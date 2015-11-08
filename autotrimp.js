@@ -185,10 +185,10 @@ function buyGemCheapestHousing() {
 // sendd trimps to work if there are a lot waiting around!!
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-	if (workspaces > 100){
-		if(game.jobs.Farmer.owned >= game.jobs.Lumberjack.owned && game.jobs.Farmer.owned >= game.jobs.Miner.owned){
+	if (workspaces > 10 + game.global.buyAmt){
+		if(game.jobs.Farmer.owned > game.jobs.Lumberjack.owned && game.jobs.Farmer.owned > game.jobs.Miner.owned){
 			buyJob("Farmer");
-		} else if(game.jobs.Lumberjack.owned >= game.jobs.Miner.owned){
+		} else if(game.jobs.Lumberjack.owned > game.jobs.Miner.owned){
 			buyJob("Lumberjack");
 		} else {
 			buyJob("Miner");
