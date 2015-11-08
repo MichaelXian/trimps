@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.7";
+var version = "0.34d.8";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -170,15 +170,14 @@ function buyGemCheapestHousing() {
 		}
 		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
 		var buildbuilding = game.buildings[keysSorted[0]];
-		if (getBuildingItemPrice(buildbuilding, "gems", false) <= game.resources.gems.owned && buildbuilding.locked == 0) {
-			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
-				if (getBuildingItemPrice(buildbuilding, "food", false) <= game.resources.food.owned && buildbuilding.locked == 0) {
+		if(buildbuilding.locked == 0){
+			if (canAffordBuilding(keysSorted[0])){
 				buyBuilding(keysSorted[0]);
 				tooltip("hide");
 				message("Bought us more housing. seems to be working!!", "Loot", "*eye2", "exotic")
-				}
 			}
 		}
+
 		var gMansion=getBuildingItemPrice(game.buildings.Mansion, "food")/ game.buildings.Mansion.increase.by;
 		var gHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
 		var gHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
@@ -187,24 +186,49 @@ function buyGemCheapestHousing() {
 			if(canAffordBuilding("House")){
 				buyBuilding("House");
 				tooltip("hide");
-				message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
+				message("More houses = more trimps", "Loot", "*eye2", "exotic")
 			}
 		}
-		
+		if(gMansion > gHut){
+			var buildbuilding = game.buildings.House;
+			if(canAffordBuilding("Hut")){
+				buyBuilding("Hut");
+				tooltip("hide");
+				message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+			}
+		}
+	} else {
+		if(game.buildings.House.locked == 0){
+			var gHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
+			var gHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
+			if(gHouse < ghut){
+				if(canAffordBuilding("House")){
+					buyBuilding("House");
+					tooltip("hide");
+					message("More houses = more trimps", "Loot", "*eye2", "exotic")
+				}
+			} else {
+				if(canAffordBuilding("Hut")){
+					buyBuilding("Hut");
+					tooltip("hide");
+					message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+				}
+			}
+		} else if(canAffordBuilding("Hut")){
+			buyBuilding("Hut");
+			tooltip("hide");
+			message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+		}
 	}
 }
 
 function buildgateways(){
-		if (game.buildings.Gateway.locked == 0) {
+	if (game.buildings.Gateway.locked == 0) {
 		var buildbuilding = game.buildings.Gateway;
-		if (getBuildingItemPrice(buildbuilding, "fragments", false) <= game.resources.fragments.owned) {
-			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned) {
-				if (getBuildingItemPrice(buildbuilding, "metal", false) <= game.resources.metal.owned) {
-					buyBuilding("Gateway");
-					tooltip("hide");
-					message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
-				}
-			}
+		if (canAffordBuilding("Gateway")) {
+			buyBuilding("Gateway");
+			tooltip("hide");
+			message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
 		}
 	}
 }
