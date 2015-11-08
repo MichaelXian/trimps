@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.8";
+var version = "0.34d.9";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -153,6 +153,8 @@ function updateHousingHighlighting() {
 }
 
 function buyGemCheapestHousing() {
+	var buyAmt = game.global.buyAmt;
+	game.global.buyAmt = 1;
 	var ahousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
 	var ghousing = [];
 	for (ahouse in ahousing) {
@@ -220,9 +222,7 @@ function buyGemCheapestHousing() {
 			message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
 		}
 	}
-}
-
-function buildgateways(){
+	
 	if (game.buildings.Gateway.locked == 0) {
 		if (canAffordBuilding("Gateway")) {
 			buyBuilding("Gateway");
@@ -230,6 +230,8 @@ function buildgateways(){
 			message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
 		}
 	}
+	
+	game.global.buyAmt = buyAmt;
 }
 
 // sendd trimps to work if there are a lot waiting around!!
@@ -450,7 +452,6 @@ if (autoTSettings.autoworkers.enabled == 1){
 //Buy housing
 if (autoTSettings.autobuildhouses.enabled == 1) {
 	buyGemCheapestHousing();
-	buildgateways();
 }
 
 
@@ -505,8 +506,8 @@ if (autoTSettings.autoupgrades.enabled == 1) {
     }
   }
 
+  
 //Buy coordination
-
   if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
     if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
       buyUpgrade('Coordination');
