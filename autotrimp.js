@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.5";
+var version = "0.34d.6";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -201,15 +201,30 @@ function buildgateways(){
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt){
-		if(game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned){
-			buyJob("Farmer");
-			tooltip("hide");
-		} else if(game.jobs.Lumberjack.owned < game.jobs.Miner.owned){
-			buyJob("Lumberjack");
-			tooltip("hide");
+		if(game.jobs.Farmer.owned >2500){
+			// if more than 2500 farmers allocate 1:1.6:2
+				if(game.jobs.Farmer.owned*1.6 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*2 < game.jobs.Miner.owned){
+				buyJob("Farmer");
+				tooltip("hide");
+			} else if(game.jobs.Lumberjack.owned*1.25 < game.jobs.Miner.owned){
+				buyJob("Lumberjack");
+				tooltip("hide");
+			} else {
+				buyJob("Miner");
+				tooltip("hide");
+			}
 		} else {
-			buyJob("Miner");
-			tooltip("hide");
+			// if less than 2500 farmers allocate 1:1:1
+			if(game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned){
+				buyJob("Farmer");
+				tooltip("hide");
+			} else if(game.jobs.Lumberjack.owned < game.jobs.Miner.owned){
+				buyJob("Lumberjack");
+				tooltip("hide");
+			} else {
+				buyJob("Miner");
+				tooltip("hide");
+			}
 		}
 	}
 	
