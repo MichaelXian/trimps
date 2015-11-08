@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.13";
+var version = "0.34d.14";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -378,7 +378,7 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 
 //Buy gyms
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
-	if(game.buildings.Tribute.locked == 0){
+	if(game.buildings.Gym.locked == 0){
 		var buyAmt = game.global.buyAmt;
 			game.global.buyAmt = 1;
 		if (canAffordBuilding("Gym")) {
