@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34c";
+var version = "0.34d.1";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -60,17 +60,17 @@ if (checking != null && checking.versioning == version) {
 }
 else {
 	var versioning = {version: version};
-	var autobuildings = {enabled: 0, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
+	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
-	var autoupgrades = {enabled: 0, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
+	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy cheapest hut", titles: ["Not Buying", "Buying"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
 //	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
-	var autohighlight = {enabled: 0, description: "Highlight the most gem-efficient housing in green and the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting All", "Housing Only", "Equipment Only"]};
-	var autopremaps = {enabled: 0, description: "Bring us back to the world if we're in the premaps screen for 30 seconds", titles: ["Not Switching", "Switching"]};
+	var autohighlight = {enabled: 1, description: "Highlight the most gem-efficient housing in green and the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting All", "Housing Only", "Equipment Only"]};
+	var autopremaps = {enabled: 1, description: "Bring us back to the world if we're in the premaps screen for 30 seconds", titles: ["Not Switching", "Switching"]};
 	var autoscience = {enabled: 0, description: "I'll send you back to work on science if you've been trying to build on an empty queue for 30 seconds", titles: ["Not Switching", "Switching"]};
-	var autoformations = {enabled: 0, description: "Automatically switch between Heap and Dominance formations based on enemy", titles: ["Not Switching", "Switching"]};
+	var autoformations = {enabled: 1, description: "Automatically switch between Heap and Dominance formations based on enemy", titles: ["Not Switching", "Switching"]};
 	var autosnimps = {enabled: 0, description: "I'll automatically buy items to help us get past snimps, squimps, and other fast enemies", titles: ["Not Avoiding", "Avoiding"]};
 	autoTSettings = {versioning: version, autobuildings: autobuildings, autogymbutes: autogymbutes, autobuildhouses: autobuildhouses, autoworkers: autoworkers, autoupgrades: autoupgrades, autohighlight: autohighlight, autopremaps: autopremaps, autoscience: autoscience, autosnimps: autosnimps, autoformations: autoformations};
 }
