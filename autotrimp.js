@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.11";
+var version = "0.34d.12";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -203,7 +203,7 @@ function buyGemCheapestHousing() {
 		if(game.buildings.House.locked == 0){
 			var gHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
 			var gHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
-			if(gHouse < ghut){
+			if(gHouse < gHut){
 				if(canAffordBuilding("House")){
 					buyBuilding("House");
 					tooltip("hide");
