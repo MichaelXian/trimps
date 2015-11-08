@@ -222,10 +222,15 @@ function talk() {
   document.getElementById("autotrimp").style.display = "block";
 }
 
+// This loops and updates stuff as things change
 function myTimer() {
   var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+  var foodtotal = game.resources.food.owned;
+  var woodtotal = game.resources.wood.owned;
+  var metaltotal = game.resources.metal.owned;
+  var gemtotal = game.resources.gems.owned;
 
 //Buy resource buildings
 if (autoTSettings.autobuildings.enabled == 1) {
