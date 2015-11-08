@@ -188,7 +188,7 @@ function buyGemCheapestHousing() {
 			if(canAffordBuilding("House")){
 				buyBuilding("House");
 				tooltip("hide");
-				message("Bought us more houses, More houses = more trimps!", "Loot", "*eye2", "exotic")
+				message("Bought us more houses. It ain't no mansion though!", "Loot", "*eye2", "exotic")
 			}
 		}
 		if(grMansion > grHut){
@@ -213,13 +213,13 @@ function buyGemCheapestHousing() {
 				if(canAffordBuilding("Hut")){
 					buyBuilding("Hut");
 					tooltip("hide");
-					message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+					message("Huts for trimps. I bet they would prefer a house!", "Loot", "*eye2", "exotic")
 				}
 			}
 	} else if(canAffordBuilding("Hut")){
 		buyBuilding("Hut");
 		tooltip("hide");
-		message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+		message("And another hut down!", "Loot", "*eye2", "exotic")
 	
 	}
 	
@@ -364,25 +364,26 @@ if (autoTSettings.autobuildings.enabled == 1) {
 
 //Buy tributes
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 3) {
-	if(game.buildings.Tribute.locked == 0){
-		var buyAmt = game.global.buyAmt;
-		game.global.buyAmt = 1;
-		if (canAffordBuilding("Tribute")){
-			buyBuilding("Tribute");
-			tooltip("hide");
-			message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
-		}
-		game.global.buyAmt = buyAmt;
+	var buyAmt = game.global.buyAmt;
+	game.global.buyAmt = 1;
+	if (getBuildingItemPrice(game.buildings.Tribute, "food", false) <= game.resources.food.owned && game.buildings.Tribute.locked == 0) {
+		buyBuilding('Tribute');
+		tooltip("hide");
+		message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
 	}
+	game.global.buyAmt = buyAmt;
 }
 
 //Buy gyms
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
+	var buyAmt = game.global.buyAmt;
+	game.global.buyAmt = 1;
 	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
 		buyBuilding('Gym');
 		tooltip("hide");
 		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
 	}
+	game.global.buyAmt = buyAmt;
 }
 
 //Buy housing
