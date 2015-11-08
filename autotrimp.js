@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34b.8";
+var version = "0.34b.9";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -183,7 +183,6 @@ function buyGemCheapestHousing() {
 }
 
 function buildgateways(){
-		message("Where are the gateways", "Loot", "*eye2", "exotic")
 		if (game.buildings.Gateway.locked == 0) {
 		var buildbuilding = game.buildings.Gateway;
 		message("Found a gateway", "Loot", "*eye2", "exotic")
