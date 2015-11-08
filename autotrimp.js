@@ -367,8 +367,8 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 	if(game.buildings.Tribute.locked == 0){
 		var buyAmt = game.global.buyAmt;
 		game.global.buyAmt = 1;
-		if (canAffordBuilding("Tribute")) {
-			buyBuilding('Tribute');
+		if (canAffordBuilding("Tribute")){
+			buyBuilding("Tribute");
 			tooltip("hide");
 			message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
 		}
@@ -378,15 +378,10 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 
 //Buy gyms
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
-	if(game.buildings.Gym.locked == 0){
-		var buyAmt = game.global.buyAmt;
-			game.global.buyAmt = 1;
-		if (canAffordBuilding("Gym")) {
-			buyBuilding('Gym');
-			tooltip("hide");
-			message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
-		}
-		game.global.buyAmt = buyAmt;
+	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
+		buyBuilding('Gym');
+		tooltip("hide");
+		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
 	}
 }
 
