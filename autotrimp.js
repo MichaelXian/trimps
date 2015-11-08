@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34b.1";
+var version = "0.34b.2";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -227,10 +227,6 @@ function myTimer() {
   var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-  var foodtotal = game.resources.food.owned;
-  var woodtotal = game.resources.wood.owned;
-  var metaltotal = game.resources.metal.owned;
-  var gemtotal = game.resources.gems.owned;
 
 //Buy resource buildings
 if (autoTSettings.autobuildings.enabled == 1) {
@@ -305,7 +301,6 @@ if (autoTSettings.autoscience.enabled == 1 && document.getElementById('noQueue')
 }
 
 //Buy gyms
-
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
 	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
 		buyBuilding('Gym');
@@ -329,6 +324,17 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 		if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
 			document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
 			document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
+		}
+	}
+}
+
+//Buy hut
+if (autoTSettings.autobuildhouses.enabled == 1) {
+	if (getBuildingItemPrice(game.buildings.Hut, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
+		if (getBuildingItemPrice(game.buildings.Hut, "food", false) <= game.resources.food.owned && game.buildings.Gym.locked == 0) {
+		buyBuilding('Hut');
+		tooltip("hide");
+		message("Bought us a hut. seems to be working!!")
 		}
 	}
 }
