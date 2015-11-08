@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.10";
+var version = "0.34d.11";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -366,28 +366,28 @@ if (autoTSettings.autobuildings.enabled == 1) {
 //Buy tributes
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 3) {
 	if(game.buildings.Tribute.locked == 0){
+		var buyAmt = game.global.buyAmt;
+		game.global.buyAmt = 1;
 		if (canAffordBuilding("Tribute")) {
-			var buyAmt = game.global.buyAmt;
-			game.global.buyAmt = 1;
 			buyBuilding('Tribute');
 			tooltip("hide");
 			message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
-			game.global.buyAmt = buyAmt;
 		}
+		game.global.buyAmt = buyAmt;
 	}
 }
 
 //Buy gyms
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
 	if(game.buildings.Tribute.locked == 0){
-		if (canAffordBuilding("Gym")) {
-			var buyAmt = game.global.buyAmt;
+		var buyAmt = game.global.buyAmt;
 			game.global.buyAmt = 1;
+		if (canAffordBuilding("Gym")) {
 			buyBuilding('Gym');
 			tooltip("hide");
 			message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
-			game.global.buyAmt = buyAmt;
 		}
+		game.global.buyAmt = buyAmt;
 	}
 }
 
