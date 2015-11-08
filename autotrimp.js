@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34b.2";
+var version = "0.34b.3";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -148,6 +148,34 @@ function updateHousingHighlighting() {
 		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
 		document.getElementById(keysSorted[0]).style.border = "1px solid #00CC00";
 		document.getElementById(keysSorted[0]).addEventListener('click',updateHousingHighlighting,false);
+	}
+}
+
+function buyGemCheapestHousing() {
+	var ahousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
+	var ghousing = [];
+	for (ahouse in ahousing) {
+		if (game.buildings[ahousing[ahouse]].locked == 0) {
+			ghousing.push(ahousing[ahouse]);
+		}
+	}
+	if (ghousing.length) {
+		for (ghouse in ghousing) {
+			var gbuilding = game.buildings[ghousing[ghouse]];
+			var gcost = 0;
+			gcost += getBuildingItemPrice(gbuilding, "gems");
+			var gratio = gcost / gbuilding.increase.by;
+			gobj[ghousing[ghouse]] = gratio;
+		}
+		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
+		var buildbuilding = game.buildings[keysSorted[0]];
+		if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
+			if (getBuildingItemPrice(buildbuilding, "food", false) <= game.resources.food.owned && buildbuilding.locked == 0) {
+			buyBuilding(keysSorted[0]);
+			tooltip("hide");
+			message("Bought us more housing. seems to be working!!", "Loot", "*eye2", "exotic")
+			}
+		}
 	}
 }
 
@@ -328,15 +356,9 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 	}
 }
 
-//Buy hut
+//Buy housing
 if (autoTSettings.autobuildhouses.enabled == 1) {
-	if (getBuildingItemPrice(game.buildings.Hut, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
-		if (getBuildingItemPrice(game.buildings.Hut, "food", false) <= game.resources.food.owned && game.buildings.Gym.locked == 0) {
-		buyBuilding('Hut');
-		tooltip("hide");
-		message("Bought us a hut. seems to be working!!")
-		}
-	}
+	buyGemCheapestHousing()
 }
 
 if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
