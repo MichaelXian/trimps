@@ -62,7 +62,6 @@ else {
 	var versioning = {version: version};
 	var autobuildings = {enabled: 0, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
-	var autohouse = {enabled: 0, description: "Automatically buy cheapest gem houses", titles: ["Not Buying", "Buying"]};
 	var autoupgrades = {enabled: 0, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
 //	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
@@ -151,8 +150,6 @@ function updateHousingHighlighting() {
 	}
 }
 
-
-
 function updateHealthHighlighting() {
 	var ahealth = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate"];
 	var ghealth = [];
@@ -228,7 +225,6 @@ function myTimer() {
   var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
   var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-  var gem = game.resources.gem.owned
 
 //Buy resource buildings
 if (autoTSettings.autobuildings.enabled == 1) {
@@ -328,18 +324,6 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 			document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
 			document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
 		}
-		cost = getBuildingItemPrice(ghousing[ghouse], "gems");
-		
-	}
-}
-
-//Buy housing
-if (autoTSettings.autohouse.enabled == 1) {
-	var gbuilding = game.buildings[keysSorted[0]];
-	if (getBuildingItemPrice(gbuilding, "gem", false) <= game.resources.gem.owned && gbuilding.locked == 0) {
-		buyBuilding(keysSorted[0]);
-		tooltip("hide");
-		message("Bought us more housing. Get those trimps breeding!")
 	}
 }
 
