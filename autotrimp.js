@@ -183,6 +183,7 @@ function buyGemCheapestHousing() {
 }
 
 function buildgateways(){
+		message("Where are the gateways", "Loot", "*eye2", "exotic")
 		if (game.buildings.Gateway.locked == 0) {
 		var buildbuilding = game.buildings.Gateway;
 		message("Found a gateway", "Loot", "*eye2", "exotic")
