@@ -180,15 +180,28 @@ function buyGemCheapestHousing() {
 			}
 		}
 	}
+	
+	if (game.buildings.Gateway.locked == 0) {
+		var buildbuilding = game.buildings.Gateway;
+		if (getBuildingItemPrice(buildbuilding, "fragments", false) <= game.resources.fragments.owned && buildbuilding.locked == 0) {
+			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
+				if (getBuildingItemPrice(buildbuilding, "food", false) <= game.resources.food.owned && buildbuilding.locked == 0) {
+					buyBuilding("Gateway");
+					tooltip("hide");
+					message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
+				}
+			}
+		}
+	}
 }
 
 // sendd trimps to work if there are a lot waiting around!!
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt){
-		if(game.jobs.Farmer.owned > game.jobs.Lumberjack.owned && game.jobs.Farmer.owned > game.jobs.Miner.owned){
+		if(game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned){
 			buyJob("Farmer");
-		} else if(game.jobs.Lumberjack.owned > game.jobs.Miner.owned){
+		} else if(game.jobs.Lumberjack.owned < game.jobs.Miner.owned){
 			buyJob("Lumberjack");
 		} else {
 			buyJob("Miner");
