@@ -174,7 +174,7 @@ function buyGemCheapestHousing() {
 			if (canAffordBuilding(keysSorted[0])){
 				buyBuilding(keysSorted[0]);
 				tooltip("hide");
-				message("Bought us more housing. seems to be working!!", "Loot", "*eye2", "exotic")
+				message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic")
 			}
 		}
 
@@ -186,7 +186,7 @@ function buyGemCheapestHousing() {
 			if(canAffordBuilding("House")){
 				buyBuilding("House");
 				tooltip("hide");
-				message("More houses = more trimps", "Loot", "*eye2", "exotic")
+				message("Bought us more houses, More houses = more trimps!", "Loot", "*eye2", "exotic")
 			}
 		}
 		if(gMansion > gHut){
@@ -224,7 +224,6 @@ function buyGemCheapestHousing() {
 
 function buildgateways(){
 	if (game.buildings.Gateway.locked == 0) {
-		var buildbuilding = game.buildings.Gateway;
 		if (canAffordBuilding("Gateway")) {
 			buyBuilding("Gateway");
 			tooltip("hide");
