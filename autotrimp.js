@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.3";
+var version = "0.34d.4";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -54,7 +54,7 @@ conversation[13] = {Q:"That's it for now, but I'll let you know if I pick up any
 updateConvo(0);
 
 //setup options
-//var checking = JSON.parse(localStorage.getItem("autotrimpsave"))
+var checking = JSON.parse(localStorage.getItem("autotrimpsave"))
 if (checking != null && checking.versioning == version) {
 	autoTSettings = checking;	
 }
