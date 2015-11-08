@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.6";
+var version = "0.34d.7";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -179,15 +179,27 @@ function buyGemCheapestHousing() {
 				}
 			}
 		}
+		var gMansion=getBuildingItemPrice(game.buildings.Mansion, "food")/ game.buildings.Mansion.increase.by;
+		var gHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
+		var gHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
+		if(gMansion > gHouse){
+			var buildbuilding = game.buildings.House;
+			if(canAffordBuilding("House")){
+				buyBuilding("House");
+				tooltip("hide");
+				message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
+			}
+		}
+		
 	}
 }
 
 function buildgateways(){
 		if (game.buildings.Gateway.locked == 0) {
 		var buildbuilding = game.buildings.Gateway;
-		if (getBuildingItemPrice(buildbuilding, "fragments", false) <= game.resources.fragments.owned && buildbuilding.locked == 0) {
-			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
-				if (getBuildingItemPrice(buildbuilding, "metal", false) <= game.resources.metal.owned && buildbuilding.locked == 0) {
+		if (getBuildingItemPrice(buildbuilding, "fragments", false) <= game.resources.fragments.owned) {
+			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned) {
+				if (getBuildingItemPrice(buildbuilding, "metal", false) <= game.resources.metal.owned) {
 					buyBuilding("Gateway");
 					tooltip("hide");
 					message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
@@ -203,10 +215,10 @@ function sendTrimpsToWork() {
 	if (workspaces > 10 + game.global.buyAmt){
 		if(game.jobs.Farmer.owned >2500){
 			// if more than 2500 farmers allocate 1:1.6:2
-				if(game.jobs.Farmer.owned*1.6 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*2 < game.jobs.Miner.owned){
+				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*1.6 < game.jobs.Miner.owned){
 				buyJob("Farmer");
 				tooltip("hide");
-			} else if(game.jobs.Lumberjack.owned*1.25 < game.jobs.Miner.owned){
+			} else if(game.jobs.Lumberjack.owned*0.8 < game.jobs.Miner.owned){
 				buyJob("Lumberjack");
 				tooltip("hide");
 			} else {
@@ -227,9 +239,6 @@ function sendTrimpsToWork() {
 			}
 		}
 	}
-	
-	
-
 }
 
 
@@ -410,15 +419,18 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 	}
 }
 
+// Make the trimps work if idle
+if (autoTSettings.autoworkers.enabled == 1){
+	sendTrimpsToWork();
+}
+
 //Buy housing
 if (autoTSettings.autobuildhouses.enabled == 1) {
 	buyGemCheapestHousing();
 	buildgateways();
 }
 
-if (autoTSettings.autoworkers.enabled == 1){
-	sendTrimpsToWork();
-}
+
 
 if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
 	updateHealthHighlighting();
