@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.9";
+var version = "0.34d.10";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -365,11 +365,35 @@ if (autoTSettings.autobuildings.enabled == 1) {
 
 //Buy tributes
 if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 3) {
-	if (getBuildingItemPrice(game.buildings.Tribute, "food", false) <= game.resources.food.owned && game.buildings.Tribute.locked == 0) {
-		buyBuilding('Tribute');
-		tooltip("hide");
-		message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
+	if(game.buildings.Tribute.locked == 0){
+		if (canAffordBuilding("Tribute")) {
+			var buyAmt = game.global.buyAmt;
+			game.global.buyAmt = 1;
+			buyBuilding('Tribute');
+			tooltip("hide");
+			message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
+			game.global.buyAmt = buyAmt;
+		}
 	}
+}
+
+//Buy gyms
+if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
+	if(game.buildings.Tribute.locked == 0){
+		if (canAffordBuilding("Gym")) {
+			var buyAmt = game.global.buyAmt;
+			game.global.buyAmt = 1;
+			buyBuilding('Gym');
+			tooltip("hide");
+			message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
+			game.global.buyAmt = buyAmt;
+		}
+	}
+}
+
+//Buy housing
+if (autoTSettings.autobuildhouses.enabled == 1) {
+	buyGemCheapestHousing();
 }
 
 //check to see if we're stuck in premap screen
@@ -416,14 +440,7 @@ if (autoTSettings.autoscience.enabled == 1 && document.getElementById('noQueue')
 	buildcounter = 0;
 }
 
-//Buy gyms
-if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
-	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
-		buyBuilding('Gym');
-		tooltip("hide");
-		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
-	}
-}
+
 
 //Highlight housing
 if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 2) {
@@ -449,10 +466,7 @@ if (autoTSettings.autoworkers.enabled == 1){
 	sendTrimpsToWork();
 }
 
-//Buy housing
-if (autoTSettings.autobuildhouses.enabled == 1) {
-	buyGemCheapestHousing();
-}
+
 
 
 
@@ -505,7 +519,6 @@ if (autoTSettings.autoupgrades.enabled == 1) {
       }
     }
   }
-
   
 //Buy coordination
   if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
