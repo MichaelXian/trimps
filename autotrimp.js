@@ -185,7 +185,7 @@ function buyGemCheapestHousing() {
 function buildgateways(){
 		if (game.buildings.Gateway.locked == 0) {
 		var buildbuilding = game.buildings.Gateway;
-		buyBuilding("Hut");
+		buyBuilding("Gateway");
 		message("Found a gateway", "Loot", "*eye2", "exotic")
 		//if (getBuildingItemPrice(buildbuilding, "fragments", false) <= game.resources.fragments.owned && buildbuilding.locked == 0) {
 			//if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
