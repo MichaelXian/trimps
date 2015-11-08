@@ -169,11 +169,13 @@ function buyGemCheapestHousing() {
 		}
 		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
 		var buildbuilding = game.buildings[keysSorted[0]];
-		if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
-			if (getBuildingItemPrice(buildbuilding, "food", false) <= game.resources.food.owned && buildbuilding.locked == 0) {
-			buyBuilding(keysSorted[0]);
-			tooltip("hide");
-			message("Bought us more housing. seems to be working!!", "Loot", "*eye2", "exotic")
+		if (getBuildingItemPrice(buildbuilding, "gems", false) <= game.resources.gems.owned && buildbuilding.locked == 0) {
+			if (getBuildingItemPrice(buildbuilding, "wood", false) <= game.resources.wood.owned && buildbuilding.locked == 0) {
+				if (getBuildingItemPrice(buildbuilding, "food", false) <= game.resources.food.owned && buildbuilding.locked == 0) {
+				buyBuilding(keysSorted[0]);
+				tooltip("hide");
+				message("Bought us more housing. seems to be working!!", "Loot", "*eye2", "exotic")
+				}
 			}
 		}
 	}
