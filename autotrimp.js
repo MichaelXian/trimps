@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34b.5";
+var version = "0.34b.6";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -64,6 +64,7 @@ else {
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
 	var autoupgrades = {enabled: 0, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy cheapest hut", titles: ["Not Buying", "Buying"]};
+	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
 //	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
 	var autohighlight = {enabled: 0, description: "Highlight the most gem-efficient housing in green and the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting All", "Housing Only", "Equipment Only"]};
@@ -71,7 +72,7 @@ else {
 	var autoscience = {enabled: 0, description: "I'll send you back to work on science if you've been trying to build on an empty queue for 30 seconds", titles: ["Not Switching", "Switching"]};
 	var autoformations = {enabled: 0, description: "Automatically switch between Heap and Dominance formations based on enemy", titles: ["Not Switching", "Switching"]};
 	var autosnimps = {enabled: 0, description: "I'll automatically buy items to help us get past snimps, squimps, and other fast enemies", titles: ["Not Avoiding", "Avoiding"]};
-	autoTSettings = {versioning: version, autobuildings: autobuildings, autogymbutes: autogymbutes, autobuildhouses: autobuildhouses, autoupgrades: autoupgrades, autohighlight: autohighlight, autopremaps: autopremaps, autoscience: autoscience, autosnimps: autosnimps, autoformations: autoformations};
+	autoTSettings = {versioning: version, autobuildings: autobuildings, autogymbutes: autogymbutes, autobuildhouses: autobuildhouses, autoworkers: autoworkers, autoupgrades: autoupgrades, autohighlight: autohighlight, autopremaps: autopremaps, autoscience: autoscience, autosnimps: autosnimps, autoformations: autoformations};
 }
 
 //add buttonss
@@ -180,6 +181,24 @@ function buyGemCheapestHousing() {
 		}
 	}
 }
+
+// sendd trimps to work if there are a lot waiting around!!
+function sendTrimpsToWork() {
+	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+	if (workspaces > 100){
+		if(game.jobs.Farmer.owned >= game.jobs.Lumberjack.owned && game.jobs.Farmer.owned >= game.jobs.Miner.owned){
+			buyJob("Farmer");
+		} else if(game.jobs.Lumberjack.owned >= game.jobs.Miner.owned){
+			buyJob("Lumberjack");
+		} else {
+			buyJob("Miner");
+		}
+	}
+	
+	
+
+}
+
 
 function updateHealthHighlighting() {
 	var ahealth = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate"];
@@ -360,7 +379,11 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 
 //Buy housing
 if (autoTSettings.autobuildhouses.enabled == 1) {
-	buyGemCheapestHousing()
+	buyGemCheapestHousing();
+}
+
+if (autoTSettings.autoworkers.enabled == 1){
+	sendTrimpsToWork();
 }
 
 if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
