@@ -233,7 +233,7 @@ function buyGemCheapestHousing() {
 	game.global.buyAmt = buyAmt;
 }
 
-// sendd trimps to work if there are a lot waiting around!!
+// send trimps to work if there are a lot waiting around!!
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt){
@@ -391,13 +391,7 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 	buyGemCheapestHousing();
 }
 
-if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
-	if(canAffordBuilding("Nursery")){
-		buyBuilding("Nursery");
-		tooltip("hide");
-		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
-	}
-}
+
 
 //check to see if we're stuck in premap screen
 if (autoTSettings.autopremaps.enabled == 1 && game.global.preMapsActive) {
