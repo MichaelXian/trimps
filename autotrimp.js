@@ -63,7 +63,7 @@ else {
 	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
 	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
-	var autobuildhouses = {enabled: 0, description: "Automatically buy cheapest hut", titles: ["Not Buying", "Buying"]};
+	var autobuildhouses = {enabled: 0, description: "Automatically buy housing and nurseries. Cheapest by gems and food", titles: ["Not Buying", "Buying Both", "Houses Only", "Nurseries Only"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
 //	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
@@ -387,8 +387,15 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 }
 
 //Buy housing
-if (autoTSettings.autobuildhouses.enabled == 1) {
+if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 2) {
 	buyGemCheapestHousing();
+}
+
+if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
+	if(canAffordBuilding("Nursery")){
+					buyBuilding("Nursery");
+					tooltip("hide");
+					message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
 }
 
 //check to see if we're stuck in premap screen
