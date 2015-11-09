@@ -391,7 +391,14 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 	buyGemCheapestHousing();
 }
 
-
+// Buy Nerseries
+if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
+	if(canAffordBuilding("Nursery")){
+		buyBuilding("Nursery");
+		tooltip("hide");
+		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
+	}
+}
 
 //check to see if we're stuck in premap screen
 if (autoTSettings.autopremaps.enabled == 1 && game.global.preMapsActive) {
