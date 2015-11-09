@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.15";
+var version = "0.34d.16";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -393,9 +393,10 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 
 if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
 	if(canAffordBuilding("Nursery")){
-					buyBuilding("Nursery");
-					tooltip("hide");
-					message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
+		buyBuilding("Nursery");
+		tooltip("hide");
+		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
+	}
 }
 
 //check to see if we're stuck in premap screen
