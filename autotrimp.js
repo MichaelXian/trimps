@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.17";
+var version = "0.34d.18";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -550,8 +550,8 @@ if (autoTSettings.autoupgrades.enabled == 1) {
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3){
-	if(getNextPrestigeCost("Dagger") < game.resources.wood.owned){
-		prestigeEquipment("Dagger")
+	if(getNextPrestigeCost("Dagadder") < game.resources.wood.owned){
+		prestigeEquipment("Dagadder")
 	}
 }
 
