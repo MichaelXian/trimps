@@ -62,7 +62,7 @@ else {
 	var versioning = {version: version};
 	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
-	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading"]};
+	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading","Reading and Weapons","Reading and Equipment"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy housing and nurseries. Cheapest by gems and food", titles: ["Not Buying", "Buying Both", "Houses Only", "Nurseries Only"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
@@ -237,8 +237,20 @@ function buyGemCheapestHousing() {
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt){
-		if(game.jobs.Farmer.owned >2500){
-			// if more than 2500 farmers allocate 1:1.6:2
+		if(game.jobs.Farmer.owned >10000){
+			// if more than 1000 farmers allocate 2:4:5
+				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*5 < 2*game.jobs.Miner.owned){
+				buyJob("Farmer");
+				tooltip("hide");
+			} else if(game.jobs.Lumberjack.owned*5 < game.jobs.Miner.owned*2){
+				buyJob("Lumberjack");
+				tooltip("hide");
+			} else {
+				buyJob("Miner");
+				tooltip("hide");
+			}
+		} if(game.jobs.Farmer.owned >1000){
+			// if more than 1000 farmers allocate 1:2:1.6
 				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*1.6 < game.jobs.Miner.owned){
 				buyJob("Farmer");
 				tooltip("hide");
@@ -393,11 +405,14 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 
 // Buy Nerseries
 if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
+	var buyAmt = game.global.buyAmt;
+	game.global.buyAmt = 1;
 	if(canAffordBuilding("Nursery")){
 		buyBuilding("Nursery");
 		tooltip("hide");
 		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
 	}
+	game.global.buyAmt = buyAmt;
 }
 
 //check to see if we're stuck in premap screen
@@ -532,6 +547,21 @@ if (autoTSettings.autoupgrades.enabled == 1) {
     }
   }
 }
+
+// prestige equiment if available
+if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3){
+	if(getNextPrestigeCost("Dagger") < game.resources.wood.owned){
+		prestigeEquipment("Dagger")
+	}
+}
+
+// prestige equiment if available
+if (autoTSettings.autoupgrades.enabled == 3){
+	if(getNextPrestigeCost("Boots") < game.resources.wood.owned){
+		prestigeEquipment("Boots")
+	}
+}
+
 
 //Update bones
 document.getElementById("boneBtnMain").innerHTML = "Bone Trader (" + game.global.b + ")";
