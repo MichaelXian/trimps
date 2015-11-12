@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.18";
+var version = "0.34d.19";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -237,8 +237,8 @@ function buyGemCheapestHousing() {
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt){
-		if(game.jobs.Farmer.owned >10000){
-			// if more than 1000 farmers allocate 2:4:5
+		if(game.jobs.Farmer.owned >15000){
+			// if more than 15000 farmers allocate 2:4:5
 				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*5 < 2*game.jobs.Miner.owned){
 				buyJob("Farmer");
 				tooltip("hide");
@@ -249,7 +249,7 @@ function sendTrimpsToWork() {
 				buyJob("Miner");
 				tooltip("hide");
 			}
-		} if(game.jobs.Farmer.owned >1000){
+		} else if(game.jobs.Farmer.owned >1000){
 			// if more than 1000 farmers allocate 1:2:1.6
 				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*1.6 < game.jobs.Miner.owned){
 				buyJob("Farmer");
@@ -407,7 +407,7 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.enabled == 3) {
 	var buyAmt = game.global.buyAmt;
 	game.global.buyAmt = 1;
-	if(canAffordBuilding("Nursery")){
+	if(canAffordBuilding("Nursery") && game.buildings.Nursery.locked == 0){
 		buyBuilding("Nursery");
 		tooltip("hide");
 		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
