@@ -524,7 +524,7 @@ if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enab
 }
 
 //Buy speed upgrades
-if (autoTSettings.autoupgrades.enabled == 1) {
+if (autoTSettings.autoupgrades.enabled > 0) {
   autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
   for (var key in game.upgrades) {
     if (autotrimpupgrades.indexOf(key) != -1) { 
@@ -553,12 +553,24 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 	if(getNextPrestigeCost("Dagadder") < game.resources.wood.owned){
 		prestigeEquipment("Dagadder")
 	}
+	if(getNextPrestigeCost("Megamace") < game.resources.wood.owned){
+		prestigeEquipment("Megamace")
+	}
+	if(getNextPrestigeCost("Polierarm") < game.resources.wood.owned){
+		prestigeEquipment("Polierarm")
+	}
+	if(getNextPrestigeCost("Axeidic") < game.resources.wood.owned){
+		prestigeEquipment("Axeidic")
+	}
+	if(getNextPrestigeCost("Axeidic") < game.resources.wood.owned){
+		prestigeEquipment("Axeidic")
+	}
 }
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
-	if(getNextPrestigeCost("Boots") < game.resources.wood.owned){
-		prestigeEquipment("Boots")
+	if(getNextPrestigeCost("Bootboost") < game.resources.wood.owned){
+		prestigeEquipment("Bootboost")
 	}
 }
 
