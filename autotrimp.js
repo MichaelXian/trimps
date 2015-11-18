@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.22";
+var version = "0.34d.23";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -569,10 +569,7 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
-	if(getNextPrestigeCost("Boots") < game.resources.metal.owned){
-		prestigeEquipment("Boots")
-	}
-	if(canAffordTwoLevel("Boots")){
+	if(getNextPrestigeCost("Bootboost") < game.resources.metal.owned){
 		prestigeEquipment("Boots")
 	}
 	if(getNextPrestigeCost("Helmet") < game.resources.wood.owned){
