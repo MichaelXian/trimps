@@ -562,15 +562,15 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 	if(getNextPrestigeCost("Axeidic") < game.resources.wood.owned){
 		prestigeEquipment("Axeidic")
 	}
-	if(getNextPrestigeCost("Axeidic") < game.resources.wood.owned){
-		prestigeEquipment("Axeidic")
+	if(getNextPrestigeCost("Greatersword") < game.resources.wood.owned){
+		prestigeEquipment("Greatersword")
 	}
 }
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
-	if(getNextPrestigeCost("Bootboost") < game.resources.wood.owned){
-		prestigeEquipment("Bootboost")
+	if(getNextPrestigeCost("Boots") < game.resources.wood.owned){
+		prestigeEquipment("Boots")
 	}
 }
 
