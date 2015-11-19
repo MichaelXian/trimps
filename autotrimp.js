@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.28";
+var version = "0.34d.29";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -575,10 +575,14 @@ if (autoTSettings.autoupgrades.enabled == 3){
 		buyUpgrade('Bootboost');
 	}
 	if(getNextPrestigeCost("Helmet") < game.resources.wood.owned){
+		
 		prestigeEquipment("Helmet")
 	}
 	if(game.upgrades.Pantastic.allowed > game.upgrades.Pantastic.done ){
-		buyUpgrade('Pantastic');
+		if(canAffordTwoLevel('Pantastic'){
+			buyUpgrade('Pantastic');
+			message("Pantastic", "Loot", "*eye2", "exotic")
+		}
 	}
 }
 
