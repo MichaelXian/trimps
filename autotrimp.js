@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.31";
+var version = "0.34d.32";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -351,7 +351,9 @@ function talk() {
 
 function prestigeEquipment(what) {
 	if(game.upgrades[what].allowed > game.upgrades[what].done ){
-		if(canAffordTwoLevel(what)){
+		var upgrade = game.upgrades[what];
+		var canAfford = canAffordTwoLevel(upgrade);
+		if(canAfford){
 			buyUpgrade(what);
 			message(what, "Loot", "*eye2", "exotic")
 		}
@@ -559,38 +561,21 @@ if (autoTSettings.autoupgrades.enabled > 0) {
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3){
-	if(getNextPrestigeCost("Dagadder") < game.resources.metal.owned){
-		message("Daggagaagagar", "Loot", "*eye2", "exotic")
-		buyUpgrade("Dagadder")
-	}
-	if(getNextPrestigeCost("Megamace") < game.resources.wood.owned){
-		prestigeEquipment("Megamace")
-	}
-	if(getNextPrestigeCost("Polierarm") < game.resources.wood.owned){
-		prestigeEquipment("Polierarm")
-	}
-	if(getNextPrestigeCost("Axeidic") < game.resources.wood.owned){
-		prestigeEquipment("Axeidic")
-	}
-	if(getNextPrestigeCost("Greatersword") < game.resources.wood.owned){
-		prestigeEquipment("Greatersword")
-	}
+	prestigeEquipment("Dagadder");
+	prestigeEquipment("Megamace");
+	prestigeEquipment("Polierarm");
+	prestigeEquipment("Axeidic");
+	prestigeEquipment("Greatersword");
 }
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
 	message("check", "Loot", "*eye2", "exotic")
-	message(game.upgrades.Bootboost.done, "Loot", "*eye2", "exotic")
-	if(game.upgrades.Bootboost.allowed > game.upgrades.Bootboost.done ){
-		buyUpgrade('Bootboost');
-	}
-	if(game.upgrades.Pantastic.allowed > game.upgrades.Pantastic.done ){
-		if(canAffordTwoLevel('Pantastic')){
-			buyUpgrade('Pantastic');
-			message("Pantastic", "Loot", "*eye2", "exotic")
-		}
-	}
-	prestigeEquipment("Smoldershoulder")
+	prestigeEquipment("Bootboost");
+	prestigeEquipment("Hellishmet");
+	prestigeEquipment("Pantastic");
+	prestigeEquipment("Smoldershoulder");
+	prestigeEquipment("Bestplate");
 }
 
 
