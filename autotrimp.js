@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.33";
+var version = "0.34d.34";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -570,7 +570,6 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
-	message("check", "Loot", "*eye2", "exotic")
 	prestigeEquipment("Bootboost");
 	prestigeEquipment("Hellishmet");
 	prestigeEquipment("Pantastic");
