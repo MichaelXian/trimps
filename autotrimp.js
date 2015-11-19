@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.34";
+var version = "0.34d.35";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -351,9 +351,7 @@ function talk() {
 
 function prestigeEquipment(what) {
 	if(game.upgrades[what].allowed > game.upgrades[what].done ){
-		var upgrade = game.upgrades[what];
-		var canAfford = canAffordTwoLevel(upgrade);
-		if(canAfford){
+		if(canAffordTwoLevel(game.upgrades[what]){
 			buyUpgrade(what);
 			message( "Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic")
 		}
@@ -559,22 +557,22 @@ if (autoTSettings.autoupgrades.enabled > 0) {
   }
 }
 
-// prestige equiment if available
+// prestige weapon if available
 if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3){
-	prestigeEquipment("Dagadder");
-	prestigeEquipment("Megamace");
-	prestigeEquipment("Polierarm");
-	prestigeEquipment("Axeidic");
-	prestigeEquipment("Greatersword");
+	prestigeEquipment('Dagadder');
+	prestigeEquipment('Megamace');
+	prestigeEquipment('Polierarm');
+	prestigeEquipment('Axeidic');
+	prestigeEquipment('Greatersword');
 }
 
-// prestige equiment if available
+// prestige all equipment if available
 if (autoTSettings.autoupgrades.enabled == 3){
-	prestigeEquipment("Bootboost");
-	prestigeEquipment("Hellishmet");
-	prestigeEquipment("Pantastic");
-	prestigeEquipment("Smoldershoulder");
-	prestigeEquipment("Bestplate");
+	prestigeEquipment('Bootboost');
+	prestigeEquipment('Hellishmet');
+	prestigeEquipment('Pantastic');
+	prestigeEquipment('Smoldershoulder');
+	prestigeEquipment('Bestplate');
 }
 
 
