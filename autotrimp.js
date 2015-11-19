@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.36";
+var version = "0.34d.38";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -57,7 +57,7 @@ updateConvo(0);
 var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
 
 if (checking !== null && checking.versioning == version) {
-	autoTSettings = checking;	
+	autoTSettings = checking;
 } else {
 	var versioning = {version: version};
 	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
@@ -75,13 +75,13 @@ if (checking !== null && checking.versioning == version) {
 	autoTSettings = {versioning: version, autobuildings: autobuildings, autogymbutes: autogymbutes, autobuildhouses: autobuildhouses, autoworkers: autoworkers, autoupgrades: autoupgrades, autohighlight: autohighlight, autopremaps: autopremaps, autoscience: autoscience, autosnimps: autosnimps, autoformations: autoformations};
 }
 
-//add buttonss
+//add buttons
 var autosettings = document.getElementById("autosettings0");
 var html = "";
 for (item in autoTSettings) {
 	if (item != "versioning") {
-		var optionItem = autoTSettings[item]; 
-  		var text = optionItem.titles[optionItem.enabled];
+		var optionItem = autoTSettings[item];
+		var text = optionItem.titles[optionItem.enabled];
 		html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div>";
 	}
 }
@@ -92,22 +92,32 @@ autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div 
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 
 //call loop
-var myVar = setInterval(function () {myTimer()}, 3000);
-var newVar = setInterval(function () {newTimer()}, 1000);
+var myVar = setInterval(function () { myTimer(); }, 3000);
+var newVar = setInterval(function () {newTimer(); }, 1000);
 
 //alert("done");
 
 //only functions below here
-function updateConvo (place) {
-  document.getElementById("q").innerHTML = conversation[place].Q;
-  document.getElementById("1").innerHTML = conversation[place].R1;
-  document.getElementById("1").onclick = (function() { var test = conversation[place].L1; return function() {updateConvo(test + '');}})();
-  if ("R2" in conversation[place]) {document.getElementById("2").innerHTML = conversation[place].R2;}
-  else {document.getElementById("2").innerHTML = "";}
-  if ("L2" in conversation[place]) {document.getElementById("2").onclick = (function() { var test = conversation[place].L2; return function() {updateConvo(test + '');}})();}
-  if ("R3" in conversation[place]) {document.getElementById("3").innerHTML = conversation[place].R3;}
-  else {document.getElementById("3").innerHTML = "";}
-  if ("L3" in conversation[place]) {document.getElementById("3").onclick = (function() { var test = conversation[place].L3; return function() {updateConvo(test + '');}})();}
+function updateConvo(place) {
+	document.getElementById("q").innerHTML = conversation[place].Q;
+	document.getElementById("1").innerHTML = conversation[place].R1;
+	document.getElementById("1").onclick = (function () { var test = conversation[place].L1; return function () {updateConvo(test + ''); }; })();
+	if ("R2" in conversation[place]) {
+		document.getElementById("2").innerHTML = conversation[place].R2;
+	} else {
+		document.getElementById("2").innerHTML = "";
+	}
+	if ("L2" in conversation[place]) {
+		document.getElementById("2").onclick = (function () { var test = conversation[place].L2; return function () {updateConvo(test + ''); }})();
+	}
+	if ("R3" in conversation[place]) {
+		document.getElementById("3").innerHTML = conversation[place].R3;
+	} else {
+		document.getElementById("3").innerHTML = "";
+	}
+	if ("L3" in conversation[place]) {
+		document.getElementById("3").onclick = (function () { var test = conversation[place].L3; return function () {updateConvo(test + '');}})();
+	}
 }
 
 function removeShieldblock() {
@@ -141,12 +151,12 @@ function updateHousingHighlighting() {
 			gcost += getBuildingItemPrice(gbuilding, "gems");
 			var gratio = gcost / gbuilding.increase.by;
 			gobj[ghousing[ghouse]] = gratio;
-			if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
+			if (document.getElementById(ghousing[ghouse]).style.border == "1px solid #00CC00") {
 				document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
 				document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
 			}
 		}
-		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
+		var keysSorted = Object.keys(gobj).sort(function (a, b) {return gobj[a] - gobj[b]});
 		document.getElementById(keysSorted[0]).style.border = "1px solid #00CC00";
 		document.getElementById(keysSorted[0]).addEventListener('click',updateHousingHighlighting,false);
 	}
@@ -170,64 +180,60 @@ function buyGemCheapestHousing() {
 			var gratio = gcost / gbuilding.increase.by;
 			gobj[ghousing[ghouse]] = gratio;
 		}
-		var keysSorted = Object.keys(gobj).sort(function(a,b){return gobj[a]-gobj[b]});
+		var keysSorted = Object.keys(gobj).sort(function (a,b) {return gobj[a] - gobj[b]; });
 		var buildbuilding = game.buildings[keysSorted[0]];
-		if(buildbuilding.locked == 0){
-			if (canAffordBuilding(keysSorted[0])){
+		if (buildbuilding.locked == 0) {
+			if (canAffordBuilding(keysSorted[0])) {
 				buyBuilding(keysSorted[0]);
 				tooltip("hide");
-				message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic")
+				message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic");
 			}
 		}
-
-		var grMansion=getBuildingItemPrice(game.buildings.Mansion, "food")/ game.buildings.Mansion.increase.by;
-		var grHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
-		var grHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
-		if(grMansion > grHouse){
-			var buildbuilding = game.buildings.House;
-			if(canAffordBuilding("House")){
+		var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
+		var grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
+		var grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
+		if (grMansion > grHouse) {
+			buildbuilding = game.buildings.House;
+			if (canAffordBuilding("House")) {
 				buyBuilding("House");
 				tooltip("hide");
-				message("Bought us more houses. It ain't no mansion though!", "Loot", "*eye2", "exotic")
+				message("Bought us more houses. It ain't no mansion though!", "Loot", "*eye2", "exotic");
 			}
 		}
-		if(grMansion > grHut){
+		if (grMansion > grHut) {
 			var buildbuilding = game.buildings.House;
-			if(canAffordBuilding("Hut")){
+			if (canAffordBuilding("Hut")) {
 				buyBuilding("Hut");
 				tooltip("hide");
-				message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic")
+				message("Still building huts. Why do they still live there??", "Loot", "*eye2", "exotic");
 			}
 		}
-	} else if(game.buildings.House.locked == 0){
-		
-			var grHouse=getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
-			var grHut=getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;	
-			if(grHouse < grHut){
-				if(canAffordBuilding("House")){
+	} else if (game.buildings.House.locked == 0) {
+			var grHouse = getBuildingItemPrice(game.buildings.House, "food")/ game.buildings.House.increase.by;
+			var grHut = getBuildingItemPrice(game.buildings.Hut, "food")/ game.buildings.Hut.increase.by;
+			if (grHouse < grHut) {
+				if (canAffordBuilding("House")) {
 					buyBuilding("House");
 					tooltip("hide");
-					message("Bought us more houses, More houses = more trimps!", "Loot", "*eye2", "exotic")
+					message("Bought us more houses, More houses = more trimps!", "Loot", "*eye2", "exotic");
 				}
 			} else {
-				if(canAffordBuilding("Hut")){
+				if (canAffordBuilding("Hut")) {
 					buyBuilding("Hut");
 					tooltip("hide");
-					message("Huts for trimps. I bet they would prefer a house!", "Loot", "*eye2", "exotic")
+					message("Huts for trimps. I bet they would prefer a house!", "Loot", "*eye2", "exotic");
 				}
 			}
-	} else if(canAffordBuilding("Hut")){
+	} else if (canAffordBuilding("Hut")) {
 		buyBuilding("Hut");
 		tooltip("hide");
-		message("And another hut down!", "Loot", "*eye2", "exotic")
-	
+		message("And another hut down!", "Loot", "*eye2", "exotic");
 	}
-	
 	if (game.buildings.Gateway.locked == 0) {
 		if (canAffordBuilding("Gateway")) {
 			buyBuilding("Gateway");
 			tooltip("hide");
-			message("More gateways for the masses!!", "Loot", "*eye2", "exotic")
+			message("More gateways for the masses!!", "Loot", "*eye2", "exotic");
 		}
 	}
 	game.global.buyAmt = buyAmt;
@@ -236,25 +242,25 @@ function buyGemCheapestHousing() {
 // send trimps to work if there are a lot waiting around!!
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-	if (workspaces > 10 + game.global.buyAmt){
-		if(game.jobs.Farmer.owned >15000){
+	if (workspaces > 10 + game.global.buyAmt) {
+		if (game.jobs.Farmer.owned >15000) {
 			// if more than 15000 farmers allocate 2:4:5
-				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*5 < 2*game.jobs.Miner.owned){
+				if (game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*5 < 2*game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
-			} else if(game.jobs.Lumberjack.owned*5 < game.jobs.Miner.owned*2){
+			} else if (game.jobs.Lumberjack.owned*5 < game.jobs.Miner.owned*2) {
 				buyJob("Lumberjack");
 				tooltip("hide");
 			} else {
 				buyJob("Miner");
 				tooltip("hide");
 			}
-		} else if(game.jobs.Farmer.owned >1000){
+		} else if (game.jobs.Farmer.owned >1000) {
 			// if more than 1000 farmers allocate 1:2:1.6
-				if(game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*1.6 < game.jobs.Miner.owned){
+				if (game.jobs.Farmer.owned*2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned*1.6 < game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
-			} else if(game.jobs.Lumberjack.owned*0.8 < game.jobs.Miner.owned){
+			} else if (game.jobs.Lumberjack.owned*0.8 < game.jobs.Miner.owned) {
 				buyJob("Lumberjack");
 				tooltip("hide");
 			} else {
@@ -263,10 +269,10 @@ function sendTrimpsToWork() {
 			}
 		} else {
 			// if less than 2500 farmers allocate 1:1:1
-			if(game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned){
+			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
-			} else if(game.jobs.Lumberjack.owned < game.jobs.Miner.owned){
+			} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
 				buyJob("Lumberjack");
 				tooltip("hide");
 			} else {
@@ -350,10 +356,10 @@ function talk() {
 }
 
 function prestigeEquipment(what) {
-	if(game.upgrades[what].allowed > game.upgrades[what].done ){
-		if(canAffordTwoLevel(game.upgrades[what])){
+	if (game.upgrades[what].allowed > game.upgrades[what].done) {
+		if (canAffordTwoLevel(game.upgrades[what])) {
 			buyUpgrade(what);
-			message( "Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic")
+			message( "Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
 		}
 	}
 }
@@ -379,7 +385,7 @@ if (autoTSettings.autobuildings.enabled == 1) {
   if (metal > .9) {
     buyBuilding('Forge');
     tooltip("hide");
-    message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
+    message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic");
   }
 }
 
@@ -390,7 +396,7 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 	if (getBuildingItemPrice(game.buildings.Tribute, "food", false) <= game.resources.food.owned && game.buildings.Tribute.locked == 0) {
 		buyBuilding('Tribute');
 		tooltip("hide");
-		message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic")
+		message("Bought us a tribute. The gems must flow!", "Loot", "*eye2", "exotic");
 	}
 	game.global.buyAmt = buyAmt;
 }
@@ -402,7 +408,7 @@ if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enable
 	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
 		buyBuilding('Gym');
 		tooltip("hide");
-		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
+		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic");
 	}
 	game.global.buyAmt = buyAmt;
 }
@@ -419,7 +425,7 @@ if (autoTSettings.autobuildhouses.enabled == 1 || autoTSettings.autobuildhouses.
 	if(canAffordBuilding("Nursery") && game.buildings.Nursery.locked == 0){
 		buyBuilding("Nursery");
 		tooltip("hide");
-		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic")
+		message("Nurseries for trimps. Be better if you stopped killing them off so fast though...", "Loot", "*eye2", "exotic");
 	}
 	game.global.buyAmt = buyAmt;
 }
@@ -540,9 +546,9 @@ if (autoTSettings.autoupgrades.enabled > 0) {
       if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
       	buyUpgrade(key);
         if (key == "Efficiency") {
-        	message("I read you the " + key + " book while you were asleep. I think it worked.", "Loot", "*eye2", "exotic")
+        	message("I read you the " + key + " book while you were asleep. I think it worked.", "Loot", "*eye2", "exotic");
         } else {
-        	message("Read the trimps the " + key + " book. Only some of them listened.", "Loot", "*eye2", "exotic")
+        	message("Read the trimps the " + key + " book. Only some of them listened.", "Loot", "*eye2", "exotic");
         }
       }
     }
@@ -552,7 +558,7 @@ if (autoTSettings.autoupgrades.enabled > 0) {
   if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
     if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
       buyUpgrade('Coordination');
-      message("We read Coordination together before bedtime, it was sweet. Now let's go kill something.", "Loot", "*eye2", "exotic")
+      message("We read Coordination together before bedtime, it was sweet. Now let's go kill something.", "Loot", "*eye2", "exotic");
     }
   }
 }
@@ -675,7 +681,7 @@ function newTimer() {
 		testhealth = myhealth;
 		testattack = badguyMinAtt;
 		if (badguyMinAtt > (myblock + myhealth)) {
-			message("You're stuck on a fastenemy. I would fix this by buying a " + hkeysSorted[0] + ".", "Loot", "*eye2", "exotic")	
+			message("You're stuck on a fastenemy. I would fix this by buying a " + hkeysSorted[0] + ".", "Loot", "*eye2", "exotic");
 		}
 	}
 }//end new loop
