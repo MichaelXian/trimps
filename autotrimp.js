@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.32";
+var version = "0.34d.33";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -355,7 +355,7 @@ function prestigeEquipment(what) {
 		var canAfford = canAffordTwoLevel(upgrade);
 		if(canAfford){
 			buyUpgrade(what);
-			message(what, "Loot", "*eye2", "exotic")
+			message( "Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic")
 		}
 	}
 }
