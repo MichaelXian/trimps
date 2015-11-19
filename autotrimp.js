@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.29";
+var version = "0.34d.30";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -349,6 +349,15 @@ function talk() {
   document.getElementById("autotrimp").style.display = "block";
 }
 
+function prestigeEquipment(what) {
+		if(game.upgrades[what].allowed > game.upgrades[what].done ){
+		if(canAffordTwoLevel(what)){
+			buyUpgrade(what);
+			message(what, "Loot", "*eye2", "exotic")
+		}
+	}
+}
+
 // This loops and updates stuff as things change
 function myTimer() {
   var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
@@ -574,16 +583,16 @@ if (autoTSettings.autoupgrades.enabled == 3){
 	if(game.upgrades.Bootboost.allowed > game.upgrades.Bootboost.done ){
 		buyUpgrade('Bootboost');
 	}
-	if(getNextPrestigeCost("Helmet") < game.resources.wood.owned){
-		
-		prestigeEquipment("Helmet")
-	}
 	if(game.upgrades.Pantastic.allowed > game.upgrades.Pantastic.done ){
-		if(canAffordTwoLevel('Pantastic'){
+		if(canAffordTwoLevel('Pantastic')){
 			buyUpgrade('Pantastic');
 			message("Pantastic", "Loot", "*eye2", "exotic")
 		}
 	}
+	
+	prestigeEquipment("Smoldershoulder")
+	
+	
 }
 
 
