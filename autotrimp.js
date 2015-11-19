@@ -18,7 +18,7 @@ var testattack = 0;
 //fixed !! document.getElementById("buyCol").style.paddingRight = ".3%";
 //fixed !!document.getElementById("rightCol").style.paddingLeft = ".3%";
 document.getElementById("helium").style.height = "32.4%";
-document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses"
+document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses";
 
 //Setup bone number addition
 document.getElementById("boneBtnMain").style = "font-size: 1vw;";
@@ -37,32 +37,32 @@ document.styleSheets[2].insertRule(".settingBtn3 {background-color: #337AB7;}", 
 
 //setup convo array
 var conversation = [];
-conversation[0] = {Q:"Hello.",R1:"What?!?!",L1:3,R2:"Oh.",L2:1};
-conversation[1] = {Q:"What do you want to change? Click the buttons below.",R1:"Nothing.",L1:2,R2:"That's it.",L2:2};
-conversation[2] = {Q:"Ok.",R1:"Hello?",L1:0};
-conversation[3] = {Q:"I figured you'd find me eventually. Before you ask...yes, I can talk. No, none of the other trimps seem to be able to.",R1:"What else do you know?",L1:4};
-conversation[4] = {Q:"Not much more than you, unfortunately. Whatever brought you here is also what made me...smarter than the average trimp. Before you got here, I wasn't anymore self-aware than any other trimp.",R1:"What are we doing here?",L1:5};
-conversation[5] = {Q:"I don't know--I don't even know where <b>here</b> is. This is all new to me too.",R1:"Well, what do you suggest we do?",L1:6};
-conversation[6] = {Q:"Keep going. Maybe we'll find some answers. Since we're friends now, I've picked up a few tricks that will help us.",R1:"Like what?",L1:7};
-conversation[7] = {Q:"I can tell the trimps to build storage buildings before they get full. I can also buy Gyms and Tributes as soon as we can afford them, and read some upgrade books to you and the trimps when you're not available.",R1:"Which upgrade books?",L1:8, R2:"What else?", L2:9};
-conversation[8] = {Q:"The upgrades I can read are: Speedfarming, Speedlumber, Speedminer, Speedscience, (all the Mega versions too), Efficiency, TrainTacular, Gymystic, Potency, Egg, UberHut, UberHouse, UberMansion, UberHotel, UberResort, and Bounty",R1:"Ok, cool",L1:9};
-conversation[9] = {Q:"I can also highlight the housing that makes the most use of our gems, and the equipment that makes the best use of our metal.",R1:"Cool, what else?",L1:10};
-conversation[10] = {Q:"I'll bring us back to the world if we idle on the premap screen too long and I'll send you back to science-ing if you stay building on an empty queue. I can also <b>unteach</b> Shieldblock.",R1:"Why unteach Shieldblock?",L1:11, R2:"Anything else?",L2:12};
-conversation[11] = {Q:"As we learn more and more Gymystic, our shields becomes less and less useful for blocking. The extra health comes in real handy post z60.",R1:"I get it.",L1:12};
-conversation[12] = {Q:"I can help you respec the portal perks if you've already done it this round, and I can automatically flip between Dominance and Heap formations depending on the enemy we're facing.",R1:"Ok.",L1:13};
-conversation[13] = {Q:"That's it for now, but I'll let you know if I pick up any more tricks. Use the buttons below to let me know what you'd like done.",R1:"Ok.",L1:2};
+conversation[0] = {Q: "Hello.", R1: "What?!?!", L1: 3, R2: "Oh.", L2: 1};
+conversation[1] = {Q: "What do you want to change? Click the buttons below.", R1: "Nothing.", L1: 2, R2: "That's it.", L2: 2};
+conversation[2] = {Q: "Ok.", R1: "Hello?", L1: 0};
+conversation[3] = {Q: "I figured you'd find me eventually. Before you ask...yes, I can talk. No, none of the other trimps seem to be able to.", R1: "What else do you know?", L1: 4};
+conversation[4] = {Q: "Not much more than you, unfortunately. Whatever brought you here is also what made me...smarter than the average trimp. Before you got here, I wasn't anymore self-aware than any other trimp.", R1: "What are we doing here?", L1: 5};
+conversation[5] = {Q: "I don't know--I don't even know where <b>here</b> is. This is all new to me too.", R1: "Well, what do you suggest we do?", L1: 6};
+conversation[6] = {Q: "Keep going. Maybe we'll find some answers. Since we're friends now, I've picked up a few tricks that will help us.", R1: "Like what?", L1: 7};
+conversation[7] = {Q: "I can tell the trimps to build storage buildings before they get full. I can also buy Gyms and Tributes as soon as we can afford them, and read some upgrade books to you and the trimps when you're not available.", R1: "Which upgrade books?", L1: 8, R2: "What else?", L2: 9};
+conversation[8] = {Q: "The upgrades I can read are: Speedfarming, Speedlumber, Speedminer, Speedscience, (all the Mega versions too), Efficiency, TrainTacular, Gymystic, Potency, Egg, UberHut, UberHouse, UberMansion, UberHotel, UberResort, and Bounty", R1: "Ok, cool", L1: 9};
+conversation[9] = {Q: "I can also highlight the housing that makes the most use of our gems, and the equipment that makes the best use of our metal.", R1: "Cool, what else?", L1: 10};
+conversation[10] = {Q: "I'll bring us back to the world if we idle on the premap screen too long and I'll send you back to science-ing if you stay building on an empty queue. I can also <b>unteach</b> Shieldblock.", R1: "Why unteach Shieldblock?", L1: 11, R2: "Anything else?", L2: 12};
+conversation[11] = {Q: "As we learn more and more Gymystic, our shields becomes less and less useful for blocking. The extra health comes in real handy post z60.", R1: "I get it.", L1: 12};
+conversation[12] = {Q: "I can help you respec the portal perks if you've already done it this round, and I can automatically flip between Dominance and Heap formations depending on the enemy we're facing.", R1: "Ok.", L1: 13};
+conversation[13] = {Q: "That's it for now, but I'll let you know if I pick up any more tricks. Use the buttons below to let me know what you'd like done.", R1: "Ok.", L1: 2};
 updateConvo(0);
 
 //setup options
-var checking = JSON.parse(localStorage.getItem("autotrimpsave"))
-if (checking != null && checking.versioning == version) {
+var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
+
+if (checking !== null && checking.versioning == version) {
 	autoTSettings = checking;	
-}
-else {
+} else {
 	var versioning = {version: version};
 	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
-	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading","Reading and Weapons","Reading and Equipment"]};
+	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading", "Reading and Weapons", "Reading and Equipment"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy housing and nurseries. Cheapest by gems and food", titles: ["Not Buying", "Buying Both", "Houses Only", "Nurseries Only"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 //	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
@@ -78,11 +78,11 @@ else {
 //add buttonss
 var autosettings = document.getElementById("autosettings0");
 var html = "";
-for (var item in autoTSettings) {
+for (item in autoTSettings) {
 	if (item != "versioning") {
 		var optionItem = autoTSettings[item]; 
-  		var text = optionItem.titles[optionItem.enabled]; 
-  		html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div> ";
+  		var text = optionItem.titles[optionItem.enabled];
+		html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div>";
 	}
 }
 autosettings.innerHTML = html;
@@ -92,8 +92,8 @@ autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div 
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 
 //call loop
-var myVar=setInterval(function () {myTimer()}, 3000);
-var newVar=setInterval(function () {newTimer()}, 1000);
+var myVar = setInterval(function () {myTimer()}, 3000);
+var newVar = setInterval(function () {newTimer()}, 1000);
 
 //alert("done");
 
@@ -350,7 +350,7 @@ function talk() {
 }
 
 function prestigeEquipment(what) {
-		if(game.upgrades[what].allowed > game.upgrades[what].done ){
+	if(game.upgrades[what].allowed > game.upgrades[what].done ){
 		if(canAffordTwoLevel(what)){
 			buyUpgrade(what);
 			message(what, "Loot", "*eye2", "exotic")
@@ -580,6 +580,7 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
 	message("check", "Loot", "*eye2", "exotic")
+	message(game.upgrades.Bootboost.done, "Loot", "*eye2", "exotic")
 	if(game.upgrades.Bootboost.allowed > game.upgrades.Bootboost.done ){
 		buyUpgrade('Bootboost');
 	}
@@ -589,10 +590,7 @@ if (autoTSettings.autoupgrades.enabled == 3){
 			message("Pantastic", "Loot", "*eye2", "exotic")
 		}
 	}
-	
 	prestigeEquipment("Smoldershoulder")
-	
-	
 }
 
 
