@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.26";
+var version = "0.34d.27";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -552,7 +552,7 @@ if (autoTSettings.autoupgrades.enabled > 0) {
 if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3){
 	if(getNextPrestigeCost("Dagadder") < game.resources.metal.owned){
 		message("Daggagaagagar", "Loot", "*eye2", "exotic")
-		prestigeEquipment("Dagadder")
+		buyUpgrade("Dagadder")
 	}
 	if(getNextPrestigeCost("Megamace") < game.resources.wood.owned){
 		prestigeEquipment("Megamace")
@@ -571,9 +571,9 @@ if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enable
 // prestige equiment if available
 if (autoTSettings.autoupgrades.enabled == 3){
 	message("check", "Loot", "*eye2", "exotic")
-	if(getNextPrestigeCost("Boots") < game.resources.metal.owned){
+	if(game.upgrades.Bootboost.allowed ){
 		message("bootooost", "Loot", "*eye2", "exotic")
-		prestigeEquipment("Boots")
+		buyUpgrade('Bootboost');
 	}
 	if(getNextPrestigeCost("Helmet") < game.resources.wood.owned){
 		prestigeEquipment("Helmet")
