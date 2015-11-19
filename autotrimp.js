@@ -9,14 +9,12 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.38";
+var version = "0.34d.40";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
 
 //Line things up, OCD FTW!
-//fixed !! document.getElementById("buyCol").style.paddingRight = ".3%";
-//fixed !!document.getElementById("rightCol").style.paddingLeft = ".3%";
 document.getElementById("helium").style.height = "32.4%";
 document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses";
 
@@ -365,7 +363,6 @@ function pprestigeEquipment(what) {
 	if (game.upgrades[what].allowed > game.upgrades[what].done) {
 		if (canAffordTwoLevel(game.upgrades[what])) {
 			buyUpgrade(what);
-			game.upgrades[what].done += 1;
 			message("Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
 		}
 	}
