@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.40";
+var version = "0.34d.41";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -150,7 +150,7 @@ function updateHousingHighlighting() {
 			gcost += getBuildingItemPrice(gbuilding, "gems");
 			var gratio = gcost / gbuilding.increase.by;
 			gobj[ghousing[ghouse]] = gratio;
-			if (document.getElementById(ghousing[ghouse]).style.border == "1px solid #00CC00") {
+			if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
 				document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
 				document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
 			}
@@ -363,7 +363,7 @@ function pprestigeEquipment(what) {
 	if (game.upgrades[what].allowed > game.upgrades[what].done) {
 		if (canAffordTwoLevel(game.upgrades[what])) {
 			buyUpgrade(what);
-			message("Prestiged a" + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
+			message("Prestiged a " + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
 		}
 	}
 }
@@ -495,7 +495,7 @@ function myTimer() {
 			}
 		}
 		for (ghouse in ghousing) {
-			if (document.getElementById(ghousing[ghouse]).style.border == "1px solid #00CC00") {
+			if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
 				document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
 				document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
 			}
@@ -519,7 +519,7 @@ function myTimer() {
 			}
 		}
 		for (gAttack in gAttacking) {
-			if (document.getElementById(gAttacking[gAttack]).style.border == "1px solid #FF0000") {
+			if (document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FF0000") {
 				document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FFFFFF";
 				document.getElementById(gAttacking[gAttack]).removeEventListener("click", updateAttackHighlighting);
 			}
