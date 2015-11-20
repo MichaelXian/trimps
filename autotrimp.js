@@ -9,7 +9,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.34d.42";
+var version = "0.34d.43";
 var testhealth = 0;
 var testblock = 0;
 var testattack = 0;
@@ -506,6 +506,7 @@ function myTimer() {
 	if (autoTSettings.autoworkers.enabled == 1) {
 		sendTrimpsToWork();
 	}
+
 
 	if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
 		updateHealthHighlighting();
