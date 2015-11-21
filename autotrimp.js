@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.3";
+var version = "0.37b.4";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -235,8 +235,8 @@ function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt) {
 		if (game.jobs.Farmer.owned > 15000) {
-			// if more than 15000 farmers allocate 2:4:5
-			if (game.jobs.Farmer.owned * 2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned * 5 < 2 * game.jobs.Miner.owned) {
+			// if more than 15000 farmers allocate 2:2:5
+			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned * 5 < 2 * game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
 			} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 2) {
@@ -350,7 +350,7 @@ function pprestigeEquipment(what) {
 	if (game.upgrades[what].allowed > game.upgrades[what].done) {
 		if (canAffordTwoLevel(game.upgrades[what])) {
 			buyUpgrade(what);
-			message("Prestiged a " + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
+			message("Prestiged " + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
 		}
 	}
 }
@@ -570,6 +570,15 @@ function myTimer() {
 		pprestigeEquipment('Polierarm');
 		pprestigeEquipment('Axeidic');
 		pprestigeEquipment('Greatersword');
+	}
+	
+	// prestige all equipment if available
+	if (autoTSettings.autoupgrades.enabled == 3) {
+		pprestigeEquipment('Bootboost');
+		pprestigeEquipment('Hellishmet');
+		pprestigeEquipment('Pantastic');
+		pprestigeEquipment('Smoldershoulder');
+		pprestigeEquipment('Bestplate');
 	}
 
 	//Update mapbonus
