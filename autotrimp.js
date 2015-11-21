@@ -63,8 +63,8 @@ else {
 	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading", "Reading and Weapons", "Reading and Equipment"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy housing and nurseries. Cheapest by gems and food", titles: ["Not Buying", "Buying Both", "Houses Only", "Nurseries Only"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
-//	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
-//	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
+	//	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
+	//	var autoequipment = {enabled: 0, description: "Highlight the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting"]};
 	var autohighlight = {enabled: 0, description: "Highlight the most gem-efficient housing in green and the most metal-efficient equipment in blue and red", titles: ["Not Highlighting", "Highlighting All", "Housing Only", "Equipment Only"]};
 	var autopremaps = {enabled: 0, description: "Bring us back to the world if we're in the premaps screen for 30 seconds", titles: ["Not Switching", "Switching"]};
 	var autogather = {enabled: 0, description: "I'll make you switch between gathering and building depending on our build queue", titles: ["Not Switching", "Switching"]};
@@ -80,8 +80,8 @@ var html = "";
 for (var item in autoTSettings) {
 	if (item != "versioning") {
 		var optionItem = autoTSettings[item]; 
-  		var text = optionItem.titles[optionItem.enabled]; 
-  		html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div> ";
+		var text = optionItem.titles[optionItem.enabled]; 
+		html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div> ";
 	}
 }
 autosettings.innerHTML = html;
@@ -98,15 +98,15 @@ var newVar = setInterval(function () {newTimer(); }, 1000);
 
 //only functions below here
 function updateConvo (place) {
-  document.getElementById("q").innerHTML = conversation[place].Q;
-  document.getElementById("1").innerHTML = conversation[place].R1;
-  document.getElementById("1").onclick = (function() { var test = conversation[place].L1; return function() {updateConvo(test + '');}})();
-  if ("R2" in conversation[place]) {document.getElementById("2").innerHTML = conversation[place].R2;}
-  else {document.getElementById("2").innerHTML = "";}
-  if ("L2" in conversation[place]) {document.getElementById("2").onclick = (function() { var test = conversation[place].L2; return function() {updateConvo(test + '');}})();}
-  if ("R3" in conversation[place]) {document.getElementById("3").innerHTML = conversation[place].R3;}
-  else {document.getElementById("3").innerHTML = "";}
-  if ("L3" in conversation[place]) {document.getElementById("3").onclick = (function() { var test = conversation[place].L3; return function() {updateConvo(test + '');}})();}
+	document.getElementById("q").innerHTML = conversation[place].Q;
+	document.getElementById("1").innerHTML = conversation[place].R1;
+	document.getElementById("1").onclick = (function() { var test = conversation[place].L1; return function() {updateConvo(test + '');}})();
+	if ("R2" in conversation[place]) {document.getElementById("2").innerHTML = conversation[place].R2;}
+	else {document.getElementById("2").innerHTML = "";}
+	if ("L2" in conversation[place]) {document.getElementById("2").onclick = (function() { var test = conversation[place].L2; return function() {updateConvo(test + '');}})();}
+	if ("R3" in conversation[place]) {document.getElementById("3").innerHTML = conversation[place].R3;}
+	else {document.getElementById("3").innerHTML = "";}
+	if ("L3" in conversation[place]) {document.getElementById("3").onclick = (function() { var test = conversation[place].L3; return function() {updateConvo(test + '');}})();}
 }
 
 function removeShieldblock() {
@@ -341,7 +341,7 @@ function toggleAutoSetting(setting){
 }
 
 function talk() {
-  document.getElementById("autotrimp").style.display = "block";
+	document.getElementById("autotrimp").style.display = "block";
 }
 
 function pprestigeEquipment(what) {
@@ -364,21 +364,21 @@ function myTimer() {
 
 	//Buy resource buildings
 	if (autoTSettings.autobuildings.enabled == 1) {
-	  if (food > 0.9) {
-		buyBuilding('Barn');
-		tooltip("hide");
-		message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
-	  }
-	  if (wood > 0.9) {
-		buyBuilding('Shed');
-		tooltip("hide");
-		message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
-	  }
-	  if (metal > 0.9) {
-		buyBuilding('Forge');
-		tooltip("hide");
-		message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
-	  }
+		if (food > 0.9) {
+			buyBuilding('Barn');
+			tooltip("hide");
+			message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
+		}
+		if (wood > 0.9) {
+			buyBuilding('Shed');
+			tooltip("hide");
+			message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
+		}
+		if (metal > 0.9) {
+			buyBuilding('Forge');
+			tooltip("hide");
+			message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
+		}
 	}
 
 	//Buy tributes
@@ -422,9 +422,9 @@ function myTimer() {
 		}
 		game.global.buyAmt = buyAmt;
 	}
-//check to see if we're stuck in premap screen
-if (autoTSettings.autopremaps.enabled == 1 && game.global.preMapsActive) {
-	switch (premapscounter) {
+	//check to see if we're stuck in premap screen
+	if (autoTSettings.autopremaps.enabled == 1 && game.global.preMapsActive) {
+		switch (premapscounter) {
 		case 0:
 			premapscounter += 1;
 			break;
@@ -441,125 +441,126 @@ if (autoTSettings.autopremaps.enabled == 1 && game.global.preMapsActive) {
 			premapscounter = 0;
 			mapsClicked();
 			break;
+		}
+	} else {
+		premapscounter = 0;
 	}
-} else {
-	premapscounter = 0;
-}
 
-//Manage Map Repeat
-if (autoTSettings.automapbmax.enabled == 1 && game.global.mapsActive && !game.global.preMapsActive) {
-	if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
-		if (game.global.repeatMap) {
-			repeatClicked();
+	//Manage Map Repeat
+	if (autoTSettings.automapbmax.enabled == 1 && game.global.mapsActive && !game.global.preMapsActive) {
+		if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
+			if (game.global.repeatMap) {
+				repeatClicked();
+			}
+		}else {
+			if (game.global.mapBonus == 9 && game.global.repeatMap) {
+				repeatClicked();
+			} else if (game.global.mapBonus != 9 && !game.global.repeatMap) {
+				repeatClicked();
+			}
 		}
-	}else {
-		if (game.global.mapBonus == 9 && game.global.repeatMap) {
-			repeatClicked();
-		} else if (game.global.mapBonus != 9 && !game.global.repeatMap) {
-			repeatClicked();
+		if (!document.getElementById("repeatBtn").innerHTML.endsWith("*")) {
+			document.getElementById("repeatBtn").appendChild(document.createTextNode("*"))
 		}
+	} else if (autoTSettings.automapbmax.enabled == 0 && game.global.mapsActive && !game.global.preMapsActive) {
+		document.getElementById("repeatBtn").innerHTML = (game.global.repeatMap) ? "Repeat On" : "Repeat Off";
 	}
-	if (!document.getElementById("repeatBtn").innerHTML.endsWith("*")) {
-		document.getElementById("repeatBtn").appendChild(document.createTextNode("*"))
-	}
-} else if (autoTSettings.automapbmax.enabled == 0 && game.global.mapsActive && !game.global.preMapsActive) {
-	document.getElementById("repeatBtn").innerHTML = (game.global.repeatMap) ? "Repeat On" : "Repeat Off";
-}
 
-//Buy gyms
-if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
-	if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
-		buyBuilding('Gym');
-		tooltip("hide");
-		message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
+	//Buy gyms
+	if (autoTSettings.autogymbutes.enabled == 1 || autoTSettings.autogymbutes.enabled == 2) {
+		if (getBuildingItemPrice(game.buildings.Gym, "wood", false) <= game.resources.wood.owned && game.buildings.Gym.locked == 0) {
+			buyBuilding('Gym');
+			tooltip("hide");
+			message("Bought us a gym. Open 24/7.", "Loot", "*eye2", "exotic")
+		}
 	}
-}
 
-//Highlight housing
-if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 2) {
-	updateHousingHighlighting();
-} else {
-	var ahousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
-	var ghousing = [];
-	for (ahouse in ahousing) {
-		if (game.buildings[ahousing[ahouse]].locked == 0) {
-			ghousing.push(ahousing[ahouse]);
+	//Highlight housing
+	if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 2) {
+		updateHousingHighlighting();
+	} else {
+		var ahousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
+		var ghousing = [];
+		for (ahouse in ahousing) {
+			if (game.buildings[ahousing[ahouse]].locked == 0) {
+				ghousing.push(ahousing[ahouse]);
+			}
+		}
+		for (ghouse in ghousing) {
+			if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
+				document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
+				document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
+			}
 		}
 	}
-	for (ghouse in ghousing) {
-		if (document.getElementById(ghousing[ghouse]).style.border = "1px solid #00CC00") {
-			document.getElementById(ghousing[ghouse]).style.border = "1px solid #FFFFFF";
-			document.getElementById(ghousing[ghouse]).removeEventListener("click", updateHousingHighlighting);
-		}
-	}
-}
 
-if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
-	updateHealthHighlighting();
-	updateAttackHighlighting();
-} else {
-	var aAttacking = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword"];
-	var gAttacking = [];
-	for (aAttack in aAttacking) {
-		if (game.equipment[aAttacking[aAttack]].locked == 0) {
-			gAttacking.push(aAttacking[aAttack]);
+	if (autoTSettings.autohighlight.enabled == 1 || autoTSettings.autohighlight.enabled == 3) {
+		updateHealthHighlighting();
+		updateAttackHighlighting();
+	} else {
+		var aAttacking = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword"];
+		var gAttacking = [];
+		for (aAttack in aAttacking) {
+			if (game.equipment[aAttacking[aAttack]].locked == 0) {
+				gAttacking.push(aAttacking[aAttack]);
+			}
+
 		}
+		for (gAttack in gAttacking) {
+			if (document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FF0000") {
+				document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FFFFFF";
+				document.getElementById(gAttacking[gAttack]).removeEventListener("click", updateAttackHighlighting);
+			}
+		}
+		var ahealth = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate"];
+		var ghealth = [];
+		for (aheal in ahealth) {
+			if (game.equipment[ahealth[aheal]].locked == 0) {
+				ghealth.push(ahealth[aheal]);
+			}
+		}
+		if (ghealth.length) {
+			for (gheal in ghealth) {
+				if (document.getElementById(ghealth[gheal]).style.border = "1px solid #0000FF") {
+					document.getElementById(ghealth[gheal]).style.border = "1px solid #FFFFFF";
+					document.getElementById(ghealth[gheal]).removeEventListener("click", updateHealthHighlighting);
+				}
+			}
+		}
+	}
+
+
+
+	//Buy speed upgrades
+	if (autoTSettings.autoupgrades.enabled !== 0) {
+		autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
+		for (var key in game.upgrades) {
+			if (autotrimpupgrades.indexOf(key) != -1) { 
+				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
+					buyUpgrade(key);
+					if (key == "Efficiency") {
+						message("I read you the " + key + " book while you were asleep. I think it worked.", "Loot", "*eye2", "exotic")
+					} else {
+						message("Read the trimps the " + key + " book. Only some of them listened.", "Loot", "*eye2", "exotic")
+					}
+				}
+			}
+		}
+
+		//Buy coordination
+
+		if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
+			if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
+				buyUpgrade('Coordination');
+				message("We read Coordination together before bedtime, it was sweet. Now let's go kill something.", "Loot", "*eye2", "exotic")
+			}
+		}
+	}
+
 	// Make the trimps work if idle
 	if (autoTSettings.autoworkers.enabled == 1) {
 		sendTrimpsToWork();
 	}
-	}
-	for (gAttack in gAttacking) {
-		if (document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FF0000") {
-			document.getElementById(gAttacking[gAttack]).style.border = "1px solid #FFFFFF";
-			document.getElementById(gAttacking[gAttack]).removeEventListener("click", updateAttackHighlighting);
-		}
-	}
-	var ahealth = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate"];
-	var ghealth = [];
-	for (aheal in ahealth) {
-		if (game.equipment[ahealth[aheal]].locked == 0) {
-			ghealth.push(ahealth[aheal]);
-		}
-	}
-	if (ghealth.length) {
-		for (gheal in ghealth) {
-			if (document.getElementById(ghealth[gheal]).style.border = "1px solid #0000FF") {
-				document.getElementById(ghealth[gheal]).style.border = "1px solid #FFFFFF";
-				document.getElementById(ghealth[gheal]).removeEventListener("click", updateHealthHighlighting);
-			}
-		}
-	}
-}
-
-//Buy speed upgrades
-if (autoTSettings.autoupgrades.enabled == 1) {
-  autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
-  for (var key in game.upgrades) {
-    if (autotrimpupgrades.indexOf(key) != -1) { 
-      if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
-      	buyUpgrade(key);
-        if (key == "Efficiency") {
-        	message("I read you the " + key + " book while you were asleep. I think it worked.", "Loot", "*eye2", "exotic")
-        } else {
-        	message("Read the trimps the " + key + " book. Only some of them listened.", "Loot", "*eye2", "exotic")
-        }
-      }
-    }
-  }
-
-//Buy coordination
-
-  if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
-    if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
-      buyUpgrade('Coordination');
-      message("We read Coordination together before bedtime, it was sweet. Now let's go kill something.", "Loot", "*eye2", "exotic")
-    }
-  }
-}
-
-//Update bones
-//document.getElementById("boneBtnMain").innerHTML = "Bone Trader (" + game.global.b + ")";
 	// prestige weapon if available
 	if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3) {
 		pprestigeEquipment('Dagadder');
@@ -569,39 +570,39 @@ if (autoTSettings.autoupgrades.enabled == 1) {
 		pprestigeEquipment('Greatersword');
 	}
 
-//Update mapbonus
-if (game.global.mapsActive && !game.global.preMapsActive) {
-	var level = getCurrentMapObject().level;
-	document.getElementById("worldNumber").innerHTML = "<br>Lv: " + level + "  (+" + prettify(game.global.mapBonus * 20) + "%)"
-}
-//remove alerts if they exist
-var removebadge = true;
-var badgeupgrades = document.getElementById("upgradesHere");
-for (i = 0; i<badgeupgrades.childNodes.length; i++) { 
-	if (badgeupgrades.childNodes[i].childNodes[0].innerHTML == "!") {
-		removebadge = false;
+	//Update mapbonus
+	if (game.global.mapsActive && !game.global.preMapsActive) {
+		var level = getCurrentMapObject().level;
+		document.getElementById("worldNumber").innerHTML = "<br>Lv: " + level + "  (+" + prettify(game.global.mapBonus * 20) + "%)"
 	}
-}
-if (removebadge) {
-	document.getElementById("upgradesAlert").innerHTML = "";
-}
+	//remove alerts if they exist
+	var removebadge = true;
+	var badgeupgrades = document.getElementById("upgradesHere");
+	for (i = 0; i<badgeupgrades.childNodes.length; i++) { 
+		if (badgeupgrades.childNodes[i].childNodes[0].innerHTML == "!") {
+			removebadge = false;
+		}
+	}
+	if (removebadge) {
+		document.getElementById("upgradesAlert").innerHTML = "";
+	}
 
-//save
-localStorage.setItem("autotrimpsave",JSON.stringify(autoTSettings));
+	//save
+	localStorage.setItem("autotrimpsave",JSON.stringify(autoTSettings));
 
-//check for portal/reset
-if (game.global.gridArray.length == 0) {
-	document.getElementById("talkBtn").style.display = "none";
-	for (item in autoTSettings) {
-		if (item != "versioning") {
-			while (autoTSettings[item].enabled != 0) {
-				toggleAutoSetting(item);
+	//check for portal/reset
+	if (game.global.gridArray.length == 0) {
+		document.getElementById("talkBtn").style.display = "none";
+		for (item in autoTSettings) {
+			if (item != "versioning") {
+				while (autoTSettings[item].enabled != 0) {
+					toggleAutoSetting(item);
+				}
 			}
 		}
 	}
-}
 
-  //clearInterval(myVar);
+	//clearInterval(myVar);
 }//end loop
 
 function newTimer() {
@@ -617,7 +618,7 @@ function newTimer() {
 		badguyFast = game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast;
 	}
 	mysoldiers = (game.portal.Coordinated.level) ? game.portal.Coordinated.currentSend : game.resources.trimps.maxSoldiers ;
-/*	mytoughness = (game.portal.Toughness.level * game.portal.Toughness.modifier * 100) + 100;
+	/*	mytoughness = (game.portal.Toughness.level * game.portal.Toughness.modifier * 100) + 100;
 	blockformation = 1;
 	healthformation = 1;
 	switch (game.global.formation) {
