@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.4";
+var version = "0.37b.6";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -60,7 +60,7 @@ if (checking != null && checking.versioning == version) {
 else {
 	var autobuildings = {enabled: 1, description: "Automatically buy storage buildings when they're 90% full", titles: ["Not Buying", "Buying"]};
 	var autogymbutes = {enabled: 0, description: "Automatically buy gyms and tributes when we can afford them", titles: ["Not Buying", "Buying Both", "Gyms Only", "Tributes Only"]};
-	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading", "Reading and Weapons", "Reading and Equipment"]};
+	var autoupgrades = {enabled: 1, description: "Automatically read certain upgrade books to you and the trimps", titles: ["Not Reading", "Reading", "Reading and Weapons", "Reading and Equipment", "Reading and Armour"]};
 	var autobuildhouses = {enabled: 0, description: "Automatically buy housing and nurseries. Cheapest by gems and food", titles: ["Not Buying", "Buying Both", "Houses Only", "Nurseries Only"]};
 	var autoworkers = {enabled: 0, description: "Automatically send trimps to work if there are too many idle", titles: ["Not Jobbing", "Jobbing"]};
 	//	var autohousing = {enabled: 0, description: "Highlight the most gem-efficient housing in green", titles: ["Not Highlighting", "Highlighting"]};
@@ -234,7 +234,19 @@ function buyGemCheapestHousing() {
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt) {
-		if (game.jobs.Farmer.owned > 15000) {
+		if (game.jobs.Farmer.owned > 200000) {
+			// if more than 15000 farmers allocate 2:1:4
+			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 2 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
+				buyJob("Farmer");
+				tooltip("hide");
+			} else if (game.jobs.Lumberjack.owned * 4 < game.jobs.Miner.owned * 1) {
+				buyJob("Lumberjack");
+				tooltip("hide");
+			} else {
+				buyJob("Miner");
+				tooltip("hide");
+			}
+		} else if (game.jobs.Farmer.owned > 15000) {
 			// if more than 15000 farmers allocate 2:2:5
 			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned * 5 < 2 * game.jobs.Miner.owned) {
 				buyJob("Farmer");
@@ -254,7 +266,7 @@ function sendTrimpsToWork() {
 			} else if (game.jobs.Lumberjack.owned * 0.8 < game.jobs.Miner.owned) {
 				buyJob("Lumberjack");
 				tooltip("hide");
-			} else {
+			} else if(game.jobs.Miner.locked == 0){
 				buyJob("Miner");
 				tooltip("hide");
 			}
@@ -266,7 +278,7 @@ function sendTrimpsToWork() {
 			} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
 				buyJob("Lumberjack");
 				tooltip("hide");
-			} else {
+			} else  if(game.jobs.Miner.locked == 0){
 				buyJob("Miner");
 				tooltip("hide");
 			}
@@ -573,7 +585,7 @@ function myTimer() {
 	}
 	
 	// prestige all equipment if available
-	if (autoTSettings.autoupgrades.enabled == 3) {
+	if (autoTSettings.autoupgrades.enabled == 3 || autoTSettings.autoupgrades.enabled == 4) {
 		pprestigeEquipment('Bootboost');
 		pprestigeEquipment('Hellishmet');
 		pprestigeEquipment('Pantastic');
