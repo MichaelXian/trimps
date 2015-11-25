@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.6";
+var version = "0.37b.7";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -175,9 +175,19 @@ function buyGemCheapestHousing() {
 		var buildbuilding = game.buildings[keysSorted[0]];
 		if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
-				buyBuilding(keysSorted[0]);
-				tooltip("hide");
-				message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic");
+				if(keysSorted[0]=="Warpstation"){
+					if(buildbuilding.owned < 10){
+						buyBuilding(keysSorted[0]);
+						tooltip("hide");
+						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
+					} else {
+						buyUpgrade("Gigastation");
+					}
+				} else {
+					buyBuilding(keysSorted[0]);
+					tooltip("hide");
+					message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic");
+				}
 			}
 		}
 		var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
@@ -221,7 +231,7 @@ function buyGemCheapestHousing() {
 		message("And another hut down!", "Loot", "*eye2", "exotic");
 	}
 	if (game.buildings.Gateway.locked == 0) {
-		if (canAffordBuilding("Gateway")) {
+		if (canAffordBuilding("Gateway") && game.buildings.Gateway.owned < 40)  {
 			buyBuilding("Gateway");
 			tooltip("hide");
 			message("More gateways for the masses!!", "Loot", "*eye2", "exotic");
@@ -235,7 +245,7 @@ function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt) {
 		if (game.jobs.Farmer.owned > 200000) {
-			// if more than 15000 farmers allocate 2:1:4
+			// if more than 200000 farmers allocate 2:1:4
 			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 2 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
@@ -672,7 +682,7 @@ function newTimer() {
 		}
 		if (badguyFast && badguyMinAtt > (myblock + myhealth) && game.global.formation != 2) {
 			console.log(game.global.formation)
-			message("You're stuck on a fastenemy. I would fix this by buying a level of " + hkeysSorted[0] + ".", "Loot", "*eye2", "exotic")	
+			message("You're stuck on a fast enemy. I would fix this by buying a level of " + hkeysSorted[0] + ".", "Loot", "*eye2", "exotic")	
 		}
 	}
 
