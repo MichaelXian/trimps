@@ -180,8 +180,10 @@ function buyGemCheapestHousing() {
 						buyBuilding(keysSorted[0]);
 						tooltip("hide");
 						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
-					} else {
+					} else if(game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
 						buyUpgrade("Gigastation");
+						tooltip("hide");
+						message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
 					}
 				} else {
 					buyBuilding(keysSorted[0]);
