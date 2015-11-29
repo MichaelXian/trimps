@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.7";
+var version = "0.37b.8";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -176,7 +176,7 @@ function buyGemCheapestHousing() {
 		if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
 				if(keysSorted[0]=="Warpstation"){
-					if(buildbuilding.owned < 10){
+					if(buildbuilding.owned < 6 + game.upgrades.Gigastation.done){
 						buyBuilding(keysSorted[0]);
 						tooltip("hide");
 						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
