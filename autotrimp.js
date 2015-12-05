@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.8";
+var version = "0.37b.9";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -176,7 +176,7 @@ function buyGemCheapestHousing() {
 		if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
 				if(keysSorted[0]=="Warpstation"){
-					if(buildbuilding.owned < 6 + game.upgrades.Gigastation.done){
+					if(buildbuilding.owned < 3 + 2*game.upgrades.Gigastation.done){
 						buyBuilding(keysSorted[0]);
 						tooltip("hide");
 						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
@@ -246,9 +246,9 @@ function buyGemCheapestHousing() {
 function sendTrimpsToWork() {
 	var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	if (workspaces > 10 + game.global.buyAmt) {
-		if (game.jobs.Farmer.owned > 200000) {
-			// if more than 200000 farmers allocate 2:1:4
-			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 2 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
+		if (game.jobs.Farmer.owned > 1000000) {
+			// if more than 200000 farmers allocate 3:1:4
+			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
 			} else if (game.jobs.Lumberjack.owned * 4 < game.jobs.Miner.owned * 1) {
@@ -258,32 +258,20 @@ function sendTrimpsToWork() {
 				buyJob("Miner");
 				tooltip("hide");
 			}
-		} else if (game.jobs.Farmer.owned > 15000) {
-			// if more than 15000 farmers allocate 2:2:5
-			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned * 5 < 2 * game.jobs.Miner.owned) {
+		} else if (game.jobs.Farmer.owned > 100000) {
+			// if more than 15000 farmers allocate 3:3:5
+			if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
-			} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 2) {
+			} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
 				buyJob("Lumberjack");
 				tooltip("hide");
 			} else {
 				buyJob("Miner");
 				tooltip("hide");
 			}
-		} else if (game.jobs.Farmer.owned > 1000) {
-			// if more than 1000 farmers allocate 1:2:1.6
-			if (game.jobs.Farmer.owned * 2 < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned * 1.6 < game.jobs.Miner.owned) {
-				buyJob("Farmer");
-				tooltip("hide");
-			} else if (game.jobs.Lumberjack.owned * 0.8 < game.jobs.Miner.owned) {
-				buyJob("Lumberjack");
-				tooltip("hide");
-			} else if(game.jobs.Miner.locked == 0){
-				buyJob("Miner");
-				tooltip("hide");
-			}
 		} else {
-			// if less than 2500 farmers allocate 1:1:1
+			// if less than  100000 farmers allocate 1:1:1
 			if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
 				buyJob("Farmer");
 				tooltip("hide");
