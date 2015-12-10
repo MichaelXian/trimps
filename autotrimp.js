@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.9";
+var version = "0.37b.10";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -70,7 +70,7 @@ else {
 	var autogather = {enabled: 0, description: "I'll make you switch between gathering and building depending on our build queue", titles: ["Not Switching", "Switching"]};
 	var autoformations = {enabled: 0, description: "Automatically switch between Heap and Dominance formations based on enemy", titles: ["Not Switching", "Switching"]};
 	var autosnimps = {enabled: 0, description: "I'll automatically buy items to help us get past snimps, squimps, and other fast enemies", titles: ["Not Avoiding", "Avoiding"]};
-	var automapbmax = {enabled: 0, description: "I'll manage turning map repeat on and off so we can reach the max map bonus", titles: ["Not Managing", "Managing"]};
+	var automapbmax = {enabled: 0, description: "I'll manage turning map repeat on and off so we can reach the max map bonus", titles: ["Not Managing", "Managing","Buy and Manage"]};
 	autoTSettings = {versioning: version, autobuildings: autobuildings, autogymbutes: autogymbutes, autobuildhouses: autobuildhouses, autoworkers: autoworkers, autoupgrades: autoupgrades, autohighlight: autohighlight, autopremaps: autopremaps, automapbmax: automapbmax, autogather: autogather, autosnimps: autosnimps, autoformations: autoformations};
 }
 
@@ -176,7 +176,7 @@ function buyGemCheapestHousing() {
 		if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
 				if(keysSorted[0]=="Warpstation"){
-					if(buildbuilding.owned < 3 + 2*game.upgrades.Gigastation.done){
+					if(buildbuilding.owned < 3 + 3*game.upgrades.Gigastation.done){
 						buyBuilding(keysSorted[0]);
 						tooltip("hide");
 						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
@@ -461,7 +461,7 @@ function myTimer() {
 	}
 
 	//Manage Map Repeat
-	if (autoTSettings.automapbmax.enabled == 1 && game.global.mapsActive && !game.global.preMapsActive) {
+	if (autoTSettings.automapbmax.enabled > 0 && game.global.mapsActive && !game.global.preMapsActive) {
 		if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
 			if (game.global.repeatMap) {
 				repeatClicked();
@@ -478,6 +478,12 @@ function myTimer() {
 		}
 	} else if (autoTSettings.automapbmax.enabled == 0 && game.global.mapsActive && !game.global.preMapsActive) {
 		document.getElementById("repeatBtn").innerHTML = (game.global.repeatMap) ? "Repeat On" : "Repeat Off";
+	}
+	
+	if (autoTSettings.automapbmax.enabled == 2 && !game.global.mapsActive && game.global.mapBonus !== 10){
+		mapsClicked();
+		buyMap();
+		selectMap(document.getElementsByClassName('mapThing')[0].id);
 	}
 
 	//Buy gyms
