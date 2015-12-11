@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.14";
+var version = "0.37b.16";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -485,8 +485,9 @@ function myTimer() {
 		buyMap();
 		var mapID=document.getElementsByClassName('mapThing')[0].id;
 		console.log(mapID)
-		selectMap(mapID);
-		runMap();
+		setTimeout(function(){selectMap(mapID)}, 1000);
+		setTimeout(function(){runMap()}, 2000);
+		
 	}
 
 	//Buy gyms
