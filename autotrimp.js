@@ -174,6 +174,7 @@ function updateHousingHighlighting() {
 		}
 	}
 	if (ghousing.length) {
+		gobj = {};
 		for (ghouse in ghousing) {
 			var gbuilding = game.buildings[ghousing[ghouse]];
 			var gcost = 0;
@@ -202,6 +203,7 @@ function buyGemCheapestHousing() {
 		}
 	}
 	if (ghousing.length) {
+		gobj = {};
 		for (ghouse in ghousing) {
 			var gbuilding = game.buildings[ghousing[ghouse]];
 			var gcost = 0;
