@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.13";
+var version = "0.37b.14";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -481,11 +481,12 @@ function myTimer() {
 	}
 	
 	if (autoTSettings.automapbmax.enabled == 2 && !game.global.mapsActive && game.global.mapBonus !== 10){
-		mapsClicked();
+
 		buyMap();
 		var mapID=document.getElementsByClassName('mapThing')[0].id;
 		console.log(mapID)
 		selectMap(mapID);
+		runMap();
 	}
 
 	//Buy gyms
