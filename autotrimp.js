@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.11";
+var version = "0.37b.12";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -484,7 +484,7 @@ function myTimer() {
 		mapsClicked();
 		buyMap();
 		var mapID=document.getElementsByClassName('mapThing')[0].id;
-		Console.log(mapID)
+		console.log(mapID)
 		//selectMap(document.getElementsByClassName('mapThing')[0].id);
 	}
 
