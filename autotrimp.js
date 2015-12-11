@@ -460,7 +460,7 @@ function getTimeRemaining(addGenesAmt) {
 	if(addGenesAmt >= 0) {
 		multiplier *= Math.pow(.98, addGenesAmt);
 	} else {
-		multiplier *= Math.pow(1.02, -addGenesAmt);
+		multiplier *= Math.pow((1/0.98), -addGenesAmt);
 	}
 	
 	var numerus = (trimps.realMax() - trimps.employed) / (trimps.realMax() - (soldiers + trimps.employed));
