@@ -435,7 +435,7 @@ function getGeneticistsRequiredToSeconds(seconds) {
 	else
 	return 0;
 }
-       
+
 function getTimeRemaining(addGenesAmt) {
 	var trimps = game.resources.trimps;
 	
@@ -444,12 +444,12 @@ function getTimeRemaining(addGenesAmt) {
 	}
 	
 	var potencyMod = trimps.potency;
-	potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+	potencyMod = potencyMod * (1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier);
 	var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
 	if (game.unlocks.quickTrimps) {
 		potencyMod *= 2;
 	}
-	if (!game.global.brokenPlanet) {
+	if (game.global.brokenPlanet) {
 		potencyMod /= 10;
 	}
 	if (game.jobs.Geneticist.owned > 0) {
@@ -463,7 +463,10 @@ function getTimeRemaining(addGenesAmt) {
 		multiplier *= Math.pow(1.02, -addGenesAmt);
 	}
 	
-	return log10((trimps.realMax() - trimps.employed) / ((trimps.realMax() - soldiers) - trimps.employed)) / log10(1 + (potencyMod * multiplier / 10));
+	var numerus = (trimps.realMax() - trimps.employed) / (trimps.realMax() - (soldiers + trimps.employed));
+	var base = potencyMod * multiplier + 1;
+
+	return Math.log(numerus)/Math.log(base);
 }
 
 function buyGeneticists(fireWhatFirst) {
