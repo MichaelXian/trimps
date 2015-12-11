@@ -7,7 +7,7 @@ var hkeysSorted = [];
 var premapscounter = 0;
 var buildcounter = 0;
 var autoTSettings = {};
-var version = "0.37b.17";
+var version = "0.37b.17T2";
 var wasgathering = "";
 var badguyMinAtt = 0;
 var badguyMaxAtt = 0;
@@ -18,6 +18,12 @@ var blockformation = 1;
 var healthformation = 1;
 var myblock = 0;
 var myhealth = 0;
+
+//genetics
+seconds1 = 1.4;
+seconds2 = 15;
+seconds3 = 28;
+allowedLoops = 2000;
 
 //Line things up, OCD FTW!
 document.getElementById("helium").style.height = "32.4%";
@@ -85,6 +91,38 @@ for (var item in autoTSettings) {
 	}
 }
 autosettings.innerHTML = html;
+
+//add genetics buttons
+var breedTimer = document.createElement("span");
+var btnShort = document.createElement("div");
+var btnModerate = document.createElement("div");
+var btnLong = document.createElement("div");
+btnShort.className = "pointer noselect";
+btnShort.innerHTML = seconds1;
+btnShort.style.backgroundColor = "black";
+btnShort.style.cssFloat = "left";
+btnShort.style.width = "25%";
+btnShort.onclick = function(){ commitEverythingTowardsSeconds(btnShort.innerHTML);};
+btnModerate.className = "pointer noselect";
+btnModerate.innerHTML = seconds2;
+btnModerate.style.backgroundColor = "black";
+btnModerate.style.cssFloat = "left";
+btnModerate.style.width = "25%";
+btnModerate.onclick = function(){ commitEverythingTowardsSeconds(btnModerate.innerHTML);};
+btnLong.className = "pointer noselect";
+btnLong.innerHTML = seconds3;
+btnLong.style.backgroundColor = "black";
+btnLong.style.cssFloat = "left";
+btnLong.style.width = "25%";
+btnLong.onclick = function(){ commitEverythingTowardsSeconds(btnLong.innerHTML);};
+document.getElementById("fireBtn").style.cssFloat = "left";
+document.getElementById("fireBtn").style.width = "25%";
+document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
+document.getElementById("fireBtn").parentElement.className = "col-xs-5";
+document.getElementById("fireBtn").parentElement.appendChild(btnShort);
+document.getElementById("fireBtn").parentElement.appendChild(btnModerate);
+document.getElementById("fireBtn").parentElement.appendChild(btnLong);
+document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
 
 //create unlearn shieldblock button
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='remove Shieldblock' class='noselect settingBtn btn-warning' onclick='removeShieldblock()'>Unlearn Shieldblock</div><div class='optionItemDescription'>We'll stop teaching the trimps to use shields to block and we'll use them for health again</div></div>");
@@ -278,7 +316,6 @@ function sendTrimpsToWork() {
 	}
 }
 
-
 function updateHealthHighlighting() {
 	var ahealth = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
 	var ghealth = [];
@@ -357,6 +394,141 @@ function pprestigeEquipment(what) {
 			message("Prestiged " + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
 		}
 	}
+}
+
+function getGeneticistsRequiredToSeconds(seconds) {
+	var timeRemaining = getTimeRemaining(0);
+	
+	if(seconds > timeRemaining) {
+		for(var i = 1; i < allowedLoops + 2; i++) {
+			var tempPrev = timeRemaining;
+			timeRemaining = getTimeRemaining(i);
+			if(timeRemaining > seconds) {
+				if(timeRemaining - seconds > tempPrev - seconds) {
+					return i - 1;
+				} else {
+					return i;
+				}
+			}
+		}
+		return null;
+	}
+	if(seconds < timeRemaining) {
+		for(var i = -1; i > -allowedLoops - 2; i--) {
+			var tempPrev = timeRemaining;
+			timeRemaining = getTimeRemaining(i);
+			if(timeRemaining < seconds) {
+				if(timeRemaining - seconds <= tempPrev - seconds) {
+					return i + 1;
+				} else {
+					return i;
+				}
+			}
+		}
+		return null;
+	}
+	else
+	return 0;
+}
+       
+function getTimeRemaining(addGenesAmt) {
+	var trimps = game.resources.trimps;
+	
+	if (trimps.owned - trimps.employed < 2 || game.global.challengeActive == "Trapper") {
+		return 0;
+	}
+	
+	var potencyMod = trimps.potency;
+	potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+	var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
+	if (game.unlocks.quickTrimps) {
+		potencyMod *= 2;
+	}
+	if (!game.global.brokenPlanet) {
+		potencyMod /= 10;
+	}
+	if (game.jobs.Geneticist.owned > 0) {
+		potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
+	}
+	
+	var multiplier = 1;
+	if(addGenesAmt >= 0) {
+		multiplier *= Math.pow(.98, addGenesAmt);
+	} else {
+		multiplier *= Math.pow(1.02, -addGenesAmt);
+	}
+	
+	return log10((trimps.realMax() - trimps.employed) / ((trimps.realMax() - soldiers) - trimps.employed)) / log10(1 + (potencyMod * multiplier / 10));
+}
+
+function buyGeneticists(fireWhatFirst) {
+	var tempState = game.global.firing;
+	
+	if(fireWhatFirst !== null) {
+		game.global.firing = true;
+		buyJob(fireWhatFirst);
+		message("Fired " + game.global.buyAmt + " " + fireWhatFirst + "s.", "Loot", "*eye2", "exotic");
+	}
+	game.global.firing = false;
+	buyJob("Geneticist");
+	message("Purchased " + game.global.buyAmt + " Geneticists.", "Loot", "*eye2", "exotic");
+	game.global.firing = tempState;
+}
+
+function commitEverythingTowardsSeconds(seconds) {
+	if(game.jobs["Geneticist"].locked) {
+		message("Geneticists are not unlocked.", "Notices");
+		return;
+	}
+	
+	var tempState = game.global.firing;
+	var tempAmt = game.global.buyAmt;
+	var tempTooltips = game.global.lockTooltip;
+	
+	game.global.lockTooltip = true;
+	game.global.buyAmt = getGeneticistsRequiredToSeconds(seconds);
+	
+	if(game.global.buyAmt === null) {
+		message("An error occured. Make sure I didn't try to automatically purchase/sell over " + allowedLoops + " Geneticists!", "Notices");
+	} else if(game.global.buyAmt == 0) {
+		message("No additional Geneticists were necessary.", "Notices");
+	} else {
+		if(game.global.buyAmt < 0) {
+			game.global.firing = true;
+			
+			message("Sold " + game.global.buyAmt + " Geneticists.", "Loot", "*eye2", "exotic");
+			game.global.buyAmt = -game.global.buyAmt;
+			buyJob("Geneticist");
+		} else {
+			game.global.firing = false;
+			
+			var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+			var isEnoughTrimps = workspaces >= game.global.buyAmt;
+			var isAffordable = canAffordJob("Geneticist", false, workspaces);
+			
+			if(isEnoughTrimps && isAffordable) {
+				buyGeneticists(null);
+			} else if(!isEnoughTrimps) {
+				if(game.jobs.Farmer.owned >= game.global.buyAmt) {
+					buyGeneticists("Farmer");
+				} else if(game.jobs.Miner.owned >= game.global.buyAmt) {
+					buyGeneticists("Miner");
+				} else if(game.jobs.Lumberjack.owned >= game.global.buyAmt) {
+					buyGeneticists("Lumberjack");
+				} else {
+					message("Error: Not enough workspaces available.", "Notices");
+				}
+                        } else if(!isAffordable){
+                        	message("Error: Not enough food. Need: " + checkJobItem("Geneticist", false, "food", true, game.global.buyAmt), "Notices");
+                        } else {
+                        	message("Error: Unknown", "Notices");
+                       	}
+		}
+	}
+	
+	game.global.buyAmt = tempAmt;
+	game.global.firing = tempState;
+	game.global.lockTooltip = tempTooltips;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -710,5 +882,8 @@ function newTimer() {
 			setGather(wasgathering);
 		}
 	}
+	
+	//set breedtimer
+	breedTimer.innerHTML = "(" + Math.round(getTimeRemaining(0)) + "s) ";
 	
 }//end new loop
