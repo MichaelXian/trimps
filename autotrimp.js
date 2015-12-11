@@ -723,6 +723,8 @@ function myTimer() {
 
 	//Buy speed upgrades
 	if (autoTSettings.autoupgrades.enabled !== 0) {
+		buyAmt = game.global.buyAmt;
+		game.global.buyAmt = 1;
 		autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
 		for (var key in game.upgrades) {
 			if (autotrimpupgrades.indexOf(key) != -1) { 
@@ -745,6 +747,7 @@ function myTimer() {
 				message("We read Coordination together before bedtime, it was sweet. Now let's go kill something.", "Loot", "*eye2", "exotic")
 			}
 		}
+		game.global.buyAmt = buyAmt;
 	}
 
 	// Make the trimps work if idle
