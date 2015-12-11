@@ -173,23 +173,15 @@ function buyGemCheapestHousing() {
 		}
 		var keysSorted = Object.keys(gobj).sort(function (a, b) {return gobj[a] - gobj[b]; });
 		var buildbuilding = game.buildings[keysSorted[0]];
-		if (buildbuilding.locked == 0) {
+		if (game.buildings.Warpstation.owned >= 3 + 3*game.upgrades.Gigastation.done && game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
+			buyUpgrade("Gigastation");
+			tooltip("hide");
+			message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
+		} else if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
-				if(keysSorted[0]=="Warpstation"){
-					if(buildbuilding.owned < 3 + 3*game.upgrades.Gigastation.done){
-						buyBuilding(keysSorted[0]);
-						tooltip("hide");
-						message("Bought us more Warpstation. Gotta colonise more planets!", "Loot", "*eye2", "exotic");
-					} else if(game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
-						buyUpgrade("Gigastation");
-						tooltip("hide");
-						message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
-					}
-				} else {
-					buyBuilding(keysSorted[0]);
-					tooltip("hide");
-					message("Bought us more gem fuelled housing.", "Loot", "*eye2", "exotic");
-				}
+				buyBuilding(keysSorted[0]);
+				tooltip("hide");
+				message("Bought us a new " + keysSorted[0] +".", "Loot", "*eye2", "exotic");
 			}
 		}
 		var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
