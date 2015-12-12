@@ -397,6 +397,7 @@ function pprestigeEquipment(what) {
 		if (canAffordTwoLevel(game.upgrades[what])) {
 			buyUpgrade(what);
 			message("Prestiged " + what + ". Was a load of rubbish before!", "Loot", "*eye2", "exotic");
+			tooltip("hide");
 		}
 	}
 }
