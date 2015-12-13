@@ -214,9 +214,11 @@ function buyGemCheapestHousing() {
 		var keysSorted = Object.keys(gobj).sort(function (a, b) {return gobj[a] - gobj[b]; });
 		var buildbuilding = game.buildings[keysSorted[0]];
 		if (game.buildings.Warpstation.owned >= 3 + 3*game.upgrades.Gigastation.done && game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
-			buyUpgrade("Gigastation");
-			tooltip("hide");
-			message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
+			if (canAffordTwoLevel(game.upgrades.Gigastation)) {
+				buyUpgrade("Gigastation");
+				tooltip("hide");
+				message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
+			}
 		} else if (buildbuilding.locked == 0) {
 			if (canAffordBuilding(keysSorted[0])) {
 				buyBuilding(keysSorted[0]);
