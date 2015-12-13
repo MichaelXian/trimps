@@ -213,7 +213,8 @@ function buyGemCheapestHousing() {
 		}
 		var keysSorted = Object.keys(gobj).sort(function (a, b) {return gobj[a] - gobj[b]; });
 		var buildbuilding = game.buildings[keysSorted[0]];
-		if (game.buildings.Warpstation.owned >= 3 + 3*game.upgrades.Gigastation.done && game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
+		if (game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done &&
+		    game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) {
 			if (canAffordTwoLevel(game.upgrades.Gigastation)) {
 				buyUpgrade("Gigastation");
 				tooltip("hide");
