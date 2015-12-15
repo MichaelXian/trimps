@@ -543,10 +543,10 @@ function commitEverythingTowardsSeconds(seconds) {
 	game.global.lockTooltip = tempTooltips;
 }
 
-function timeTillFull(resource) {
+function timeTillFull(resourceName) {
 	var perSec = 0;
 	var job = "";
-	switch (resource) {
+	switch (resourceName) {
 		case "food":
 			job = "Farmer";
 			break;
@@ -556,6 +556,8 @@ function timeTillFull(resource) {
 		case "metal":
 			job = "Miner";
 			break;
+		default:
+			return "";
 	}
 	if (game.jobs[job].owned > 0){
 		perSec = (game.jobs[job].owned * game.jobs[job].modifier);
@@ -563,17 +565,21 @@ function timeTillFull(resource) {
 			perSec += (perSec * game.portal.Motivation.level * game.portal.Motivation.modifier);
 		}
 	}
-	if (game.global.playerGathering == resource){
+	if (game.global.playerGathering === resourceName){
 		if (game.global.turkimpTimer > 0){
 			perSec *= 1.5;
 		}
 		perSec += game.global.playerModifier;
 	}
-        amount = perSec / game.settings.speed;
-        
-        if (perSec <= 0) return "";
-	var remaining = ((game.resources[resource].max * (1 + game.portal.Packrat.modifier * game.portal.Packrat.level))) - game.resources[resource].owned;
-	if (remaining <= 0) return "";
+	amount = perSec / game.settings.speed;
+	
+	if (perSec <= 0){
+		return "";
+	}
+	var remaining = ((game.resources[resourceName].max * (1 + game.portal.Packrat.modifier * game.portal.Packrat.level))) - game.resources[resourceName].owned;
+	if (remaining <= 0){
+		return "";
+	}
 	return Math.floor(remaining / perSec);
 }
 
