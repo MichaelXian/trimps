@@ -543,6 +543,40 @@ function commitEverythingTowardsSeconds(seconds) {
 	game.global.lockTooltip = tempTooltips;
 }
 
+function timeTillFull(resource) {
+	var perSec = 0;
+	var job = "";
+	switch (resource) {
+		case "food":
+			job = "Farmer";
+			break;
+		case "wood":
+			job = "Lumberjack";
+			break;
+		case "metal":
+			job = "Miner";
+			break;
+	}
+	if (game.jobs[job].owned > 0){
+		perSec = (game.jobs[job].owned * game.jobs[job].modifier);
+		if (game.portal.Motivation.level > 0) {
+			perSec += (perSec * game.portal.Motivation.level * game.portal.Motivation.modifier);
+		}
+	}
+	if (game.global.playerGathering == resource){
+		if (game.global.turkimpTimer > 0){
+			perSec *= 1.5;
+		}
+		perSec += game.global.playerModifier;
+	}
+        amount = perSec / game.settings.speed;
+        
+        if (perSec <= 0) return "";
+	var remaining = ((game.resources[resource].max * (1 + game.portal.Packrat.modifier * game.portal.Packrat.level))) - game.resources[resource].owned;
+	if (remaining <= 0) return "";
+	return Math.floor(remaining / perSec);
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -551,20 +585,23 @@ function myTimer() {
 	var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 	var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 	var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-
+	var foodTime = timeTillFull("food");
+	var woodTime = timeTillFull("wood");
+	var metalTime = timeTillFull("metal");
+	
 	//Buy resource buildings
 	if (autoTSettings.autobuildings.enabled == 1) {
-		if (food > 0.9) {
+		if (food > 0.9 || foodTime > 600) {
 			buyBuilding('Barn');
 			tooltip("hide");
 			message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
 		}
-		if (wood > 0.9) {
+		if (wood > 0.9 || woodTime > 600) {
 			buyBuilding('Shed');
 			tooltip("hide");
 			message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
 		}
-		if (metal > 0.9) {
+		if (metal > 0.9 || metalTime > 600) {
 			buyBuilding('Forge');
 			tooltip("hide");
 			message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
