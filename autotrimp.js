@@ -18,6 +18,7 @@ var blockformation = 1;
 var healthformation = 1;
 var myblock = 0;
 var myhealth = 0;
+var targetSeconds = 30;
 
 //Line things up, OCD FTW!
 document.getElementById("helium").style.height = "32.4%";
@@ -96,19 +97,18 @@ btnShort.innerHTML = 1.5;
 btnShort.style.backgroundColor = "black";
 btnShort.style.cssFloat = "left";
 btnShort.style.width = "25%";
-btnShort.onclick = function(){ hireFireGeneticistToSeconds(btnShort.innerHTML);};
+btnShort.onclick = function(){ targetSeconds = btnShort.innerHTML;};
 btnLong.className = "pointer noselect";
 btnLong.innerHTML = 30;
 btnLong.style.backgroundColor = "black";
 btnLong.style.cssFloat = "left";
 btnLong.style.width = "25%";
-btnLong.onclick = function(){ hireFireGeneticistToSeconds(btnLong.innerHTML);};
+btnLong.onclick = function(){ targetSeconds = btnLong.innerHTML;};
 document.getElementById("fireBtn").style.cssFloat = "left";
-document.getElementById("fireBtn").style.width = "25%";
+document.getElementById("fireBtn").style.width = "50%";
 document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
 document.getElementById("fireBtn").parentElement.className = "col-xs-5";
 document.getElementById("fireBtn").parentElement.appendChild(btnShort);
-document.getElementById("fireBtn").parentElement.appendChild(btnModerate);
 document.getElementById("fireBtn").parentElement.appendChild(btnLong);
 document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
 
@@ -781,6 +781,9 @@ function myTimer() {
 	// Make the trimps work if idle
 	if (autoTSettings.autoworkers.enabled == 1) {
 		sendTrimpsToWork();
+	}
+	if (!game.jobs["Geneticist"].locked){
+		hireFireGeneticistToSeconds(targetSeconds);
 	}
 	// prestige weapon if available
 	if (autoTSettings.autoupgrades.enabled == 2 || autoTSettings.autoupgrades.enabled == 3) {
