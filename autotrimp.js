@@ -102,19 +102,19 @@ btnShort.innerHTML = seconds1;
 btnShort.style.backgroundColor = "black";
 btnShort.style.cssFloat = "left";
 btnShort.style.width = "25%";
-btnShort.onclick = function(){ commitEverythingTowardsSeconds(btnShort.innerHTML);};
+btnShort.onclick = function(){ hireFireGeneticistToSeconds(btnShort.innerHTML);};
 btnModerate.className = "pointer noselect";
 btnModerate.innerHTML = seconds2;
 btnModerate.style.backgroundColor = "black";
 btnModerate.style.cssFloat = "left";
 btnModerate.style.width = "25%";
-btnModerate.onclick = function(){ commitEverythingTowardsSeconds(btnModerate.innerHTML);};
+btnModerate.onclick = function(){ hireFireGeneticistToSeconds(btnModerate.innerHTML);};
 btnLong.className = "pointer noselect";
 btnLong.innerHTML = seconds3;
 btnLong.style.backgroundColor = "black";
 btnLong.style.cssFloat = "left";
 btnLong.style.width = "25%";
-btnLong.onclick = function(){ commitEverythingTowardsSeconds(btnLong.innerHTML);};
+btnLong.onclick = function(){ hireFireGeneticistToSeconds(btnLong.innerHTML);};
 document.getElementById("fireBtn").style.cssFloat = "left";
 document.getElementById("fireBtn").style.width = "25%";
 document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
@@ -473,68 +473,53 @@ function getTimeRemaining(addGenesAmt) {
 	return Math.log(numerus)/Math.log(base);
 }
 
-function buyGeneticists(fireWhatFirst) {
-	var tempState = game.global.firing;
-	
-	if(fireWhatFirst !== null) {
-		game.global.firing = true;
-		buyJob(fireWhatFirst);
-		message("Fired " + game.global.buyAmt + " " + fireWhatFirst + "s.", "Loot", "*eye2", "exotic");
-	}
-	game.global.firing = false;
-	buyJob("Geneticist");
-	message("Purchased " + game.global.buyAmt + " Geneticists.", "Loot", "*eye2", "exotic");
-	game.global.firing = tempState;
-}
-
-function commitEverythingTowardsSeconds(seconds) {
+function hireFireGeneticistToSeconds(seconds) {
 	if(game.jobs["Geneticist"].locked) {
-		message("Geneticists are not unlocked.", "Notices");
 		return;
 	}
 	
-	var tempState = game.global.firing;
 	var tempAmt = game.global.buyAmt;
+	var tempState = game.global.firing;
 	var tempTooltips = game.global.lockTooltip;
 	
 	game.global.lockTooltip = true;
 	game.global.buyAmt = getGeneticistsRequiredToSeconds(seconds);
 	
 	if(game.global.buyAmt === null) {
-		message("An error occured. Make sure I didn't try to automatically purchase/sell over " + allowedLoops + " Geneticists!", "Notices");
-	} else if(game.global.buyAmt == 0) {
-		message("No additional Geneticists were necessary.", "Notices");
+		//message("An error occured. Make sure I didn't try to automatically purchase/sell over " + allowedLoops + " Geneticists!", "Notices");
+	} else if(game.global.buyAmt === 0) {
+		//message("No additional Geneticists were necessary.", "Notices");
 	} else {
 		if(game.global.buyAmt < 0) {
 			game.global.firing = true;
-			
-			message("Sold " + game.global.buyAmt + " Geneticists.", "Loot", "*eye2", "exotic");
 			game.global.buyAmt = -game.global.buyAmt;
 			buyJob("Geneticist");
 		} else {
 			game.global.firing = false;
 			
 			var workspaces = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-			var isEnoughTrimps = workspaces >= game.global.buyAmt;
-			var isAffordable = canAffordJob("Geneticist", false, workspaces);
 			
-			if(isEnoughTrimps && isAffordable) {
-				buyGeneticists(null);
-			} else if(!isEnoughTrimps) {
-				if(game.jobs.Farmer.owned >= game.global.buyAmt) {
-					buyGeneticists("Farmer");
-				} else if(game.jobs.Miner.owned >= game.global.buyAmt) {
-					buyGeneticists("Miner");
-				} else if(game.jobs.Lumberjack.owned >= game.global.buyAmt) {
-					buyGeneticists("Lumberjack");
-				} else {
-					message("Error: Not enough workspaces available.", "Notices");
+			if (canAffordJob("Geneticist", false, workspaces)){
+				if (workspaces >= game.global.buyAmt){
+					game.global.firing = false;
+					buyJob("Geneticist");
+				} else if (game.jobs.Lumberjack.owned >= game.global.buyAmt){
+					game.global.firing = true;
+					buyJob("Lumberjack");
+					game.global.firing = false;
+					buyJob("Geneticist");
+				} else if (game.jobs.Farmer.owned >= game.global.buyAmt){
+					game.global.firing = true;
+					buyJob("Farmer");
+					game.global.firing = false;
+					buyJob("Geneticist");
+				} else if (game.jobs.Miner.owned >= game.global.buyAmt){
+					game.global.firing = true;
+					buyJob("Miner");
+					game.global.firing = false;
+					buyJob("Geneticist");
 				}
-                        } else if(!isAffordable){
-                        	message("Error: Not enough food. Need: " + checkJobItem("Geneticist", false, "food", true, game.global.buyAmt), "Notices");
-                        } else {
-                        	message("Error: Unknown", "Notices");
-                       	}
+			}
 		}
 	}
 	
