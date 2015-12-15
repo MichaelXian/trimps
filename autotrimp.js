@@ -19,12 +19,6 @@ var healthformation = 1;
 var myblock = 0;
 var myhealth = 0;
 
-//genetics
-seconds1 = 1.4;
-seconds2 = 15;
-seconds3 = 28;
-allowedLoops = 2000;
-
 //Line things up, OCD FTW!
 document.getElementById("helium").style.height = "32.4%";
 document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses";
@@ -98,19 +92,13 @@ var btnShort = document.createElement("div");
 var btnModerate = document.createElement("div");
 var btnLong = document.createElement("div");
 btnShort.className = "pointer noselect";
-btnShort.innerHTML = seconds1;
+btnShort.innerHTML = 1.5;
 btnShort.style.backgroundColor = "black";
 btnShort.style.cssFloat = "left";
 btnShort.style.width = "25%";
 btnShort.onclick = function(){ hireFireGeneticistToSeconds(btnShort.innerHTML);};
-btnModerate.className = "pointer noselect";
-btnModerate.innerHTML = seconds2;
-btnModerate.style.backgroundColor = "black";
-btnModerate.style.cssFloat = "left";
-btnModerate.style.width = "25%";
-btnModerate.onclick = function(){ hireFireGeneticistToSeconds(btnModerate.innerHTML);};
 btnLong.className = "pointer noselect";
-btnLong.innerHTML = seconds3;
+btnLong.innerHTML = 30;
 btnLong.style.backgroundColor = "black";
 btnLong.style.cssFloat = "left";
 btnLong.style.width = "25%";
@@ -409,7 +397,7 @@ function getGeneticistsRequiredToSeconds(seconds) {
 	var timeRemaining = getTimeRemaining(0);
 	
 	if(seconds > timeRemaining) {
-		for(var i = 1; i < allowedLoops + 2; i++) {
+		for(var i = 1; i < 2000 + 2; i++) {
 			var tempPrev = timeRemaining;
 			timeRemaining = getTimeRemaining(i);
 			if(timeRemaining > seconds) {
@@ -421,9 +409,8 @@ function getGeneticistsRequiredToSeconds(seconds) {
 			}
 		}
 		return null;
-	}
-	if(seconds < timeRemaining) {
-		for(var i = -1; i > -allowedLoops - 2; i--) {
+	} else if(seconds < timeRemaining) {
+		for(var i = -1; i > -2000 - 2; i--) {
 			var tempPrev = timeRemaining;
 			timeRemaining = getTimeRemaining(i);
 			if(timeRemaining < seconds) {
