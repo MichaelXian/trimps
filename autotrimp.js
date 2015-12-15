@@ -591,17 +591,17 @@ function myTimer() {
 	
 	//Buy resource buildings
 	if (autoTSettings.autobuildings.enabled == 1) {
-		if (food > 0.9 || foodTime > 600) {
+		if (food > 0.9 || foodTime < 600) {
 			buyBuilding('Barn');
 			tooltip("hide");
 			message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
 		}
-		if (wood > 0.9 || woodTime > 600) {
+		if (wood > 0.9 || woodTime < 600) {
 			buyBuilding('Shed');
 			tooltip("hide");
 			message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
 		}
-		if (metal > 0.9 || metalTime > 600) {
+		if (metal > 0.9 || metalTime < 600) {
 			buyBuilding('Forge');
 			tooltip("hide");
 			message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
