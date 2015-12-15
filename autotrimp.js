@@ -449,7 +449,7 @@ function getTimeRemaining(addGenesAmt) {
 	
 	var potencyMod = trimps.potency;
 	potencyMod = potencyMod * (1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier);
-	var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
+
 	if (game.unlocks.quickTrimps) {
 		potencyMod *= 2;
 	}
@@ -467,6 +467,7 @@ function getTimeRemaining(addGenesAmt) {
 		multiplier *= Math.pow((1/0.98), -addGenesAmt);
 	}
 	
+	var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
 	var numerus = (trimps.realMax() - trimps.employed) / (trimps.realMax() - (soldiers + trimps.employed));
 	var base = potencyMod * multiplier + 1;
 
