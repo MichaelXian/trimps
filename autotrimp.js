@@ -561,26 +561,25 @@ function timeTillFull(resourceName) {
 ///////////////////////////////////////////////////////////////////////
 // This loops and updates stuff as things change
 function myTimer() {
-	var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-	var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-	var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
-	var foodTime = timeTillFull("food");
-	var woodTime = timeTillFull("wood");
-	var metalTime = timeTillFull("metal");
-	
 	//Buy resource buildings
 	if (autoTSettings.autobuildings.enabled == 1) {
-		if (food > 0.9 || foodTime < 600) {
+		var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var foodTime = timeTillFull("food");
+		var woodTime = timeTillFull("wood");
+		var metalTime = timeTillFull("metal");
+		if ((food > 0.9 || foodTime < 600) && canAffordBuilding(game.buildings["Barn"])) {
 			buyBuilding('Barn');
 			tooltip("hide");
 			message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
 		}
-		if (wood > 0.9 || woodTime < 600) {
+		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding(game.buildings["Shed"])) {
 			buyBuilding('Shed');
 			tooltip("hide");
 			message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
 		}
-		if (metal > 0.9 || metalTime < 600) {
+		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding(game.buildings["Forge"])) {
 			buyBuilding('Forge');
 			tooltip("hide");
 			message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
