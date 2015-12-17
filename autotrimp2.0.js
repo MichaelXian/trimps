@@ -481,7 +481,8 @@ function myTimer(){
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
-						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger"]
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
+						"Formation", "Dominance", "Barrier"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
@@ -562,7 +563,7 @@ function myTimer(){
 				setTimeout(function(){selectMap(mapID)}, 300);
 				setTimeout(function(){runMap()}, 600);
 				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
-			} else if (mapsWithRewards.indexOf(window.game.global.world) != -1 && game.global.mapBonus < 1){
+			} else if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1){
 				mapsClicked();
 				mapsClicked();
 				buyMap();
