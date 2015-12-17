@@ -49,7 +49,7 @@ if (checking != null && checking.versioning == version) {
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
-	var autoStartMap = {enabled: 2, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
+	var autoStartMap = {enabled: 3, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting"]};
@@ -318,7 +318,7 @@ function myTimer(){
 		document.getElementById("toggle" + "autoBuildNurseries").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoBuildNurseries").className = "";
 		document.getElementById("toggle" + "autoBuildNurseries").className = "settingBtn settingBtn" + autoOption.enabled;
-		autoStartMap.enabled = 2;
+		autoStartMap.enabled = 3;
 		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoStartMap").className = "";
 		document.getElementById("toggle" + "autoStartMap").className = "settingBtn settingBtn" + autoOption.enabled;
@@ -552,7 +552,17 @@ function myTimer(){
 			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
 			var highestMap = keysSorted[0];
 			
+			var mapsWithRewards = [8, 14, 18, 25, 29, 30, 34, 37, 40, 47, 59, 80];
+			
 			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
+				mapsClicked();
+				mapsClicked();
+				buyMap();
+				var mapID=document.getElementsByClassName('mapThing')[0].id;
+				setTimeout(function(){selectMap(mapID)}, 300);
+				setTimeout(function(){runMap()}, 600);
+				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
+			} else if (mapsWithRewards.indexOf(window.game.global.world) != -1 && game.global.mapBonus < 1){
 				mapsClicked();
 				mapsClicked();
 				buyMap();
