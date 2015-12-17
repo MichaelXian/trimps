@@ -481,13 +481,14 @@ function myTimer(){
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
-						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers"]
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
 					buyUpgrade(key);
 					message("Read " + key, "Unlocks", "*eye2", "exotic");
 					update();
+					break;
 				}
 			}
 		}
@@ -502,6 +503,7 @@ function myTimer(){
 					message("Prestiged " + allEquip[equip], "Unlocks", "*eye2", "exotic");
 					tooltip("hide");
 					update();
+					break;
 				}
 			}
 		}
