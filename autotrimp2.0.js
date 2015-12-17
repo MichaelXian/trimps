@@ -321,7 +321,7 @@ function myTimer(){
 		if ((food > 0.9 || foodTime < 600) && canAffordBuilding("Barn")) {
 			buyBuilding('Barn');
 			tooltip("hide");
-			message("Build Barn", "Loot", "*eye2", "exotic");
+			message("Build Barn", "Unlocks", "*eye2", "exotic");
 		}
 		
 		var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
@@ -329,7 +329,7 @@ function myTimer(){
 		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding("Shed")) {
 			buyBuilding('Shed');
 			tooltip("hide");
-			message("Build Shed", "Loot", "*eye2", "exotic");
+			message("Build Shed", "Unlocks", "*eye2", "exotic");
 		}
 		
 		var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
@@ -337,7 +337,7 @@ function myTimer(){
 		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding("Forge")) {
 			buyBuilding('Forge');
 			tooltip("hide");
-			message("Build Forge", "Loot", "*eye2", "exotic")
+			message("Build Forge", "Unlocks", "*eye2", "exotic")
 		}
 	}
 	
@@ -348,7 +348,7 @@ function myTimer(){
 					if (canAffordTwoLevel(game.upgrades.Gigastation)) {
 						buyUpgrade("Gigastation");
 						tooltip("hide");
-						message("Build Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Loot", "*eye2", "exotic");
+						message("Build Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
 						if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
 							document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
 						}
@@ -360,7 +360,7 @@ function myTimer(){
 				if (canAffordBuilding(bestBuilding)) {
 					buyBuilding(bestBuilding);
 					tooltip("hide");
-					message("Build " + bestBuilding, "Loot", "*eye2", "exotic");
+					message("Build " + bestBuilding, "Unlocks", "*eye2", "exotic");
 					update();
 				}
 			}
@@ -375,14 +375,14 @@ function myTimer(){
 				if (canAffordBuilding("House")) {
 					buyBuilding("House");
 					tooltip("hide");
-					message("Build House", "Loot", "*eye2", "exotic");
+					message("Build House", "Unlocks", "*eye2", "exotic");
 				}
 			}
 			if (grMansion > grHut) {
 				if (canAffordBuilding("Hut")) {
 					buyBuilding("Hut");
 					tooltip("hide");
-					message("Build Hut", "Loot", "*eye2", "exotic");
+					message("Build Hut", "Unlocks", "*eye2", "exotic");
 				}
 			}
 		} else if (!game.buildings.House.locked) {
@@ -392,25 +392,25 @@ function myTimer(){
 				if (canAffordBuilding("House")) {
 					buyBuilding("House");
 					tooltip("hide");
-					message("Build House", "Loot", "*eye2", "exotic");
+					message("Build House", "Unlocks", "*eye2", "exotic");
 					}
 			} else {
 				if (canAffordBuilding("Hut")) {
 					buyBuilding("Hut");
 					tooltip("hide");
-					message("Build Hut", "Loot", "*eye2", "exotic");
+					message("Build Hut", "Unlocks", "*eye2", "exotic");
 				}
 			}
 		} else if (canAffordBuilding("Hut")) {
 			buyBuilding("Hut");
 			tooltip("hide");
-			message("Build Hut", "Loot", "*eye2", "exotic");
+			message("Build Hut", "Unlocks", "*eye2", "exotic");
 		}
 		if (game.buildings.Gateway.locked == 0) {
 			if (canAffordBuilding("Gateway") && game.buildings.Gateway.owned < 40)  {
 				buyBuilding("Gateway");
 				tooltip("hide");
-				message("Build Gateway", "Loot", "*eye2", "exotic");
+				message("Build Gateway", "Unlocks", "*eye2", "exotic");
 			}
 		}
 	}
@@ -419,7 +419,7 @@ function myTimer(){
 		if (!game.buildings.Gym.locked && canAffordBuilding("Gym")) {
 			buyBuilding("Gym");
 			tooltip("hide");
-			message("Build Gym", "Loot", "*eye2", "exotic");
+			message("Build Gym", "Unlocks", "*eye2", "exotic");
 		}
 	}
 	
@@ -427,7 +427,7 @@ function myTimer(){
 		if (!game.buildings.Tribute.locked && canAffordBuilding("Tribute")) {
 			buyBuilding("Tribute");
 			tooltip("hide");
-			message("Build Tribute", "Loot", "*eye2", "exotic");
+			message("Build Tribute", "Unlocks", "*eye2", "exotic");
 		}
 	}
 	
@@ -435,7 +435,7 @@ function myTimer(){
 		if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
 			buyBuilding("Nursery");
 			tooltip("hide");
-			message("Build Nursery", "Loot", "*eye2", "exotic");
+			message("Build Nursery", "Unlocks", "*eye2", "exotic");
 		}
 	}
 	
@@ -443,7 +443,7 @@ function myTimer(){
 		if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
 			if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
 				buyUpgrade('Coordination');
-				message("Read Coordination", "Loot", "*eye2", "exotic")
+				message("Read Coordination", "Unlocks", "*eye2", "exotic")
 				update();
 			}
 		}
@@ -453,7 +453,7 @@ function myTimer(){
 			if (autotrimpupgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
 					buyUpgrade(key);
-					message("Read " + key, "Loot", "*eye2", "exotic");
+					message("Read " + key, "Unlocks", "*eye2", "exotic");
 					update();
 				}
 			}
@@ -466,7 +466,7 @@ function myTimer(){
 			if (game.upgrades[allEquip[equip]].allowed > game.upgrades[allEquip[equip]].done) {
 				if (canAffordTwoLevel(game.upgrades[allEquip[equip]])) {
 					buyUpgrade(allEquip[equip]);
-					message("Prestiged " + allEquip[equip], "Loot", "*eye2", "exotic");
+					message("Prestiged " + allEquip[equip], "Unlocks", "*eye2", "exotic");
 					tooltip("hide");
 					update();
 				}
