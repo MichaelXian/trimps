@@ -380,8 +380,6 @@ function myTimer(){
 					}
 					update();
 				}
-			document.getElementById("Gigastation").removeEventListener("click", update);
-			document.getElementById("Gigastation").addEventListener('click',update,false);
 			}
 
 			var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
