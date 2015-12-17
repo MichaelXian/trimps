@@ -52,7 +52,7 @@ if (checking != null && checking.versioning == version) {
 	var autoStartMap = {enabled: 0, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 1, description: "Leave Map", titles: ["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
-	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
+	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
 	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	autoTSettings = {
@@ -466,7 +466,7 @@ function myTimer(){
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
-						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust"]
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
@@ -508,7 +508,7 @@ function myTimer(){
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
 		//["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]
-		if (!game.global.mapsActive) {
+		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			var everyMap = 100;
 			switch (autoStartMap.enabled) {
 				case 1:
