@@ -55,7 +55,8 @@ if (checking != null && checking.versioning == version) {
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
 	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
-	autoTSettings = {versioning: version, 
+	autoTSettings = {
+		versioning: version, 
 		autoBuildResources: autoBuildResources, 
 		autoBuildHouses: autoBuildHouses, 
 		autoBuildGyms: autoBuildGyms, 
@@ -69,7 +70,8 @@ if (checking != null && checking.versioning == version) {
 		autoFormations: autoFormations, 
 		autoGeneticists: autoGeneticists, 
 		autoWorkers: autoWorkers,
-		autoGather: autoGather};
+		autoGather: autoGather
+	};
 }
 
 //add buttons
@@ -573,6 +575,16 @@ function myTimer(){
 		if(!game.jobs["Geneticist"].locked) {
 			if (!(breedTime(0) > breedTarget.value)) {
 				if (canAffordJob("Geneticist", false, game.global.buyAmt)){
+					var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
+					if (maxemployed >= game.resources.trimps.owned - 1) {
+						maxemployed = game.resources.trimps.owned - 2
+					}
+					var workspaces = maxemployed - game.resources.trimps.employed;
+					if (workspaces < 1) {
+						game.global.firing = true;
+						buyJob("Lumberjack");
+						game.global.firing = false;
+					}
 					buyJob("Geneticist");
 					update();
 				}
@@ -590,10 +602,10 @@ function myTimer(){
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
 		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
-		if (maxemployed > game.resources.trimps.owned) {
-			maxemployed = game.resources.trimps.owned
+		if (maxemployed >= game.resources.trimps.owned - 1) {
+			maxemployed = game.resources.trimps.owned - 2
 		}
-		var workspaces = maxemployed - (game.resources.trimps.employed + 2);
+		var workspaces = maxemployed - game.resources.trimps.employed;
 		if (workspaces > tempAmt) {
 			game.global.buyAmt = Math.ceil((workspaces- game.global.buyAmt)*0.1);
 			if (game.jobs.Farmer.owned > 1000000) {
