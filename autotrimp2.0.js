@@ -534,7 +534,7 @@ function myTimer(){
 							repeatClicked();
 						}
 					} else if (autoTSettings.autoEndMap.enabled == 2) {
-						if (console.log(addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)])) <= 1) {
+						if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
 							repeatClicked();
 						}
 					}
