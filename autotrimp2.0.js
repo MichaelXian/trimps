@@ -40,7 +40,7 @@ document.styleSheets[2].insertRule(".settingBtn3 {background-color: #337AB7;}", 
 var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
 if (checking != null && checking.versioning == version) {
 	autoTSettings = checking;
-}else {
+} else {
 	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not Buying", "Buying"]};
 	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
 	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
@@ -346,9 +346,10 @@ function myTimer(){
 			if (game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
 				if (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) {
 					if (canAffordTwoLevel(game.upgrades.Gigastation)) {
+						message("Build Gigastation at " + game.buildings.Warpstation.owned + " Warpstations", "Unlocks", "*eye2", "exotic");
 						buyUpgrade("Gigastation");
 						tooltip("hide");
-						message("Build Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
+						message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
 						if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
 							document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
 						}
@@ -361,6 +362,10 @@ function myTimer(){
 					buyBuilding(bestBuilding);
 					tooltip("hide");
 					message("Build " + bestBuilding, "Unlocks", "*eye2", "exotic");
+					if (bestbuilding == "Warpstation")
+					{
+						message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
+					}
 					update();
 				}
 			}
@@ -447,10 +452,10 @@ function myTimer(){
 				update();
 			}
 		}
-		
-		autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
+		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty"]
 		for (var key in game.upgrades) {
-			if (autotrimpupgrades.indexOf(key) != -1) { 
+			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
 					buyUpgrade(key);
 					message("Read " + key, "Unlocks", "*eye2", "exotic");
