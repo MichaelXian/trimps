@@ -9,7 +9,7 @@ var breedTimer = document.createElement("span");
 document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
 var breedTarget = document.createElement('input');
 breedTarget.value = 30;
-breedTarget.style.width = "25%";
+breedTarget.style.width = "15%";
 breedTarget.style.color = "black";
 breedTarget.style.textAlign = "right";
 document.getElementById("fireBtn").style.cssFloat = "left";
