@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.01.02";
+var version = "1.02.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -567,6 +567,7 @@ function myTimer(){
 						} else if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
 							repeatClicked();
 						}
+					}
 				}
 			}
 		}
