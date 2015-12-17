@@ -569,17 +569,17 @@ function myTimer() {
 		var foodTime = timeTillFull("food");
 		var woodTime = timeTillFull("wood");
 		var metalTime = timeTillFull("metal");
-		if ((food > 0.9 || foodTime < 600) && canAffordBuilding(game.buildings["Barn"])) {
+		if ((food > 0.9 || foodTime < 600) && canAffordBuilding("Barn")) {
 			buyBuilding('Barn');
 			tooltip("hide");
 			message("Bought us another barn. It's red...hooray.", "Loot", "*eye2", "exotic");
 		}
-		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding(game.buildings["Shed"])) {
+		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding("Shed")) {
 			buyBuilding('Shed');
 			tooltip("hide");
 			message("Bought us another shed. It's very shed-like", "Loot", "*eye2", "exotic");
 		}
-		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding(game.buildings["Forge"])) {
+		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding("Forge")) {
 			buyBuilding('Forge');
 			tooltip("hide");
 			message("Bought us another forge. It's a good forge.", "Loot", "*eye2", "exotic")
