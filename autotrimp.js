@@ -182,13 +182,14 @@ function buyGemCheapestHousing() {
 					message("Got the next Gigastation upgrade, much bigger than the last sort!", "Loot", "*eye2", "exotic");
 					if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
 						document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
-						document.getElementById("Gigastation").removeEventListener("click", updateHousingHighlighting);
 					}
 					update();
 				} else {
 					document.getElementById("Gigastation").style.border = "1px solid #00CC00";
 				}
 			}
+		document.getElementById("Gigastation").removeEventListener("click", updateHousingHighlighting);
+		document.getElementById("Gigastation").addEventListener('click',updateHousingHighlighting,false);
 		} else if (!game.buildings[bestBuilding].locked) {
 			if (canAffordBuilding(game.buildings[bestBuilding])) {
 				buyBuilding(bestBuilding);

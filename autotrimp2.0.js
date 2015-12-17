@@ -1,5 +1,21 @@
 var autoTSettings = {};
-var version = "1.00.00";
+var version = "1.00.01";
+var bestBuilding = null;
+var bestArmor = null;
+var bestWeapon = null;
+var premapscounter = 0;
+
+var breedTimer = document.createElement("span");
+document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
+var breedTarget = document.createElement('input');
+breedTarget.style.width = "25%";
+breedTarget.style.color = "black";
+document.getElementById("fireBtn").style.cssFloat = "left";
+document.getElementById("fireBtn").style.width = "50%";
+document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
+document.getElementById("fireBtn").parentElement.className = "col-xs-5";
+document.getElementById("fireBtn").parentElement.appendChild(breedTarget);
+
 
 //Line things up, OCD FTW!
 document.getElementById("helium").style.height = "32.4%";
@@ -26,19 +42,19 @@ if (checking != null && checking.versioning == version) {
 else {
 	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not Buying", "Buying"]};
 	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
-	var autoBuildGym = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
+	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
 	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
 	var autoBuildNurseries = {enabled: 1, description: "Nurseries", titles: ["Not Buying", "Buying"]};
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
-	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
-	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
 	var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 1, description: "Leave Map", titles: ["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]};
-	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting 30s", "Targeting 1.5s"]};
+	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
-	autoTSettings = {versioning: version, autoBuildResources: autoBuildResources, autoBuildHouses: autoBuildHouses, autoBuildGym: autoBuildGym, autoBuildTributes: autoBuildTributes, autoBuildNurseries: autoBuildNurseries, autoRead: autoRead, autoPrestige: autoPrestige, autoWorkers: autoWorkers, autoGather: autoGather, autoContinue: autoContinue, autoStartMap: autoStartMap, autoEndMap: autoEndMap, autoGeneticists: autoGeneticists, autoFormations: autoFormations};
+	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting 30s", "Targeting 1.5s"]};
+	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
+	autoTSettings = {versioning: version, autoBuildResources: autoBuildResources, autoBuildHouses: autoBuildHouses, autoBuildGyms: autoBuildGyms, autoBuildTributes: autoBuildTributes, autoBuildNurseries: autoBuildNurseries, autoRead: autoRead, autoPrestige: autoPrestige, autoContinue: autoContinue, autoStartMap: autoStartMap, autoEndMap: autoEndMap, autoGather: autoGather, autoFormations: autoFormations, autoGeneticists: autoGeneticists, autoWorkers: autoWorkers};
 }
 
 //add buttons
@@ -59,8 +75,12 @@ document.getElementById("remove Shieldblock").onclick = function(){if (game.upgr
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 document.getElementById("add Respec").onclick = function(){if (game.global.canRespecPerks == false) {game.global.canRespecPerks = true;}}
 
+update();
 var timer = setInterval(function () { myTimer(); }, 1000);
 
+
+////////////////////////////////////
+//Functions
 function toggleAutoSetting(setting){
 	var autoOption = autoTSettings[setting];
 	var toggles = autoOption.titles.length;
@@ -81,6 +101,476 @@ function toggleAutoSetting(setting){
 	menuElem.className = "settingBtn settingBtn" + autoOption.enabled;
 }
 
-function myTimer(){
+function breedTime(genes) {
+	var trimps = game.resources.trimps;
 	
+	if (trimps.owned - trimps.employed < 2 || game.global.challengeActive == "Trapper") {
+		return 0;
+	}
+	
+	var potencyMod = trimps.potency;
+	potencyMod = potencyMod * (1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+
+	if (game.unlocks.quickTrimps) {
+		potencyMod *= 2;
+	}
+	if (game.global.brokenPlanet) {
+		potencyMod /= 10;
+	}
+	if (game.jobs.Geneticist.owned > 0) {
+		potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
+	}
+	
+	var multiplier = 1;
+	if(genes >= 0) {
+		multiplier *= Math.pow(.98, genes);
+	} else {
+		multiplier *= Math.pow((1/0.98), -genes);
+	}
+	
+	var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
+	var numerus = (trimps.realMax() - trimps.employed) / (trimps.realMax() - (soldiers + trimps.employed));
+	var base = potencyMod * multiplier + 1;
+
+	return Math.log(numerus)/Math.log(base);
+}
+
+function timeTillFull(resourceName) {
+	var perSec = 0;
+	var job = "";
+	switch (resourceName) {
+		case "food":
+			job = "Farmer";
+			break;
+		case "wood":
+			job = "Lumberjack";
+			break;
+		case "metal":
+			job = "Miner";
+			break;
+		default:
+			return "";
+	}
+	if (game.jobs[job].owned > 0){
+		perSec = (game.jobs[job].owned * game.jobs[job].modifier);
+		if (game.portal.Motivation.level > 0) {
+			perSec += (perSec * game.portal.Motivation.level * game.portal.Motivation.modifier);
+		}
+	}
+	if (game.global.playerGathering === resourceName){
+		if (game.global.turkimpTimer > 0){
+			perSec *= 1.5;
+		}
+		perSec += game.global.playerModifier;
+	}
+	amount = perSec / game.settings.speed;
+	
+	if (perSec <= 0){
+		return "";
+	}
+	var remaining = ((game.resources[resourceName].max * (1 + game.portal.Packrat.modifier * game.portal.Packrat.level))) - game.resources[resourceName].owned;
+	if (remaining <= 0){
+		return "";
+	}
+	return Math.floor(remaining / perSec);
+}
+
+function update() {
+	var tempAmt = game.global.buyAmt;
+	var tempState = game.global.firing;
+	var tempTooltips = game.global.lockTooltip;
+	
+	//bestBuilding
+	game.global.buyAmt = 1;
+	var allHousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
+	var unlockedHousing = [];
+	for (house in allHousing) {
+		if (game.buildings[allHousing[house]].locked == 0) {
+			unlockedHousing.push(allHousing[house]);
+		}
+	}
+	if (unlockedHousing.length) {
+		obj = {};
+		for (house in unlockedHousing) {
+			var building = game.buildings[unlockedHousing[house]];
+			var cost = 0;
+			cost += getBuildingItemPrice(building, "gems");
+			var ratio = cost / building.increase.by;
+			obj[unlockedHousing[house]] = ratio;
+			if (document.getElementById(unlockedHousing[house]).style.border = "1px solid #00CC00") {
+				document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
+				document.getElementById(unlockedHousing[house]).removeEventListener("click", update);
+			}
+		}
+		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+		bestBuilding = keysSorted[0];
+		document.getElementById(bestBuilding).style.border = "1px solid #00CC00";
+		document.getElementById(bestBuilding).addEventListener('click',update,false);
+	}
+	
+	//Health
+	var allArmor = ["Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
+	var unlockedArmor = [];
+	for (armor in allArmor) {
+		if (game.equipment[allArmor[armor]].locked == 0) {
+			unlockedArmor.push(allArmor[armor]);
+		}
+	}
+	if (unlockedArmor.length) {
+		obj = {};
+		for (armor in unlockedArmor) {
+			var equip = game.equipment[unlockedArmor[armor]];
+			var cost = 0;
+			cost += getBuildingItemPrice(equip, "metal", true);
+			var ratio = cost / equip.healthCalculated;
+			obj[unlockedArmor[armor]] = ratio;
+			if (document.getElementById(unlockedArmor[armor]).style.border = "1px solid #0000FF") {
+				document.getElementById(unlockedArmor[armor]).style.border = "1px solid #FFFFFF";
+				document.getElementById(unlockedArmor[armor]).removeEventListener("click", update);
+			}
+		}
+		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+		bestArmor = keysSorted[0];
+		document.getElementById(bestArmor).style.border = "1px solid #0000FF";
+		document.getElementById(bestArmor).addEventListener('click',update,false);
+	}
+	
+	//Attack
+	var allWeapons = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
+	var unlockedWeapons = [];
+	for (weapon in allWeapons) {
+		if (game.equipment[allWeapons[weapon]].locked == 0) {
+			unlockedWeapons.push(allWeapons[weapon]);
+		}
+	}
+	if (unlockedWeapons.length) {
+		obj = {};
+		for (weapon in unlockedWeapons) {
+			var equip = game.equipment[unlockedWeapons[weapon]];
+			var cost = 0;
+			cost += getBuildingItemPrice(equip, "metal", true);
+			var ratio = cost / equip.attackCalculated;
+			obj[unlockedWeapons[weapon]] = ratio;
+			if (document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FF0000") {
+				document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FFFFFF";
+				document.getElementById(unlockedWeapons[weapon]).removeEventListener("click", update);
+			}
+		}
+		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+		bestWeapon = keysSorted[0];
+		document.getElementById(bestWeapon).style.border = "1px solid #FF0000";
+		document.getElementById(bestWeapon).addEventListener('click',update,false);
+	}
+	
+	game.global.buyAmt = tempAmt;
+	game.global.firing = tempState;
+	game.global.lockTooltip = tempTooltips;
+	
+	breedTimer.innerHTML = "(" + Math.round(breedTime(0)) + "s) ";
+}
+
+////////////////////////////////////
+//BaseLoop
+function myTimer(){
+	update();
+	
+	var tempAmt = game.global.buyAmt;
+	var tempState = game.global.firing;
+	var tempTooltips = game.global.lockTooltip;
+	
+	game.global.buyAmt = 1;
+	game.global.firing = false;
+	
+	if (autoTSettings.autoBuildResources.enabled != 0) {
+		var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var foodTime = timeTillFull("food");
+		if ((food > 0.9 || foodTime < 600) && canAffordBuilding("Barn")) {
+			buyBuilding('Barn');
+			tooltip("hide");
+			message("Build Barn", "Loot", "*eye2", "exotic");
+		}
+		
+		var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var woodTime = timeTillFull("wood");
+		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding("Shed")) {
+			buyBuilding('Shed');
+			tooltip("hide");
+			message("Build Shed", "Loot", "*eye2", "exotic");
+		}
+		
+		var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
+		var metalTime = timeTillFull("metal");
+		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding("Forge")) {
+			buyBuilding('Forge');
+			tooltip("hide");
+			message("Build Forge", "Loot", "*eye2", "exotic")
+		}
+	}
+	
+	if (autoTSettings.autoBuildHouses.enabled != 0) {
+		if (bestBuilding != null){
+			if (game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
+				if (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) {
+					if (canAffordTwoLevel(game.upgrades.Gigastation)) {
+						buyUpgrade("Gigastation");
+						tooltip("hide");
+						message("Build Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Loot", "*eye2", "exotic");
+						if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
+							document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
+						}
+						update();
+					} else {
+						document.getElementById("Gigastation").style.border = "1px solid #00CC00";
+					}
+				}
+				document.getElementById("Gigastation").removeEventListener("click", update);
+				document.getElementById("Gigastation").addEventListener('click',update,false);
+			} else if (!game.buildings[bestBuilding].locked) {
+				if (canAffordBuilding(game.buildings[bestBuilding])) {
+					buyBuilding(bestBuilding);
+					tooltip("hide");
+					message("Build " + bestBuilding, "Loot", "*eye2", "exotic");
+					update();
+				}
+			}
+
+			var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
+			var grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
+			var grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
+			if (grMansion > grHouse) {
+				if (canAffordBuilding("House")) {
+					buyBuilding("House");
+					tooltip("hide");
+					message("Build House", "Loot", "*eye2", "exotic");
+				}
+			}
+			if (grMansion > grHut) {
+				if (canAffordBuilding("Hut")) {
+					buyBuilding("Hut");
+					tooltip("hide");
+					message("Build Hut", "Loot", "*eye2", "exotic");
+				}
+			}
+		} else if (!game.buildings.House.locked) {
+			grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
+			grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
+			if (grHouse < grHut) {
+				if (canAffordBuilding("House")) {
+					buyBuilding("House");
+					tooltip("hide");
+					message("Build House", "Loot", "*eye2", "exotic");
+					}
+			} else {
+				if (canAffordBuilding("Hut")) {
+					buyBuilding("Hut");
+					tooltip("hide");
+					message("Build Hut", "Loot", "*eye2", "exotic");
+				}
+			}
+		} else if (canAffordBuilding("Hut")) {
+			buyBuilding("Hut");
+			tooltip("hide");
+			message("Build Hut", "Loot", "*eye2", "exotic");
+		}
+		if (game.buildings.Gateway.locked == 0) {
+			if (canAffordBuilding("Gateway") && game.buildings.Gateway.owned < 40)  {
+				buyBuilding("Gateway");
+				tooltip("hide");
+				message("Build Gateway", "Loot", "*eye2", "exotic");
+			}
+		}
+	}
+	
+	if (autoTSettings.autoBuildGyms.enabled != 0) {
+		if (!game.buildings.Gym.locked && canAffordBuilding(game.buildings.Gym)) {
+			buyBuilding("Gym");
+			tooltip("hide");
+			message("Build Gym", "Loot", "*eye2", "exotic");
+		}
+	}
+	
+	if (autoTSettings.autoBuildTributes.enabled != 0) {
+		if (!game.buildings.Tribute.locked && canAffordBuilding(game.buildings.Tribute)) {
+			buyBuilding("Tribute");
+			tooltip("hide");
+			message("Build Tribute", "Loot", "*eye2", "exotic");
+		}
+	}
+	
+	if (autoTSettings.autoBuildNurseries.enabled != 0) {
+		if (!game.buildings.Nursery.locked && canAffordBuilding(game.buildings.Nursery)) {
+			buyBuilding("Nursery");
+			tooltip("hide");
+			message("Build Nursery", "Loot", "*eye2", "exotic");
+		}
+	}
+	
+	if (autoTSettings.autoRead.enabled != 0) {
+		if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
+			if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
+				buyUpgrade('Coordination');
+				message("Read Coordination", "Loot", "*eye2", "exotic")
+				update();
+			}
+		}
+		
+		autotrimpupgrades = ["Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency"]
+		for (var key in game.upgrades) {
+			if (autotrimpupgrades.indexOf(key) != -1) { 
+				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
+					buyUpgrade(key);
+					message("Read " + key, "Loot", "*eye2", "exotic");
+					update();
+				}
+			}
+		}
+	}
+	
+	if (autoTSettings.autoPrestige.enabled != 0) {
+		var allEquip = ["Supershield", "Dagadder", "Bootboost", "Megamace", "Hellishmet", "Polierarm", "Pantastic", "Axeidic", "Smoldershoulder", "Greatersword", "Bestplate", "Harmbalest", "GambesOP"];
+		for (equip in allEquip) {
+			if (game.upgrades[allEquip[equip]].allowed > game.upgrades[allEquip[equip]].done) {
+				if (canAffordTwoLevel(game.upgrades[allEquip[equip]])) {
+					buyUpgrade(allEquip[equip]);
+					message("Prestiged " + allEquip[equip], "Loot", "*eye2", "exotic");
+					tooltip("hide");
+					update();
+				}
+			}
+		}
+	}
+	
+	if (autoTSettings.autoContinue.enabled != 0) {
+		if (game.global.preMapsActive) {
+			if (premapscounter < 10)
+			{
+				premapscounter++;
+			} else {
+				premapscounter = 0;
+				mapsClicked();
+			}
+		} else {
+			premapscounter = 0;
+		}
+	}
+	
+	if (autoTSettings.autoStartMap.enabled != 0) {
+		//TODO
+	}
+	
+	if (autoTSettings.autoEndMap.enabled != 0) {
+		//TODO
+	}
+		
+	if (autoTSettings.autoFormations.enabled != 0) {
+		if (game.upgrades.Dominance.done == 1)	{
+			if (game.global.mapsActive && !game.global.preMapsActive){
+				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
+					if (game.global.formation == 2 && myblock < badguyMaxAtt) {setFormation(1);}
+				} else {
+					if (game.global.formation == 1) {setFormation(2);}
+				}
+			} else {
+				if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
+					if (game.global.formation == 2) {setFormation(1);}
+				} else {
+					if (game.global.formation == 1) {setFormation(2);}
+				}
+			}
+		}
+	}
+	
+	if (autoTSettings.autoGeneticists.enabled != 0) {
+		//TODO
+		//breedTarget.value
+	}
+	
+	if (autoTSettings.autoWorkers.enabled != 0) {
+		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
+		if (maxemployed > game.resources.trimps.owned) {
+			maxemployed = game.resources.trimps.owned
+		}
+		var workspaces = maxemployed - (game.resources.trimps.employed + 2);
+		if (workspaces > tempAmt) {
+			game.global.buyAmt = Math.ceil((workspaces- game.global.buyAmt)*0.1);
+			if (game.jobs.Farmer.owned > 1000000) {
+				// if more than 1000000 farmers allocate 3:1:4
+				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
+					buyJob("Farmer");
+					tooltip("hide");
+				} else if (game.jobs.Lumberjack.owned * 4 < game.jobs.Miner.owned * 1) {
+					buyJob("Lumberjack");
+					tooltip("hide");
+				} else {
+					buyJob("Miner");
+					tooltip("hide");
+				}
+			} else if (game.jobs.Farmer.owned > 100000) {
+				// if more than 100000 farmers allocate 3:3:5
+				if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
+					buyJob("Farmer");
+					tooltip("hide");
+				} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
+					buyJob("Lumberjack");
+					tooltip("hide");
+				} else {
+					buyJob("Miner");
+					tooltip("hide");
+				}
+			} else if (game.jobs.Farmer.owned < 10){
+				game.global.buyAmt = 1;
+				buyJob("Farmer");
+				tooltip("hide");
+			} else if (game.jobs.Farmer.owned < 20){
+				game.global.buyAmt = 1;
+				if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
+					buyJob("Lumberjack");
+					tooltip("hide");
+				} else {
+					buyJob("Farmer");
+					tooltip("hide");
+				}
+			} else {
+				// if less than  100000 farmers allocate 1:1:1
+				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
+					buyJob("Farmer");
+					tooltip("hide");
+				} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
+					buyJob("Lumberjack");
+					tooltip("hide");
+				} else  if(game.jobs.Miner.locked == 0){
+					buyJob("Miner");
+					tooltip("hide");
+				}
+			}
+		}
+	}
+	
+	if (autoTSettings.autoGather.enabled != 0) {
+		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap") && game.global.playerGathering != "buildings") {
+			setGather("buildings");
+		} else if (window.game.global.turkimpTimer > 0) {
+			if (game.jobs.Farmer.owned >= game.jobs.Lumberjack.owned && game.jobs.Farmer.owned >= game.jobs.Miner.owned) {
+				if (game.global.playerGathering != "food") {
+					setGather("food");
+				}
+			} else if (game.jobs.Miner.owned >= game.jobs.Farmer.owned && game.jobs.Miner.owned >= game.jobs.Lumberjack.owned) {
+				if (game.global.playerGathering != "metal") {
+					setGather("metal");
+				}
+			} else if (game.jobs.Lumberjack.owned >= game.jobs.Farmer.owned && game.jobs.Lumberjack.owned >= game.jobs.Miner.owned) {
+				if (game.global.playerGathering != "wood") {
+					setGather("wood");
+				}
+			}
+		} else {
+			setGather("sience");
+		}
+	}
+	
+	breedTimer.innerHTML = "(" + Math.round(breedTime(0)) + "s) ";
+	
+	game.global.buyAmt = tempAmt;
+	game.global.firing = tempState;
+	game.global.lockTooltip = tempTooltips;
 }
