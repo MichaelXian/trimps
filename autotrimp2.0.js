@@ -552,7 +552,7 @@ function myTimer(){
 			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
 			var highestMap = keysSorted[0];
 			
-			var mapsWithRewards = [8, 14, 18, 25, 29, 30, 34, 37, 40, 47, 59, 80];
+			var mapsWithRewards = [8, 14, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80];
 			
 			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
 				mapsClicked();
