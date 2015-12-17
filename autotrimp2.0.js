@@ -303,8 +303,21 @@ function myTimer(){
 	
 	if (game.global.gridArray.length == 0) {
 		autoBuildNurseries.enabled = 0;
+		document.getElementById("toggle" + "autoBuildNurseries").innerHTML = autoOption.titles[autoOption.enabled];
+		document.getElementById("toggle" + "autoBuildNurseries").className = "";
+		document.getElementById("toggle" + "autoBuildNurseries").className = "settingBtn settingBtn" + autoOption.enabled;
 		autoStartMap.enabled = 0;
+		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
+		document.getElementById("toggle" + "autoStartMap").className = "";
+		document.getElementById("toggle" + "autoStartMap").className = "settingBtn settingBtn" + autoOption.enabled;
 		autoGather.enabled = 0;
+		document.getElementById("toggle" + "autoGather").innerHTML = autoOption.titles[autoOption.enabled];
+		document.getElementById("toggle" + "autoGather").className = "";
+		document.getElementById("toggle" + "autoGather").className = "settingBtn settingBtn" + autoOption.enabled;
+		autoWorkers.enabled = 0;
+		document.getElementById("toggle" + "autoWorkers").innerHTML = autoOption.titles[autoOption.enabled];
+		document.getElementById("toggle" + "autoWorkers").className = "";
+		document.getElementById("toggle" + "autoWorkers").className = "settingBtn settingBtn" + autoOption.enabled;
 		return;
 	}
 	
@@ -453,7 +466,7 @@ function myTimer(){
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
-						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty"]
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
@@ -670,8 +683,10 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGather.enabled != 0) {
-		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap") && game.global.playerGathering != "buildings") {
-			setGather("buildings");
+		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap")) {
+			if (game.global.playerGathering != "buildings") {
+				setGather("buildings");
+			}
 		} else if (window.game.global.turkimpTimer > 0) {
 			if (game.jobs.Farmer.owned >= game.jobs.Lumberjack.owned && game.jobs.Farmer.owned >= game.jobs.Miner.owned) {
 				if (game.global.playerGathering != "food") {
