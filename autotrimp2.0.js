@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.00.01";
+var version = "1.00.02";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -326,7 +326,7 @@ function myTimer(){
 				document.getElementById("Gigastation").removeEventListener("click", update);
 				document.getElementById("Gigastation").addEventListener('click',update,false);
 			} else if (!game.buildings[bestBuilding].locked) {
-				if (canAffordBuilding(game.buildings[bestBuilding])) {
+				if (canAffordBuilding(bestBuilding)) {
 					buyBuilding(bestBuilding);
 					tooltip("hide");
 					message("Build " + bestBuilding, "Loot", "*eye2", "exotic");
@@ -382,7 +382,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildGyms.enabled != 0) {
-		if (!game.buildings.Gym.locked && canAffordBuilding(game.buildings.Gym)) {
+		if (!game.buildings.Gym.locked && canAffordBuilding("Gym")) {
 			buyBuilding("Gym");
 			tooltip("hide");
 			message("Build Gym", "Loot", "*eye2", "exotic");
@@ -390,7 +390,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildTributes.enabled != 0) {
-		if (!game.buildings.Tribute.locked && canAffordBuilding(game.buildings.Tribute)) {
+		if (!game.buildings.Tribute.locked && canAffordBuilding("Tribute")) {
 			buyBuilding("Tribute");
 			tooltip("hide");
 			message("Build Tribute", "Loot", "*eye2", "exotic");
@@ -398,7 +398,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildNurseries.enabled != 0) {
-		if (!game.buildings.Nursery.locked && canAffordBuilding(game.buildings.Nursery)) {
+		if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
 			buyBuilding("Nursery");
 			tooltip("hide");
 			message("Build Nursery", "Loot", "*eye2", "exotic");
