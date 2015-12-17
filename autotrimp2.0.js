@@ -318,7 +318,7 @@ function myTimer(){
 	if (autoTSettings.autoBuildResources.enabled != 0) {
 		var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var foodTime = timeTillFull("food");
-		if ((food > 0.9 || foodTime < 600) && canAffordBuilding("Barn")) {
+		if ((food > 0.9 || (foodTime != "" && foodTime < 600)) && canAffordBuilding("Barn")) {
 			buyBuilding('Barn');
 			tooltip("hide");
 			message("Build Barn", "Unlocks", "*eye2", "exotic");
@@ -326,7 +326,7 @@ function myTimer(){
 		
 		var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var woodTime = timeTillFull("wood");
-		if ((wood > 0.9 || woodTime < 600) && canAffordBuilding("Shed")) {
+		if ((wood > 0.9 || (woodTime != "" && woodTime < 600)) && canAffordBuilding("Shed")) {
 			buyBuilding('Shed');
 			tooltip("hide");
 			message("Build Shed", "Unlocks", "*eye2", "exotic");
@@ -334,7 +334,7 @@ function myTimer(){
 		
 		var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var metalTime = timeTillFull("metal");
-		if ((metal > 0.9 || metalTime < 600) && canAffordBuilding("Forge")) {
+		if ((metal > 0.9 || (metalTime != "" && metalTime < 600)) && canAffordBuilding("Forge")) {
 			buyBuilding('Forge');
 			tooltip("hide");
 			message("Build Forge", "Unlocks", "*eye2", "exotic")
