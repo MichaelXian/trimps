@@ -356,21 +356,20 @@ function myTimer(){
 	
 	if (autoTSettings.autoBuildHouses.enabled != 0) {
 		if (bestBuilding != null){
-			if (game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) {
-				if (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) {
-					if (canAffordTwoLevel(game.upgrades.Gigastation)) {
-						message("Build Gigastation at " + game.buildings.Warpstation.owned + " Warpstations", "Unlocks", "*eye2", "exotic");
-						buyUpgrade("Gigastation");
-						tooltip("hide");
-						message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
-						if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
-							document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
-						}
-						update();
-					} else {
-						document.getElementById("Gigastation").style.border = "1px solid #00CC00";
+			if ((game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) && (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done)) {
+				if (canAffordTwoLevel(game.upgrades.Gigastation)) {
+					message("Build Gigastation at " + game.buildings.Warpstation.owned + " Warpstations", "Unlocks", "*eye2", "exotic");
+					buyUpgrade("Gigastation");
+					tooltip("hide");
+					message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
+					if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
+						document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
 					}
-				} else if (!game.buildings[bestBuilding].locked) {
+					update();
+				} else {
+					document.getElementById("Gigastation").style.border = "1px solid #00CC00";
+				}
+			} else if (!game.buildings[bestBuilding].locked) {
 				if (canAffordBuilding(bestBuilding)) {
 					buyBuilding(bestBuilding);
 					tooltip("hide");
@@ -381,7 +380,6 @@ function myTimer(){
 					}
 					update();
 				}
-			}
 			document.getElementById("Gigastation").removeEventListener("click", update);
 			document.getElementById("Gigastation").addEventListener('click',update,false);
 			}
