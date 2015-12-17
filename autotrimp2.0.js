@@ -49,8 +49,8 @@ if (checking != null && checking.versioning == version) {
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
-	var autoStartMap = {enabled: 0, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
-	var autoEndMap = {enabled: 1, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades"]};
+	var autoStartMap = {enabled: 2, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
+	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
@@ -290,6 +290,18 @@ function update() {
 	game.global.lockTooltip = tempTooltips;
 	
 	breedTimer.innerHTML = "(" + Math.round(breedTime(0)) + "s) ";
+	
+	//remove alerts if they exist
+	var removebadge = true;
+	var badgeupgrades = document.getElementById("upgradesHere");
+	for (i = 0; i<badgeupgrades.childNodes.length; i++) { 
+		if (badgeupgrades.childNodes[i].childNodes[0].innerHTML == "!") {
+			removebadge = false;
+		}
+	}
+	if (removebadge) {
+		document.getElementById("upgradesAlert").innerHTML = "";
+	}
 }
 
 ////////////////////////////////////
@@ -306,10 +318,14 @@ function myTimer(){
 		document.getElementById("toggle" + "autoBuildNurseries").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoBuildNurseries").className = "";
 		document.getElementById("toggle" + "autoBuildNurseries").className = "settingBtn settingBtn" + autoOption.enabled;
-		autoStartMap.enabled = 0;
+		autoStartMap.enabled = 2;
 		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoStartMap").className = "";
 		document.getElementById("toggle" + "autoStartMap").className = "settingBtn settingBtn" + autoOption.enabled;
+		autoEndMap.enabled = 3;
+		document.getElementById("toggle" + "autoEndMap").innerHTML = autoOption.titles[autoOption.enabled];
+		document.getElementById("toggle" + "autoEndMap").className = "";
+		document.getElementById("toggle" + "autoEndMap").className = "settingBtn settingBtn" + autoOption.enabled;
 		autoGather.enabled = 0;
 		document.getElementById("toggle" + "autoGather").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoGather").className = "";
@@ -319,6 +335,9 @@ function myTimer(){
 		document.getElementById("toggle" + "autoWorkers").className = "";
 		document.getElementById("toggle" + "autoWorkers").className = "settingBtn settingBtn" + autoOption.enabled;
 		return;
+		
+		
+		
 	}
 	
 	var tempAmt = game.global.buyAmt;
@@ -462,7 +481,7 @@ function myTimer(){
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
-						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm"]
+						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
@@ -539,6 +558,17 @@ function myTimer(){
 				setTimeout(function(){selectMap(mapID)}, 300);
 				setTimeout(function(){runMap()}, 600);
 				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
+			} else {
+				for (map in game.global.mapsOwnedArray) {
+					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1)
+					{
+						mapsClicked();
+						mapsClicked();
+						setTimeout(function(){selectMap(game.global.mapsOwnedArray[map].id)}, 300);
+						setTimeout(function(){runMap()}, 600);
+						break;
+					}
+				}
 			}
 		}
 	}
