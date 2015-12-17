@@ -575,7 +575,7 @@ function myTimer(){
 		if (game.upgrades.Dominance.done == 1)	{
 			if (game.global.mapsActive && !game.global.preMapsActive){
 				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-					if (game.global.formation == 2 && myblock < badguyMaxAtt) {setFormation(1);}
+					if (game.global.formation == 2 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {setFormation(1);}
 				} else {
 					if (game.global.formation == 1) {setFormation(2);}
 				}
