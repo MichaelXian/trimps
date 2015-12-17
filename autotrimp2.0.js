@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.00.02";
+var version = "1.01.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -8,8 +8,10 @@ var premapscounter = 0;
 var breedTimer = document.createElement("span");
 document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
 var breedTarget = document.createElement('input');
+breedTarget.value = 30;
 breedTarget.style.width = "25%";
 breedTarget.style.color = "black";
+breedTarget.style.textAlign = "right";
 document.getElementById("fireBtn").style.cssFloat = "left";
 document.getElementById("fireBtn").style.width = "50%";
 document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
@@ -38,23 +40,36 @@ document.styleSheets[2].insertRule(".settingBtn3 {background-color: #337AB7;}", 
 var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
 if (checking != null && checking.versioning == version) {
 	autoTSettings = checking;
-}
-else {
+}else {
 	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not Buying", "Buying"]};
-	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
+	var autoBuildHouses = {enabled: 0, description: "Housing", titles: ["Not Buying", "Buying"]};
 	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
 	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
-	var autoBuildNurseries = {enabled: 1, description: "Nurseries", titles: ["Not Buying", "Buying"]};
+	var autoBuildNurseries = {enabled: 0, description: "Nurseries", titles: ["Not Buying", "Buying"]};
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
-	var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
+	var autoStartMap = {enabled: 0, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 1, description: "Leave Map", titles: ["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]};
-	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
-	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting 30s", "Targeting 1.5s"]};
+	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
-	autoTSettings = {versioning: version, autoBuildResources: autoBuildResources, autoBuildHouses: autoBuildHouses, autoBuildGyms: autoBuildGyms, autoBuildTributes: autoBuildTributes, autoBuildNurseries: autoBuildNurseries, autoRead: autoRead, autoPrestige: autoPrestige, autoContinue: autoContinue, autoStartMap: autoStartMap, autoEndMap: autoEndMap, autoGather: autoGather, autoFormations: autoFormations, autoGeneticists: autoGeneticists, autoWorkers: autoWorkers};
+	var autoGather = {enabled: 0, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
+	autoTSettings = {versioning: version, 
+		autoBuildResources: autoBuildResources, 
+		autoBuildHouses: autoBuildHouses, 
+		autoBuildGyms: autoBuildGyms, 
+		autoBuildTributes: autoBuildTributes, 
+		autoBuildNurseries: autoBuildNurseries, 
+		autoRead: autoRead, 
+		autoPrestige: autoPrestige, 
+		autoContinue: autoContinue, 
+		autoStartMap: autoStartMap, 
+		autoEndMap: autoEndMap,  
+		autoFormations: autoFormations, 
+		autoGeneticists: autoGeneticists, 
+		autoWorkers: autoWorkers,
+		autoGather: autoGather};
 }
 
 //add buttons
@@ -190,7 +205,7 @@ function update() {
 		}
 	}
 	if (unlockedHousing.length) {
-		obj = {};
+		var obj = {};
 		for (house in unlockedHousing) {
 			var building = game.buildings[unlockedHousing[house]];
 			var cost = 0;
@@ -206,6 +221,8 @@ function update() {
 		bestBuilding = keysSorted[0];
 		document.getElementById(bestBuilding).style.border = "1px solid #00CC00";
 		document.getElementById(bestBuilding).addEventListener('click',update,false);
+	} else {
+		bestBuilding = null;
 	}
 	
 	//Health
@@ -217,7 +234,7 @@ function update() {
 		}
 	}
 	if (unlockedArmor.length) {
-		obj = {};
+		var obj = {};
 		for (armor in unlockedArmor) {
 			var equip = game.equipment[unlockedArmor[armor]];
 			var cost = 0;
@@ -233,6 +250,8 @@ function update() {
 		bestArmor = keysSorted[0];
 		document.getElementById(bestArmor).style.border = "1px solid #0000FF";
 		document.getElementById(bestArmor).addEventListener('click',update,false);
+	} else {
+		bestArmor = null;
 	}
 	
 	//Attack
@@ -244,7 +263,7 @@ function update() {
 		}
 	}
 	if (unlockedWeapons.length) {
-		obj = {};
+		var obj = {};
 		for (weapon in unlockedWeapons) {
 			var equip = game.equipment[unlockedWeapons[weapon]];
 			var cost = 0;
@@ -260,6 +279,8 @@ function update() {
 		bestWeapon = keysSorted[0];
 		document.getElementById(bestWeapon).style.border = "1px solid #FF0000";
 		document.getElementById(bestWeapon).addEventListener('click',update,false);
+	} else {
+		bestWeapon = null;
 	}
 	
 	game.global.buyAmt = tempAmt;
@@ -274,6 +295,9 @@ function update() {
 function myTimer(){
 	update();
 	
+	if (document.getElementById("autotrimp").style.display == "block"){
+		 return;
+	}
 	var tempAmt = game.global.buyAmt;
 	var tempState = game.global.firing;
 	var tempTooltips = game.global.lockTooltip;
@@ -322,16 +346,16 @@ function myTimer(){
 					} else {
 						document.getElementById("Gigastation").style.border = "1px solid #00CC00";
 					}
-				}
-				document.getElementById("Gigastation").removeEventListener("click", update);
-				document.getElementById("Gigastation").addEventListener('click',update,false);
-			} else if (!game.buildings[bestBuilding].locked) {
+				} else if (!game.buildings[bestBuilding].locked) {
 				if (canAffordBuilding(bestBuilding)) {
 					buyBuilding(bestBuilding);
 					tooltip("hide");
 					message("Build " + bestBuilding, "Loot", "*eye2", "exotic");
 					update();
 				}
+			}
+			document.getElementById("Gigastation").removeEventListener("click", update);
+			document.getElementById("Gigastation").addEventListener('click',update,false);
 			}
 
 			var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
@@ -455,11 +479,68 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
-		//TODO
+		//["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]
+		if (!game.global.mapsActive) {
+			var everyMap = 100;
+			switch (autoStartMap.enabled) {
+				case 1:
+					everyMap = 1;
+					break;
+				case 2:
+					everyMap = 3;
+					break;
+				case 3:
+					everyMap = 5;
+					break;
+				case 4:
+					everyMap = 10;
+					break;
+			}
+			
+			var obj = {};
+			for (map in game.global.mapsOwnedArray) {
+				if (!game.global.mapsOwnedArray[map].noRecycle)
+				{
+					obj[map] = game.global.mapsOwnedArray[map].level;
+				}
+			}
+			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
+			var highestMap = keysSorted[0];
+			
+			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
+				mapsClicked();
+				mapsClicked();
+				buyMap();
+				var mapID=document.getElementsByClassName('mapThing')[0].id;
+				setTimeout(function(){selectMap(mapID)}, 300);
+				setTimeout(function(){runMap()}, 600);
+				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
+			}
+		}
 	}
-	
+
 	if (autoTSettings.autoEndMap.enabled != 0) {
-		//TODO
+		//["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]
+		
+		if (game.global.mapsActive) {
+			if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
+				if (game.global.repeatMap) {
+					repeatClicked();
+				}
+			} else {
+				if (game.global.repeatMap) {
+					if (autoTSettings.autoEndMap.enabled == 1) {
+						if (game.global.mapBonus >= 9) {
+							repeatClicked();
+						}
+					} else if (autoTSettings.autoEndMap.enabled == 2) {
+						if (console.log(addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)])) <= 1) {
+							repeatClicked();
+						}
+					}
+				}
+			}
+		}
 	}
 		
 	if (autoTSettings.autoFormations.enabled != 0) {
@@ -481,8 +562,22 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGeneticists.enabled != 0) {
-		//TODO
-		//breedTarget.value
+		if(!game.jobs["Geneticist"].locked) {
+			if (!(breedTime(0) > breedTarget.value)) {
+				if (canAffordJob("Geneticist", false, game.global.buyAmt)){
+					buyJob("Geneticist");
+					update();
+				}
+			}
+			if (breedTime(-1) > breedTarget.value) {
+				if (game.jobs.Geneticist.owned > 0) {
+					game.global.firing = true;
+					buyJob("Geneticist");
+					game.global.firing = false;
+					update();
+				}
+			} 
+		}
 	}
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
@@ -564,7 +659,7 @@ function myTimer(){
 				}
 			}
 		} else {
-			setGather("sience");
+			setGather("science");
 		}
 	}
 	
