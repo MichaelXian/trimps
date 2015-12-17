@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.01.00";
+var version = "1.01.01";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -42,7 +42,7 @@ if (checking != null && checking.versioning == version) {
 	autoTSettings = checking;
 }else {
 	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not Buying", "Buying"]};
-	var autoBuildHouses = {enabled: 0, description: "Housing", titles: ["Not Buying", "Buying"]};
+	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
 	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
 	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
 	var autoBuildNurseries = {enabled: 0, description: "Nurseries", titles: ["Not Buying", "Buying"]};
@@ -54,7 +54,7 @@ if (checking != null && checking.versioning == version) {
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
-	var autoGather = {enabled: 0, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
+	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	autoTSettings = {versioning: version, 
 		autoBuildResources: autoBuildResources, 
 		autoBuildHouses: autoBuildHouses, 
@@ -298,6 +298,14 @@ function myTimer(){
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
+	
+	if (game.global.gridArray.length == 0) {
+		autoBuildNurseries.enabled = 0;
+		autoStartMap.enabled = 0;
+		autoGather.enabled = 0;
+		return;
+	}
+	
 	var tempAmt = game.global.buyAmt;
 	var tempState = game.global.firing;
 	var tempTooltips = game.global.lockTooltip;
