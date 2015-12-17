@@ -374,7 +374,7 @@ function myTimer(){
 					buyBuilding(bestBuilding);
 					tooltip("hide");
 					message("Build " + bestBuilding, "Unlocks", "*eye2", "exotic");
-					if (bestbuilding == "Warpstation")
+					if (bestBuilding == "Warpstation")
 					{
 						message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
 					}
