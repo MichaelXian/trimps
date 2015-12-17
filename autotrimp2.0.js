@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.01.01";
+var version = "1.01.02";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -52,7 +52,7 @@ if (checking != null && checking.versioning == version) {
 	var autoStartMap = {enabled: 0, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 1, description: "Leave Map", titles: ["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
-	var autoGeneticists = {enabled: 1, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
+	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
 	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	autoTSettings = {
@@ -583,8 +583,10 @@ function myTimer(){
 					if (workspaces < 1) {
 						game.global.firing = true;
 						buyJob("Lumberjack");
+					tooltip("hide");
 						game.global.firing = false;
 					}
+					tooltip("hide");
 					buyJob("Geneticist");
 					update();
 				}
@@ -592,6 +594,7 @@ function myTimer(){
 			if (breedTime(-1) > breedTarget.value) {
 				if (game.jobs.Geneticist.owned > 0) {
 					game.global.firing = true;
+					tooltip("hide");
 					buyJob("Geneticist");
 					game.global.firing = false;
 					update();
