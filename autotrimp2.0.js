@@ -482,7 +482,7 @@ function myTimer(){
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
 						"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
-						"Formation", "Dominance", "Barrier"]
+						"Formations", "Dominance", "Barrier", "Miners"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
 				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
@@ -525,6 +525,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
+		//TODO how to set sliders?
 		//["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			var everyMap = 100;
@@ -620,7 +621,9 @@ function myTimer(){
 		if (game.upgrades.Dominance.done == 1)	{
 			if (game.global.mapsActive && !game.global.preMapsActive){
 				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-					if (game.global.formation == 2 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {setFormation(1);}
+					if (game.global.formation == 2 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
+						setFormation(1);
+					}
 				} else {
 					if (game.global.formation == 1) {setFormation(2);}
 				}
@@ -646,19 +649,19 @@ function myTimer(){
 					if (workspaces < 1) {
 						game.global.firing = true;
 						buyJob("Lumberjack");
-					tooltip("hide");
+						tooltip("hide");
 						game.global.firing = false;
 					}
-					tooltip("hide");
 					buyJob("Geneticist");
+					tooltip("hide");
 					update();
 				}
 			}
 			if (breedTime(-1) > breedTarget.value) {
 				if (game.jobs.Geneticist.owned > 0) {
 					game.global.firing = true;
-					tooltip("hide");
 					buyJob("Geneticist");
+					tooltip("hide");
 					game.global.firing = false;
 					update();
 				}
