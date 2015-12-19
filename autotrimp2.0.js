@@ -322,18 +322,6 @@ function myTimer(){
 		document.getElementById("toggle" + "autoEndMap").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoEndMap").className = "";
 		document.getElementById("toggle" + "autoEndMap").className = "settingBtn settingBtn" + autoOption.enabled;
-		autoGather.enabled = 0;
-		document.getElementById("toggle" + "autoGather").innerHTML = autoOption.titles[autoOption.enabled];
-		document.getElementById("toggle" + "autoGather").className = "";
-		document.getElementById("toggle" + "autoGather").className = "settingBtn settingBtn" + autoOption.enabled;
-		autoWorkers.enabled = 0;
-		document.getElementById("toggle" + "autoWorkers").innerHTML = autoOption.titles[autoOption.enabled];
-		document.getElementById("toggle" + "autoWorkers").className = "";
-		document.getElementById("toggle" + "autoWorkers").className = "settingBtn settingBtn" + autoOption.enabled;
-		return;
-		
-		
-		
 	}
 	
 	var tempAmt = game.global.buyAmt;
@@ -535,8 +523,13 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
-		//TODO how to set sliders?
-		//["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]
+		lootAdvMapsRange.value = 0;
+		adjustMap('loot', 0);
+		sizeAdvMapsRange.value = 9;
+		adjustMap('size', 9)
+		difficultyAdvMapsRange.value = 9;
+		adjustMap('difficulty', 9)
+		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			var everyMap = 100;
 			switch (autoStartMap.enabled) {
@@ -650,28 +643,6 @@ function myTimer(){
 					}
 				}
 			}
-		} else if (game.upgrades.Formations.done == 1) {
-			if (game.global.mapsActive && !game.global.preMapsActive){
-				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-					if (game.global.formation != 1 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
-						setFormation(1);
-					}
-				} else {
-					if (game.global.formation != 0) {
-						setFormation(0);
-					}
-				}
-			} else {
-				if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
-					if (game.global.formation != 1) {
-						setFormation(1);
-					}
-				} else {
-					if (game.global.formation != 0) {
-						setFormation(0);
-					}
-				}
-			}
 		}
 	}
 	
@@ -700,6 +671,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
+		//TODO scientists
 		game.global.buyAmt = 10;
 		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=290 && canAffordJob("Trainer", false, game.global.buyAmt)){
 			game.global.firing = true;
@@ -779,6 +751,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGather.enabled != 0) {
+		//TODO depends on ressource/sec instead of trimps
 		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap")) {
 			if (game.global.playerGathering != "buildings") {
 				setGather("buildings");
