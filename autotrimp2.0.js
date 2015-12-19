@@ -1,5 +1,5 @@
 var autoTSettings = {};
-var version = "1.02.00";
+var version = "1.03.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -314,10 +314,6 @@ function myTimer(){
 	}
 	
 	if (game.global.gridArray.length == 0) {
-		autoBuildNurseries.enabled = 0;
-		document.getElementById("toggle" + "autoBuildNurseries").innerHTML = autoOption.titles[autoOption.enabled];
-		document.getElementById("toggle" + "autoBuildNurseries").className = "";
-		document.getElementById("toggle" + "autoBuildNurseries").className = "settingBtn settingBtn" + autoOption.enabled;
 		autoStartMap.enabled = 3;
 		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
 		document.getElementById("toggle" + "autoStartMap").className = "";
