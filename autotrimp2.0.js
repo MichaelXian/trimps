@@ -45,7 +45,7 @@ if (checking != null && checking.versioning == version) {
 	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
 	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
 	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
-	var autoBuildNurseries = {enabled: 2, description: "Nurseries", titles: ["Not Buying", "Buying", "Only when above breedTarget"]};
+	var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not Buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
@@ -468,13 +468,18 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildNurseries.enabled != 0) {
-		if (autoBuildNurseries.enabled == 1 || (autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value)) {
+		game.global.buyAmt = 35;
+		if ((autoBuildNurseries.enabled == 1) || 
+				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value) || 
+				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value && canAffordBuilding("Nursery"))) {
+			game.global.buyAmt = 1;
 			if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
 				buyBuilding("Nursery");
 				tooltip("hide");
 				message("Build Nursery", "Unlocks", "*eye2", "exotic");
 			}
 		}
+		game.global.buyAmt = 1;
 	}
 	
 	if (autoTSettings.autoRead.enabled != 0) {
