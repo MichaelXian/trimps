@@ -626,17 +626,45 @@ function myTimer(){
 		if (game.upgrades.Dominance.done == 1)	{
 			if (game.global.mapsActive && !game.global.preMapsActive){
 				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-					if (game.global.formation == 2 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
+					if (game.global.formation != 1 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation == 1) {setFormation(2);}
+					if (game.global.formation != 2) {
+						setFormation(2);
+					}
 				}
 			} else {
 				if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
-					if (game.global.formation == 2) {setFormation(1);}
+					if (game.global.formation != 1) {
+						setFormation(1);
+					}
 				} else {
-					if (game.global.formation == 1) {setFormation(2);}
+					if (game.global.formation != 2) {
+						setFormation(2);
+					}
+				}
+			}
+		} else if (game.upgrades.Formations.done == 1) {
+			if (game.global.mapsActive && !game.global.preMapsActive){
+				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
+					if (game.global.formation != 1 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
+						setFormation(1);
+					}
+				} else {
+					if (game.global.formation != 0) {
+						setFormation(0);
+					}
+				}
+			} else {
+				if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
+					if (game.global.formation != 1) {
+						setFormation(1);
+					}
+				} else {
+					if (game.global.formation != 0) {
+						setFormation(0);
+					}
 				}
 			}
 		}
