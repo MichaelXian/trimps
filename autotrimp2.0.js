@@ -45,14 +45,14 @@ if (checking != null && checking.versioning == version) {
 	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
 	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
 	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
-	var autoBuildNurseries = {enabled: 0, description: "Nurseries", titles: ["Not Buying", "Buying"]};
+	var autoBuildNurseries = {enabled: 2, description: "Nurseries", titles: ["Not Buying", "Buying", "Only when above breedTarget"]};
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
 	var autoStartMap = {enabled: 3, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
-	var autoGeneticists = {enabled: 0, description: "Genetics to breedspeed", titles: ["Not targeting", "Targeting"]};
+	var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
 	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
 	autoTSettings = {
@@ -446,6 +446,13 @@ function myTimer(){
 				message("Build Gateway", "Unlocks", "*eye2", "exotic");
 			}
 		}
+		if (game.buildings.Wormhole.locked == 0) {
+			if (canAffordBuilding("Wormhole") && game.buildings.Wormhole.owned < 20)  {
+				buyBuilding("Gateway");
+				tooltip("hide");
+				message("Build Gateway", "Unlocks", "*eye2", "exotic");
+			}
+		}
 	}
 	
 	if (autoTSettings.autoBuildGyms.enabled != 0) {
@@ -465,10 +472,12 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildNurseries.enabled != 0) {
-		if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
-			buyBuilding("Nursery");
-			tooltip("hide");
-			message("Build Nursery", "Unlocks", "*eye2", "exotic");
+		if (autoBuildNurseries.enabled == 1 || (autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value)) {
+			if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
+				buyBuilding("Nursery");
+				tooltip("hide");
+				message("Build Nursery", "Unlocks", "*eye2", "exotic");
+			}
 		}
 	}
 	
@@ -554,7 +563,7 @@ function myTimer(){
 			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
 			var highestMap = keysSorted[0];
 			
-			var mapsWithRewards = [8, 14, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80];
+			var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80];
 			
 			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
 				mapsClicked();
@@ -641,17 +650,9 @@ function myTimer(){
 		if(!game.jobs["Geneticist"].locked) {
 			if (!(breedTime(0) > breedTarget.value)) {
 				if (canAffordJob("Geneticist", false, game.global.buyAmt)){
-					var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
-					if (maxemployed >= game.resources.trimps.owned - 1) {
-						maxemployed = game.resources.trimps.owned - 2
-					}
-					var workspaces = maxemployed - game.resources.trimps.employed;
-					if (workspaces < 1) {
-						game.global.firing = true;
-						buyJob("Lumberjack");
-						tooltip("hide");
-						game.global.firing = false;
-					}
+					game.global.firing = true;
+					buyJob("Lumberjack");
+					game.global.firing = false;
 					buyJob("Geneticist");
 					tooltip("hide");
 					update();
@@ -670,6 +671,23 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
+		game.global.buyAmt = 10;
+		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=290 && canAffordJob("Trainer", false, game.global.buyAmt)){
+			game.global.firing = true;
+			buyJob("Lumberjack");
+			game.global.firing = false;
+			buyJob("Trainer");
+			tooltip("hide");
+		}
+		
+		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=190 && canAffordJob("Explorer", false, game.global.buyAmt)){
+			game.global.firing = true;
+			buyJob("Lumberjack");
+			game.global.firing = false;
+			buyJob("Explorer");
+			tooltip("hide");
+		}
+		
 		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
 		if (maxemployed >= game.resources.trimps.owned - 1) {
 			maxemployed = game.resources.trimps.owned - 2
@@ -728,6 +746,7 @@ function myTimer(){
 				}
 			}
 		}
+		game.global.buyAmt = 1;
 	}
 	
 	if (autoTSettings.autoGather.enabled != 0) {
