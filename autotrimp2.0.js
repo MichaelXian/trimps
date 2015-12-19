@@ -444,9 +444,9 @@ function myTimer(){
 		}
 		if (game.buildings.Wormhole.locked == 0) {
 			if (canAffordBuilding("Wormhole") && game.buildings.Wormhole.owned < 20)  {
-				buyBuilding("Gateway");
+				buyBuilding("Wormhole");
 				tooltip("hide");
-				message("Build Gateway", "Unlocks", "*eye2", "exotic");
+				message("Build Wormhole", "Unlocks", "*eye2", "exotic");
 			}
 		}
 	}
