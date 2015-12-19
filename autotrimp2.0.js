@@ -718,7 +718,7 @@ function myTimer(){
 		}
 		var workspaces = maxemployed - game.resources.trimps.employed;
 		if (workspaces > tempAmt) {
-			game.global.buyAmt = Math.ceil((workspaces- game.global.buyAmt)*0.1);
+			game.global.buyAmt = Math.ceil((workspaces- tempAmt)*0.1);
 			if (game.jobs.Farmer.owned > 1000000) {
 				// if more than 1000000 farmers allocate 3:1:4
 				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
