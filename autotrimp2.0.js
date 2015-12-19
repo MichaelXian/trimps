@@ -471,7 +471,7 @@ function myTimer(){
 		game.global.buyAmt = 35;
 		if ((autoBuildNurseries.enabled == 1) || 
 				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value) || 
-				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value && canAffordBuilding("Nursery"))) {
+				(autoBuildNurseries.enabled == 3 && breedTime(0) > breedTarget.value && canAffordBuilding("Nursery"))) {
 			game.global.buyAmt = 1;
 			if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
 				buyBuilding("Nursery");
