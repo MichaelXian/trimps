@@ -526,9 +526,9 @@ function myTimer(){
 		lootAdvMapsRange.value = 0;
 		adjustMap('loot', 0);
 		sizeAdvMapsRange.value = 9;
-		adjustMap('size', 9)
+		adjustMap('size', 9);
 		difficultyAdvMapsRange.value = 9;
-		adjustMap('difficulty', 9)
+		adjustMap('difficulty', 9);
 		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			var everyMap = 100;
@@ -562,6 +562,12 @@ function myTimer(){
 			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
 				mapsClicked();
 				mapsClicked();
+				lootAdvMapsRange.value = 0;
+				adjustMap('loot', 0);
+				sizeAdvMapsRange.value = 9;
+				adjustMap('size', 9);
+				difficultyAdvMapsRange.value = 9;
+				adjustMap('difficulty', 9);
 				buyMap();
 				var mapID=document.getElementsByClassName('mapThing')[0].id;
 				setTimeout(function(){selectMap(mapID)}, 300);
@@ -570,6 +576,12 @@ function myTimer(){
 			} else if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1){
 				mapsClicked();
 				mapsClicked();
+				lootAdvMapsRange.value = 0;
+				adjustMap('loot', 0);
+				sizeAdvMapsRange.value = 9;
+				adjustMap('size', 9);
+				difficultyAdvMapsRange.value = 9;
+				adjustMap('difficulty', 9);
 				buyMap();
 				var mapID=document.getElementsByClassName('mapThing')[0].id;
 				setTimeout(function(){selectMap(mapID)}, 300);
@@ -577,8 +589,7 @@ function myTimer(){
 				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
 			} else {
 				for (map in game.global.mapsOwnedArray) {
-					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1)
-					{
+					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1) {
 						mapsClicked();
 						mapsClicked();
 						setTimeout(function(){selectMap(game.global.mapsOwnedArray[map].id)}, 300);
