@@ -153,7 +153,6 @@ function breedTime(genes) {
 }
 
 function timeTillFull(resourceName) {
-	var perSec = 0;
 	var job = "";
 	switch (resourceName) {
 		case "food":
@@ -168,28 +167,34 @@ function timeTillFull(resourceName) {
 		default:
 			return "";
 	}
-	if (game.jobs[job].owned > 0){
-		perSec = (game.jobs[job].owned * game.jobs[job].modifier);
-		if (game.portal.Motivation.level > 0) {
-			perSec += (perSec * game.portal.Motivation.level * game.portal.Motivation.modifier);
-		}
-	}
+	var perSec = resourcePerSecond(job);
+	
 	if (game.global.playerGathering === resourceName){
 		if (game.global.turkimpTimer > 0){
 			perSec *= 1.5;
 		}
 		perSec += game.global.playerModifier;
 	}
-	amount = perSec / game.settings.speed;
 	
 	if (perSec <= 0){
-		return "";
+		return 0;
 	}
 	var remaining = ((game.resources[resourceName].max * (1 + game.portal.Packrat.modifier * game.portal.Packrat.level))) - game.resources[resourceName].owned;
 	if (remaining <= 0){
-		return "";
+		return 0;
 	}
 	return Math.floor(remaining / perSec);
+}
+
+function resourcePerSecond(job) {
+	var perSec = 0;
+	if (game.jobs[job].owned > 0){
+		perSec = (game.jobs[job].owned * game.jobs[job].modifier);
+		if (game.portal.Motivation.level > 0) {
+			perSec += (perSec * game.portal.Motivation.level * game.portal.Motivation.modifier);
+		}
+	}
+	return perSec;
 }
 
 function update() {
@@ -762,21 +767,23 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGather.enabled != 0) {
-		//TODO depends on ressource/sec instead of trimps
 		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap")) {
 			if (game.global.playerGathering != "buildings") {
 				setGather("buildings");
 			}
 		} else if (window.game.global.turkimpTimer > 0) {
-			if (game.jobs.Farmer.owned >= game.jobs.Lumberjack.owned && game.jobs.Farmer.owned >= game.jobs.Miner.owned) {
+			var farmer = resourcePerSecond("Farmer");
+			var lumberjack = resourcePerSecond("Lumberjack");
+			var miner = resourcePerSecond("Miner");
+			if (farmer >= lumberjack && farmer >= miner) {
 				if (game.global.playerGathering != "food") {
 					setGather("food");
 				}
-			} else if (game.jobs.Miner.owned >= game.jobs.Farmer.owned && game.jobs.Miner.owned >= game.jobs.Lumberjack.owned) {
+			} else if (miner >= farmer && miner >= lumberjack) {
 				if (game.global.playerGathering != "metal") {
 					setGather("metal");
 				}
-			} else if (game.jobs.Lumberjack.owned >= game.jobs.Farmer.owned && game.jobs.Lumberjack.owned >= game.jobs.Miner.owned) {
+			} else if (lumberjack >= farmer && lumberjack >= miner) {
 				if (game.global.playerGathering != "wood") {
 					setGather("wood");
 				}
