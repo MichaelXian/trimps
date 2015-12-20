@@ -92,6 +92,13 @@ document.getElementById("remove Shieldblock").onclick = function(){if (game.upgr
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 document.getElementById("add Respec").onclick = function(){if (game.global.canRespecPerks == false) {game.global.canRespecPerks = true;}}
 
+lootAdvMapsRange.value = 0;
+adjustMap('loot', 0);
+sizeAdvMapsRange.value = 9;
+adjustMap('size', 9);
+difficultyAdvMapsRange.value = 9;
+adjustMap('difficulty', 9);
+
 update();
 var timer = setInterval(function () { myTimer(); }, 1000);
 
@@ -528,12 +535,6 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
-		lootAdvMapsRange.value = 0;
-		adjustMap('loot', 0);
-		sizeAdvMapsRange.value = 9;
-		adjustMap('size', 9);
-		difficultyAdvMapsRange.value = 9;
-		adjustMap('difficulty', 9);
 		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			var everyMap = 100;
