@@ -344,6 +344,7 @@ function myTimer(){
 	game.global.firing = false;
 	
 	if (autoTSettings.autoBuildResources.enabled != 0) {
+		
 		var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var foodTime = timeTillFull("food");
 		if ((food > 0.9 || (foodTime != "" && foodTime < 600)) && canAffordBuilding("Barn")) {
@@ -370,6 +371,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildHouses.enabled != 0) {
+		
 		if (bestBuilding != null){
 			if ((game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) && (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done)) {
 				if (canAffordTwoLevel(game.upgrades.Gigastation)) {
@@ -452,6 +454,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildGyms.enabled != 0) {
+		
 		if (!game.buildings.Gym.locked && canAffordBuilding("Gym")) {
 			buyBuilding("Gym");
 			tooltip("hide");
@@ -460,6 +463,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildTributes.enabled != 0) {
+		
 		if (!game.buildings.Tribute.locked && canAffordBuilding("Tribute")) {
 			buyBuilding("Tribute");
 			tooltip("hide");
@@ -468,6 +472,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoBuildNurseries.enabled != 0) {
+		
 		game.global.buyAmt = 35;
 		if ((autoBuildNurseries.enabled == 1) || 
 				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value) || 
@@ -483,6 +488,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoRead.enabled != 0) {
+		
 		if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
 			if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
 				buyUpgrade('Coordination');
@@ -506,6 +512,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoPrestige.enabled != 0) {
+		
 		var allEquip = ["Supershield", "Dagadder", "Bootboost", "Megamace", "Hellishmet", "Polierarm", "Pantastic", "Axeidic", "Smoldershoulder", "Greatersword", "Bestplate", "Harmbalest", "GambesOP"];
 		for (equip in allEquip) {
 			if (game.upgrades[allEquip[equip]].allowed > game.upgrades[allEquip[equip]].done) {
@@ -521,6 +528,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoContinue.enabled != 0) {
+		
 		if (game.global.preMapsActive) {
 			if (premapscounter < 10)
 			{
@@ -638,6 +646,7 @@ function myTimer(){
 	}
 		
 	if (autoTSettings.autoFormations.enabled != 0) {
+		
 		if (game.upgrades.Dominance.done == 1)	{
 			if (game.global.mapsActive && !game.global.preMapsActive){
 				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
@@ -664,6 +673,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGeneticists.enabled != 0) {
+		
 		if(!game.jobs["Geneticist"].locked) {
 			if (!(breedTime(0) > breedTarget.value)) {
 				if (canAffordJob("Geneticist", false, game.global.buyAmt)){
@@ -689,8 +699,10 @@ function myTimer(){
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
 		//TODO scientists
-		game.global.buyAmt = 10;
-		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=290 && canAffordJob("Trainer", false, game.global.buyAmt)){
+		
+		game.global.buyAmt = 35;
+		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=499 && canAffordJob("Trainer", false, game.global.buyAmt)){
+			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
 			game.global.firing = false;
@@ -698,7 +710,8 @@ function myTimer(){
 			tooltip("hide");
 		}
 		
-		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=190 && canAffordJob("Explorer", false, game.global.buyAmt)){
+		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && canAffordJob("Explorer", false, game.global.buyAmt)){
+			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
 			game.global.firing = false;
@@ -768,6 +781,7 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoGather.enabled != 0) {
+		
 		if (game.global.buildingsQueue.length > 0 && !game.global.buildingsQueue[0].startsWith("Trap")) {
 			if (game.global.playerGathering != "buildings") {
 				setGather("buildings");
