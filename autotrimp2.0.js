@@ -100,7 +100,7 @@ difficultyAdvMapsRange.value = 9;
 adjustMap('difficulty', 9);
 
 update();
-var timer = setInterval(function () { myTimer(); }, 1000);
+var timer = setInterval(function () { myTimer(); }, 100);
 
 
 ////////////////////////////////////
@@ -530,7 +530,7 @@ function myTimer(){
 	if (autoTSettings.autoContinue.enabled != 0) {
 		
 		if (game.global.preMapsActive) {
-			if (premapscounter < 10)
+			if (premapscounter < 100)
 			{
 				premapscounter++;
 			} else {
