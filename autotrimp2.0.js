@@ -584,9 +584,9 @@ function myTimer(){
 				adjustMap('difficulty', 9);
 				buyMap();
 				var mapID=document.getElementsByClassName('mapThing')[0].id;
-				setTimeout(function(){selectMap(mapID)}, 300);
-				setTimeout(function(){runMap()}, 600);
-				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 900)
+				setTimeout(function(){selectMap(mapID)}, 30);
+				setTimeout(function(){runMap()}, 60);
+				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 90)
 			} else if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1){
 				mapsClicked();
 				mapsClicked();
@@ -808,7 +808,7 @@ function myTimer(){
 		}
 	}
 	
-	breedTimer.innerHTML = "(" + Math.round(breedTime(0)) + "s) ";
+	breedTimer.innerHTML = "(" + Math.round(breedTime(1)) + "s)";
 	
 	game.global.buyAmt = tempAmt;
 	game.global.firing = tempState;
