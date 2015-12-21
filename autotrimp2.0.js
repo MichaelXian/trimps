@@ -50,7 +50,7 @@ if (checking != null && checking.versioning == version) {
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
 	var autoStartMap = {enabled: 3, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
-	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades"]};
+	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when nextdoable AND mapbonus OR upgrades"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
@@ -202,6 +202,53 @@ function resourcePerSecond(job) {
 		}
 	}
 	return perSec;
+}
+
+function getEnemyMaxAttack(zone) {
+	var amt = 0;
+	var level = 30;
+	var world = zone;
+	amt += 50 * Math.sqrt(world * Math.pow(3.27, world));
+	amt -= 10;
+	if (world == 1){
+		amt *= 0.35;
+		amt = (amt * 0.20) + ((amt * 0.75) * (level / 100));
+	} else if (world == 2){
+		amt *= 0.5;
+		amt = (amt * 0.32) + ((amt * 0.68) * (level / 100));
+	} else if (world < 60) {
+		amt = (amt * 0.375) + ((amt * 0.7) * (level / 100));
+	} else { 
+		amt = (amt * 0.4) + ((amt * 0.9) * (level / 100));
+		amt *= Math.pow(1.15, world - 59);
+	}	
+
+	amt *= 1.1;	
+	amt *= game.badGuys["Snimp"].attack;
+	amt *= 0.84;
+	amt *= 1.19;
+	return Math.floor(amt);
+}
+
+function getEnemyMaxHealth(zone) {
+	var amt = 0;
+	var level = 30;
+	var world = zone;
+	amt += 130 * Math.sqrt(world * Math.pow(3.265, world));
+	amt -= 110;
+	if (world == 1 || world == 2 && level < 10){
+		amt *= 0.6;
+		amt = (amt * 0.25) + ((amt * 0.72) * (level / 100));
+	} else if (world < 60) {
+		amt = (amt * 0.4) + ((amt * 0.4) * (level / 110));
+	} else {
+		amt = (amt * 0.5) + ((amt * 0.8) * (level / 100));
+		amt *= Math.pow(1.1, world - 59);
+	}
+	amt *= 1.1;
+	amt *= game.badGuys["Grimp"].health;
+	amt *= 0.84;
+	return Math.floor(amt);
 }
 
 function update() {
@@ -571,7 +618,7 @@ function myTimer(){
 			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
 			var highestMap = keysSorted[0];
 			
-			var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80];
+			var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80, 21, 33, 44];
 			
 			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
 				mapsClicked();
@@ -634,10 +681,37 @@ function myTimer(){
 							repeatClicked();
 						}
 					} else if (autoTSettings.autoEndMap.enabled == 3) {
-						if (game.global.mapBonus >= 9) {
+						if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
 							repeatClicked();
-						} else if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
-							repeatClicked();
+						}
+					} else if (autoTSettings.autoEndMap.enabled == 4) {
+						if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
+							
+							var minFluct = -1;
+							
+							if (game.portal.Range.level > 0){
+								minFluct = 0.2 - (.02 * game.portal.Range.level);
+							}
+							if (minFluct == -1) {
+								minFluct = .2;
+							}
+							
+							var damage = game.global.soldierCurrentAttack * 2;
+							
+							if (game.global.achievementBonus > 0){
+								damage *= (1 + (game.global.achievementBonus / 100));
+							}
+							
+							var minDamage = Math.floor(damage * (1 - minFluct));
+							
+							if (game.global.antiStacks > 0){
+								minDamage *= (breedTime(0) * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
+							}
+							
+							var zone = game.global.world;
+							if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
+								repeatClicked();
+							}
 						}
 					}
 				}
@@ -698,7 +772,6 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
-		//TODO scientists
 		
 		game.global.buyAmt = 35;
 		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=499 && canAffordJob("Trainer", false, game.global.buyAmt)){
@@ -765,7 +838,10 @@ function myTimer(){
 				}
 			} else {
 				// if less than  100000 farmers allocate 1:1:1
-				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
+				if (game.jobs.Scientists.owned * 5 < game.jobs.Miner.owned) {
+					buyJob("Scientists");
+					tooltip("hide");
+				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
 					buyJob("Farmer");
 					tooltip("hide");
 				} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
