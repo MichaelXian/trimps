@@ -835,8 +835,8 @@ function myTimer(){
 				}
 			} else {
 				// if less than  100000 farmers allocate 1:1:1
-				if (game.jobs.Scientists.owned * 5 < game.jobs.Miner.owned) {
-					buyJob("Scientists");
+				if (game.jobs.Scientist.owned * 5 < game.jobs.Miner.owned) {
+					buyJob("Scientist");
 					tooltip("hide");
 				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
 					buyJob("Farmer");
