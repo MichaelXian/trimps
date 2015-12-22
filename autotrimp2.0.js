@@ -50,7 +50,7 @@ if (checking != null && checking.versioning == version) {
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
 	var autoStartMap = {enabled: 3, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
-	var autoEndMap = {enabled: 3, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when nextdoable AND mapbonus OR upgrades"]};
+	var autoEndMap = {enabled: 4, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when next doable"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
@@ -685,34 +685,31 @@ function myTimer(){
 							repeatClicked();
 						}
 					} else if (autoTSettings.autoEndMap.enabled == 4) {
-						if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
-							
-							var minFluct = -1;
-							
-							if (game.portal.Range.level > 0){
-								minFluct = 0.2 - (.02 * game.portal.Range.level);
-							}
-							if (minFluct == -1) {
-								minFluct = .2;
-							}
-							
-							var damage = game.global.soldierCurrentAttack * 2;
-							
-							if (game.global.achievementBonus > 0){
-								damage *= (1 + (game.global.achievementBonus / 100));
-							}
-							
-							var minDamage = Math.floor(damage * (1 - minFluct));
-							
-							if (game.global.antiStacks > 0){
-								minDamage *= (breedTime(0) * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
-							}
-							
-							var zone = game.global.world;
-							if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
-								repeatClicked();
-							}
+						var minFluct = -1;
+
+						if (game.portal.Range.level > 0){
+							minFluct = 0.2 - (.02 * game.portal.Range.level);
 						}
+						if (minFluct == -1) {
+							minFluct = .2;
+						}
+
+						var damage = game.global.soldierCurrentAttack * 2;
+
+						if (game.global.achievementBonus > 0){
+							damage *= (1 + (game.global.achievementBonus / 100));
+						}
+
+						var minDamage = Math.floor(damage * (1 - minFluct));
+
+						if (game.global.antiStacks > 0){
+							minDamage *= (game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
+						}
+
+						var zone = game.global.world;
+						if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
+							repeatClicked();
+						}					
 					}
 				}
 			}
