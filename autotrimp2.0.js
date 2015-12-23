@@ -805,6 +805,13 @@ function myTimer(){
 			tooltip("hide");
 		}
 		
+		if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 100000) {
+			game.global.buyAmt = game.jobs.Scientist.owned;
+			game.global.firing = true;
+			buyJob("Scientist");
+			game.global.firing = false;
+		}
+		
 		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
 		if (maxemployed >= game.resources.trimps.owned - 1) {
 			maxemployed = game.resources.trimps.owned - 2
@@ -851,7 +858,7 @@ function myTimer(){
 				}
 			} else {
 				// if less than  100000 farmers allocate 1:1:1
-				if (game.jobs.Scientist.owned * 5 < game.jobs.Miner.owned) {
+				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
 					buyJob("Scientist");
 					tooltip("hide");
 				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
