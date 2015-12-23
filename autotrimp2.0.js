@@ -92,13 +92,6 @@ document.getElementById("remove Shieldblock").onclick = function(){if (game.upgr
 autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 document.getElementById("add Respec").onclick = function(){if (game.global.canRespecPerks == false) {game.global.canRespecPerks = true;}}
 
-lootAdvMapsRange.value = 0;
-adjustMap('loot', 0);
-sizeAdvMapsRange.value = 9;
-adjustMap('size', 9);
-difficultyAdvMapsRange.value = 9;
-adjustMap('difficulty', 9);
-
 update();
 var timer = setInterval(function () { myTimer(); }, 100);
 
@@ -123,6 +116,17 @@ function toggleAutoSetting(setting){
 	menuElem.innerHTML = autoOption.titles[autoOption.enabled];
 	menuElem.className = "";
 	menuElem.className = "settingBtn settingBtn" + autoOption.enabled;
+}
+
+function refreshSettings() {
+	for (var item in autoTSettings) {
+		if (item != "versioning") {
+			var menuElem = document.getElementById("toggle" + setting);
+			menuElem.innerHTML = autoOption.titles[autoOption.enabled];
+			menuElem.className = "";
+			menuElem.className = "settingBtn settingBtn" + autoOption.enabled;
+		}
+	}
 }
 
 function breedTime(genes) {
@@ -372,19 +376,22 @@ function myTimer(){
 		 return;
 	}
 	
-	//TODO autofight
+	if (game.global.autoBattle) {
+		if (!game.global.pauseFight) {
+			pauseFight();
+		}
+	} else if (!game.global.fighting) {
+		fightManual();
+	}
+
 	//TODO change behaviour depending on game.global.world
 	//from upgrades/mapbonus to nextdoable at 60
 	//from every 3 to every at 60
+	//restoreGrid
 	if (game.global.gridArray.length == 0) {
 		autoStartMap.enabled = 3;
-		document.getElementById("toggle" + "autoStartMap").innerHTML = autoStartMap.titles[autoStartMap.enabled];
-		document.getElementById("toggle" + "autoStartMap").className = "";
-		document.getElementById("toggle" + "autoStartMap").className = "settingBtn settingBtn" + autoStartMap.enabled;
 		autoEndMap.enabled = 3;
-		document.getElementById("toggle" + "autoEndMap").innerHTML = autoEndMap.titles[autoEndMap.enabled];
-		document.getElementById("toggle" + "autoEndMap").className = "";
-		document.getElementById("toggle" + "autoEndMap").className = "settingBtn settingBtn" + autoEndMap.enabled;
+		refreshSettings();
 	}
 	
 	var tempAmt = game.global.buyAmt;
@@ -581,7 +588,7 @@ function myTimer(){
 	if (autoTSettings.autoContinue.enabled != 0) {
 		
 		if (game.global.preMapsActive) {
-			if (premapscounter < 100)
+			if (premapscounter < 20)
 			{
 				premapscounter++;
 			} else {
@@ -714,7 +721,7 @@ function myTimer(){
 			} else {
 				if (game.global.repeatMap) {
 					if (autoTSettings.autoEndMap.enabled == 1) {
-						if (game.global.mapBonus >= 9) {
+						if (game.global.mapBonus >= 9 || game.global.world > game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level ) {
 							repeatClicked();
 						}
 					} else if (autoTSettings.autoEndMap.enabled == 2) {
