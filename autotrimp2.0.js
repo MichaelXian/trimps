@@ -591,73 +591,89 @@ function myTimer(){
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
 		
-		if (game.global.mapsUnlocked && !game.global.mapsActive) {
-			var everyMap = 100;
-			switch (autoStartMap.enabled) {
-				case 1:
-					everyMap = 1;
-					break;
-				case 2:
-					everyMap = 3;
-					break;
-				case 3:
-					everyMap = 5;
-					break;
-				case 4:
-					everyMap = 10;
-					break;
-			}
-			
-			var obj = {};
-			for (map in game.global.mapsOwnedArray) {
-				if (!game.global.mapsOwnedArray[map].noRecycle)
-				{
-					obj[map] = game.global.mapsOwnedArray[map].level;
+		if (game.global.mapsUnlocked && !game.global.mapsActive && !game.global.preMapsActive) {
+			var startMap = false;
+			var createMap = false;
+			var mapID = null;
+			if (startMap == false && createMap == false)
+			{
+				var everyMap = 100;
+				switch (autoStartMap.enabled) {
+					case 1:
+						everyMap = 1;
+						break;
+					case 2:
+						everyMap = 3;
+						break;
+					case 3:
+						everyMap = 5;
+						break;
+					case 4:
+						everyMap = 10;
+						break;
+				}
+				
+				var obj = {};
+				for (map in game.global.mapsOwnedArray) {
+					if (!game.global.mapsOwnedArray[map].noRecycle)
+					{
+						obj[map] = game.global.mapsOwnedArray[map].level;
+					}
+				}
+				var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
+				var highestMap = keysSorted[0];
+				
+				if (game.global.mapsOwnedArray[highestMap].level <= game.global.world - everyMap) {
+					createMap = true;
 				}
 			}
-			var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
-			var highestMap = keysSorted[0];
 			
-			var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80, 21, 33, 44];
+			if (startMap == false && createMap == false) {
+				var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80, 21, 33, 44];
+				if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1) {
+					createMap = true;
+				}
+			}
 			
-			if (game.global.mapsOwnedArray[highestMap].level <= window.game.global.world - everyMap) {
-				mapsClicked();
-				mapsClicked();
-				lootAdvMapsRange.value = 0;
-				adjustMap('loot', 0);
-				sizeAdvMapsRange.value = 9;
-				adjustMap('size', 9);
-				difficultyAdvMapsRange.value = 9;
-				adjustMap('difficulty', 9);
-				buyMap();
-				var mapID=document.getElementsByClassName('mapThing')[0].id;
-				setTimeout(function(){selectMap(mapID)}, 30);
-				setTimeout(function(){runMap()}, 60);
-				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 90)
-			} else if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1){
-				mapsClicked();
-				mapsClicked();
-				lootAdvMapsRange.value = 0;
-				adjustMap('loot', 0);
-				sizeAdvMapsRange.value = 9;
-				adjustMap('size', 9);
-				difficultyAdvMapsRange.value = 9;
-				adjustMap('difficulty', 9);
-				buyMap();
-				var mapID=document.getElementsByClassName('mapThing')[0].id;
-				setTimeout(function(){selectMap(mapID)}, 30);
-				setTimeout(function(){runMap()}, 60);
-				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 90)
-			} else {
+			if (startMap == false && createMap == false) {
 				for (map in game.global.mapsOwnedArray) {
 					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1) {
-						mapsClicked();
-						mapsClicked();
-						setTimeout(function(){selectMap(game.global.mapsOwnedArray[map].id)}, 300);
-						setTimeout(function(){runMap()}, 600);
+						startMap = true;
+						mapID = game.global.mapsOwnedArray[map].id;
 						break;
 					}
 				}
+			}
+			
+			if (createMap == true) {
+				mapsClicked();
+				mapsClicked();
+				sizeAdvMapsRange.value = 9;
+				adjustMap('size', 9);
+				difficultyAdvMapsRange.value = 9;
+				adjustMap('difficulty', 9);
+				if (game.global.world > 60) {
+					lootAdvMapsRange.value = 9;
+					adjustMap('loot', 9);
+					
+					biomeAdvMapsSelect.value = "Mountain";
+					updateMapCost();
+				} else {
+					lootAdvMapsRange.value = 0;
+					adjustMap('loot', 0);
+					
+					biomeAdvMapsSelect.value = "Random";
+					updateMapCost();
+				}
+				buyMap();
+				startMap = true;
+				mapID = document.getElementsByClassName('mapThing')[0].id;
+			}
+			
+			if (startMap = true) {
+				setTimeout(function(){selectMap(mapID)}, 30);
+				setTimeout(function(){runMap()}, 60);
+				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 90)
 			}
 		}
 	}
