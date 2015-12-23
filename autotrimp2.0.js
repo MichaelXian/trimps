@@ -371,6 +371,8 @@ function myTimer(){
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
+	
+	//TODO autofight
 	//TODO change behaviour depending on game.global.world
 	//from upgrades/mapbonus to nextdoable at 60
 	//from every 3 to every at 60
@@ -638,7 +640,7 @@ function myTimer(){
 				}
 			}
 			
-			if (startMap == false && createMap == false) {
+			if (startMap == false && createMap == false && (autoTSettings.autoEndMap.enabled == 2 || autoTSettings.autoEndMap.enabled == 3)) {
 				for (map in game.global.mapsOwnedArray) {
 					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1) {
 						startMap = true;
@@ -704,7 +706,7 @@ function myTimer(){
 	if (autoTSettings.autoEndMap.enabled != 0) {
 		//["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]
 		
-		if (game.global.mapsActive) {
+		if (game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
 				if (game.global.repeatMap) {
 					repeatClicked();
@@ -764,7 +766,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2) {
+					if (game.global.formation != 2 && (game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 ) {
 						setFormation(2);
 					}
 				}
@@ -774,7 +776,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2) {
+					if (game.global.formation != 2 && (game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 ) {
 						setFormation(2);
 					}
 				}
