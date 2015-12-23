@@ -592,8 +592,9 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoStartMap.enabled != 0) {
-		//TODO depending on state
-		if (game.global.mapsUnlocked && !game.global.mapsActive && !game.global.preMapsActive) {
+		
+		if (game.global.mapsUnlocked && !game.global.mapsActive) {
+			
 			var startMap = false;
 			var createMap = false;
 			var mapID = null;
@@ -647,46 +648,54 @@ function myTimer(){
 				}
 			}
 			
-			if (createMap == true) {
-				mapsClicked();
-				mapsClicked();
-				sizeAdvMapsRange.value = 9;
-				adjustMap('size', 9);
-				difficultyAdvMapsRange.value = 9;
-				adjustMap('difficulty', 9);
-				if (game.global.world > 70) {
-					lootAdvMapsRange.value = 9;
-					adjustMap('loot', 9);
-					
-					biomeAdvMapsSelect.value = "Mountain";
-					updateMapCost();
-				} else if (game.global.world < 16) {
-					sizeAdvMapsRange.value = 0;
-					adjustMap('size', 0);
-					difficultyAdvMapsRange.value = 0;
-					adjustMap('difficulty', 0);
-					lootAdvMapsRange.value = 0;
-					adjustMap('loot', 0);
-					
-					biomeAdvMapsSelect.value = "Random";
-					updateMapCost();
+			if (startMap || createMap) {
+				if (game.global.preMapsActive) {
+					if (createMap == true) {
+						if (game.global.world > 70) {
+							sizeAdvMapsRange.value = 9;
+							adjustMap('size', 9);
+							difficultyAdvMapsRange.value = 9;
+							adjustMap('difficulty', 9);
+							lootAdvMapsRange.value = 9;
+							adjustMap('loot', 9);
+
+							biomeAdvMapsSelect.value = "Mountain";
+							updateMapCost();
+						} else if (game.global.world < 16) {
+							sizeAdvMapsRange.value = 0;
+							adjustMap('size', 0);
+							difficultyAdvMapsRange.value = 0;
+							adjustMap('difficulty', 0);
+							lootAdvMapsRange.value = 0;
+							adjustMap('loot', 0);
+
+							biomeAdvMapsSelect.value = "Random";
+							updateMapCost();
+						} else {
+							adjustMap('size', 9);
+							difficultyAdvMapsRange.value = 9;
+							adjustMap('difficulty', 9);
+							lootAdvMapsRange.value = 0;
+							adjustMap('loot', 0);
+
+							biomeAdvMapsSelect.value = "Random";
+							updateMapCost();
+						}
+						buyMap();
+						startMap = true;
+						mapID = document.getElementsByClassName('mapThing')[0].id;
+					}
+
+					if (startMap == true) {
+						selectMap(mapID);
+						runMap();
+						if (!game.global.repeatMap) {
+							repeatClicked();
+						}
+					}
 				} else {
-					lootAdvMapsRange.value = 0;
-					adjustMap('loot', 0);
-					
-					biomeAdvMapsSelect.value = "Random";
-					updateMapCost();
-				}
-				buyMap();
-				startMap = true;
-				mapID = document.getElementsByClassName('mapThing')[0].id;
-			}
-			
-			if (startMap == true) {
-				selectMap(mapID);
-				runMap();
-				if (!game.global.repeatMap) {
-					repeatClicked();
+					mapsClicked();
+					mapsClicked();
 				}
 			}
 		}
