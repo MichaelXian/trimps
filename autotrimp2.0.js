@@ -385,9 +385,10 @@ function myTimer(){
 	}
 
 	//TODO change behaviour depending on game.global.world
-	//from upgrades/mapbonus to nextdoable at 60
+	//from upgrades/mapbonus to mapbonus at 60
+	//mapbonus to doable at 71
 	//from every 3 to every at 60
-	//restoreGrid
+	//restoreGrid at 60
 	if (game.global.gridArray.length == 0) {
 		autoStartMap.enabled = 3;
 		autoEndMap.enabled = 3;
@@ -773,7 +774,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2 && (game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 ) {
+					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax == game.resources.owned)) {
 						setFormation(2);
 					}
 				}
@@ -783,7 +784,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2 && (game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 ) {
+					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax == game.resources.owned)) {
 						setFormation(2);
 					}
 				}
