@@ -371,7 +371,7 @@ function myTimer(){
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
-	
+	//TODO change behavier depending on game.global.world
 	if (game.global.gridArray.length == 0) {
 		autoStartMap.enabled = 3;
 		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
