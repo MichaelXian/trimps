@@ -371,7 +371,7 @@ function myTimer(){
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
-	//TODO change behavier depending on game.global.world
+	//TODO change behaviour depending on game.global.world
 	if (game.global.gridArray.length == 0) {
 		autoStartMap.enabled = 3;
 		document.getElementById("toggle" + "autoStartMap").innerHTML = autoOption.titles[autoOption.enabled];
@@ -670,7 +670,7 @@ function myTimer(){
 				mapID = document.getElementsByClassName('mapThing')[0].id;
 			}
 			
-			if (startMap = true) {
+			if (startMap == true) {
 				setTimeout(function(){selectMap(mapID)}, 30);
 				setTimeout(function(){runMap()}, 60);
 				setTimeout(function(){if (!game.global.repeatMap) {repeatClicked();}}, 90)
