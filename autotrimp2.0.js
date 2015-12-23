@@ -377,7 +377,7 @@ function myTimer(){
 	}
 	
 	if (game.global.autoBattle) {
-		if (!game.global.pauseFight) {
+		if (game.global.pauseFight) {
 			pauseFight();
 		}
 	} else if (!game.global.fighting) {
