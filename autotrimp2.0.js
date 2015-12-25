@@ -648,9 +648,9 @@ function myTimer(){
 				}
 			}
 			
-			if (startMap == false && createMap == false && (autoTSettings.autoEndMap.enabled == 2 || autoTSettings.autoEndMap.enabled == 3)) {
+			if (startMap == false && createMap == false) {
 				for (map in game.global.mapsOwnedArray) {
-					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) >= 1) {
+					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
 						startMap = true;
 						mapID = game.global.mapsOwnedArray[map].id;
 						break;
@@ -682,6 +682,7 @@ function myTimer(){
 							biomeAdvMapsSelect.value = "Random";
 							updateMapCost();
 						} else {
+							sizeAdvMapsRange.value = 9;
 							adjustMap('size', 9);
 							difficultyAdvMapsRange.value = 9;
 							adjustMap('difficulty', 9);
@@ -714,51 +715,47 @@ function myTimer(){
 	if (autoTSettings.autoEndMap.enabled != 0) {
 		//["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]
 		
-		if (game.global.mapsActive && !game.global.preMapsActive) {
+		if (game.global.repeatMap && game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
-				if (game.global.repeatMap) {
-					repeatClicked();
-				}
+				repeatClicked();
 			} else {
-				if (game.global.repeatMap) {
-					if (autoTSettings.autoEndMap.enabled == 1) {
-						if (game.global.mapBonus >= 9 || game.global.world > game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level ) {
-							repeatClicked();
-						}
-					} else if (autoTSettings.autoEndMap.enabled == 2) {
-						if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
-							repeatClicked();
-						}
-					} else if (autoTSettings.autoEndMap.enabled == 3) {
-						if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
-							repeatClicked();
-						}
-					} else if (autoTSettings.autoEndMap.enabled == 4) {
-						var minFluct = -1;
+				if (autoTSettings.autoEndMap.enabled == 1) {
+					if (game.global.mapBonus >= 9 || game.global.world > game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level ) {
+						repeatClicked();
+					}
+				} else if (autoTSettings.autoEndMap.enabled == 2) {
+					if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
+						repeatClicked();
+					}
+				} else if (autoTSettings.autoEndMap.enabled == 3) {
+					if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
+						repeatClicked();
+					}
+				} else if (autoTSettings.autoEndMap.enabled == 4) {
+					var minFluct = -1;
 
-						if (game.portal.Range.level > 0){
-							minFluct = 0.2 - (.02 * game.portal.Range.level);
-						}
-						if (minFluct == -1) {
-							minFluct = .2;
-						}
+					if (game.portal.Range.level > 0){
+						minFluct = 0.2 - (.02 * game.portal.Range.level);
+					}
+					if (minFluct == -1) {
+						minFluct = .2;
+					}
 
-						var damage = game.global.soldierCurrentAttack * 2;
+					var damage = game.global.soldierCurrentAttack * 2;
 
-						if (game.global.achievementBonus > 0){
-							damage *= (1 + (game.global.achievementBonus / 100));
-						}
+					if (game.global.achievementBonus > 0){
+						damage *= (1 + (game.global.achievementBonus / 100));
+					}
 
-						var minDamage = Math.floor(damage * (1 - minFluct));
+					var minDamage = Math.floor(damage * (1 - minFluct));
 
-						if (game.global.antiStacks > 0){
-							minDamage *= (game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
-						}
+					if (game.global.antiStacks > 0){
+						minDamage *= (game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
+					}
 
-						var zone = game.global.world;
-						if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
-							repeatClicked();
-						}					
+					var zone = game.global.world;
+					if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
+						repeatClicked();
 					}
 				}
 			}
