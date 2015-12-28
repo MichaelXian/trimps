@@ -771,7 +771,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax <= game.resources.trimps.owned)) {
+					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax <= game.resources.trimps.owned + 1)) {
 						setFormation(2);
 					}
 				}
@@ -781,7 +781,7 @@ function myTimer(){
 						setFormation(1);
 					}
 				} else {
-					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax <= game.resources.trimps.owned)) {
+					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax <= game.resources.trimps.owned + 1)) {
 						setFormation(2);
 					}
 				}
