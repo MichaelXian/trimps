@@ -432,12 +432,13 @@ function myTimer(){
 	if (autoTSettings.autoBuildHouses.enabled != 0) {
 		
 		if (bestBuilding != null){
-			if ((game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) && (game.buildings.Warpstation.owned >= Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 2*game.upgrades.Gigastation.done)) {
+			var nextStationAt = 20 + 2 * game.upgrades.Gigastation.done;
+			if ((game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) && (game.buildings.Warpstation.owned >= nextStationAt)) {
 				if (canAffordTwoLevel(game.upgrades.Gigastation)) {
 					message("Build Gigastation at " + game.buildings.Warpstation.owned + " Warpstations", "Unlocks", "*eye2", "exotic");
 					buyUpgrade("Gigastation");
 					tooltip("hide");
-					message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 3*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
+					message("Next Gigastation at " + nextStationAt + " Warpstations", "Unlocks", "*eye2", "exotic");
 					if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
 						document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
 					}
@@ -452,7 +453,7 @@ function myTimer(){
 					message("Build " + bestBuilding, "Unlocks", "*eye2", "exotic");
 					if (bestBuilding == "Warpstation")
 					{
-						message("Next Gigastation at " + (Math.ceil(game.stats.totalHelium.valueTotal()/10000) + 2*game.upgrades.Gigastation.done) + " Warpstations", "Unlocks", "*eye2", "exotic");
+						message("Next Gigastation at " + nextStationAt + " Warpstations", "Unlocks", "*eye2", "exotic");
 					}
 					update();
 				}
