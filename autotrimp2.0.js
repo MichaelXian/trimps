@@ -414,8 +414,7 @@ function myTimer(){
 		if (game.global.pauseFight) {
 			pauseFight();
 		}
-	}
-	if (!game.global.fighting && game.global.gridArray.length != 0) {
+	} else if (!game.global.fighting && game.global.gridArray.length != 0) {
 		fightManual();
 	}
 	
