@@ -6,8 +6,8 @@ var bestWeapon = null;
 var premapscounter = 0;
 
 var breedTarget = document.createElement('input');
-breedTarget.value = 30;
-breedTarget.style.width = "15%";
+breedTarget.value = 30.9;
+breedTarget.style.width = "20%";
 breedTarget.style.color = "black";
 breedTarget.style.textAlign = "right";
 document.getElementById("fireBtn").style.cssFloat = "left";
@@ -411,10 +411,11 @@ function myTimer(){
 	}
 	
 	if (game.global.autoBattle) {
-		if (game.global.pauseFight) {
+		if (!game.global.pauseFight) {
 			pauseFight();
 		}
-	} else if (!game.global.fighting && game.global.gridArray.length != 0) {
+	}
+	if (!game.global.fighting && game.global.gridArray.length != 0 && game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) {
 		fightManual();
 	}
 	
