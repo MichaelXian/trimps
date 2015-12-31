@@ -5,6 +5,10 @@ var bestArmor = null;
 var bestWeapon = null;
 var premapscounter = 0;
 
+var trigger1 = false;
+var trigger2 = false;
+var trigger3 = false;
+
 var breedTarget = document.createElement('input');
 breedTarget.value = 30.9;
 breedTarget.style.width = "20%";
@@ -398,16 +402,22 @@ function myTimer(){
 		 return;
 	}
 
-	//TODO change behaviour depending on game.global.world
-	//from upgrades/mapbonus to mapbonus at 60
-	//mapbonus to doable at 71
-	//from every 3 to every at 60
-	//restoreGrid at 60
 	if (game.global.gridArray.length == 0) {
-		autoTSettings.autoStartMap.enabled = 3;
+		purchaseUpgrade("Battle");
+	}
+	if (!trigger1 && game.global.world <= 59) {
+		autoTSettings.autoStartMap.enabled = 1;
 		autoTSettings.autoEndMap.enabled = 3;
 		refreshSettings();
-		purchaseUpgrade("Battle");
+		trigger1 = true;
+	} else if (!trigger2 && game.global.world > 59) {
+		autoTSettings.autoEndMap.enabled = 1;
+		refreshSettings();
+		trigger2 = true;
+	} else if (!trigger3 && game.global.world > 70) {
+		autoTSettings.autoEndMap.enabled = 4;
+		refreshSettings();
+		trigger3 = true;
 	}
 	
 	if (game.global.autoBattle) {
@@ -806,11 +816,14 @@ function myTimer(){
 		
 		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
 		if (maxemployed >= game.resources.trimps.owned - 1) {
-			maxemployed = game.resources.trimps.owned - 2
+			maxemployed = game.resources.trimps.owned - 2;
 		}
 		var workspaces = maxemployed - game.resources.trimps.employed;
 		if (workspaces > tempAmt) {
 			game.global.buyAmt = Math.ceil((workspaces- tempAmt)*0.1);
+			if (game.global.buyAmt > game.resources.trimps.employed) {
+				game.global.buyAmt = game.resources.trimps.employed;
+			}
 			if (game.jobs.Farmer.owned > 1000000) {
 				// if more than 1000000 farmers allocate 3:1:4
 				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
@@ -836,17 +849,20 @@ function myTimer(){
 					tooltip("hide");
 				}
 			} else if (game.jobs.Farmer.owned < 100){
-				game.global.buyAmt = 1;
-				if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
-					buyJob("Lumberjack");
-					tooltip("hide");
-				} else {
-					buyJob("Farmer");
-					tooltip("hide");
+				if (game.resources.trimps.owned > game.resources.trimps.realMax()*0.9) {
+					game.global.buyAmt = 1;
+					if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
+						buyJob("Lumberjack");
+						tooltip("hide");
+					} else {
+						buyJob("Farmer");
+						tooltip("hide");
+					}
 				}
 			} else {
 				// if less than  100000 farmers allocate 1:1:1
 				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
+					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
 					buyJob("Scientist");
 					tooltip("hide");
 				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
