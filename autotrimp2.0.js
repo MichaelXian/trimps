@@ -132,12 +132,30 @@ function refreshSettings() {
 	}
 }
 
+function getTime() {
+	var date = new Date();
+	var hours = date.getHours() + "";
+	if (hours.length <= 1) {
+		hours = "0" + hours;
+	}
+	var minutes = date.getMinutes() + "";
+	if (minutes.length <= 1) {
+		minutes = "0" + minutes;
+	}
+	var seconds = date.getSeconds() + "";
+	if (seconds.length <= 1) {
+		seconds = "0" + seconds;
+	}
+	return hours + ":" + minutes + ":" + seconds;
+}
+
 function purchaseBuilding(buildingName) {
 	if (canAffordBuilding(buildingName)) {
 		if (game.global.buildingsQueue.indexOf(buildingName + ".1") == -1) {
 			buyBuilding(buildingName);
 			tooltip("hide");
-			message("Build " + buildingName + ".", "Unlocks", "*eye2", "exotic");
+			var date = new Date();
+			message(getTime() + " - Build " + buildingName + ".", "Unlocks", "*eye2", "exotic");
 			update();
 			return true;
 		}
@@ -149,7 +167,8 @@ function purchaseUpgrade(upgradeName) {
 	if (canAffordTwoLevel(game.upgrades[upgradeName])) {
 		if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
 			buyUpgrade(upgradeName);
-			message("Read " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
+			var date = new Date();
+			message(getTime() + " - Upgraded " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
 			update();
 			return true;
 		}
@@ -807,7 +826,7 @@ function myTimer(){
 			tooltip("hide");
 		}
 		
-		if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 100000) {
+		if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 1000000) {
 			game.global.buyAmt = game.jobs.Scientist.owned;
 			game.global.firing = true;
 			buyJob("Scientist");
@@ -838,7 +857,11 @@ function myTimer(){
 				}
 			} else if (game.jobs.Farmer.owned > 100000) {
 				// if more than 100000 farmers allocate 3:3:5
-				if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
+				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
+					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
+					buyJob("Scientist");
+					tooltip("hide");
+				} else if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
 					buyJob("Farmer");
 					tooltip("hide");
 				} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
