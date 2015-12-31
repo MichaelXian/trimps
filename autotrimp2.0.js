@@ -1,12 +1,10 @@
 var autoTSettings = {};
-var version = "1.03.00";
+var version = "1.04.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
 var premapscounter = 0;
 
-var breedTimer = document.createElement("span");
-document.getElementById("goodGuyAttack").parentElement.insertBefore(breedTimer, document.getElementById("critSpan"));
 var breedTarget = document.createElement('input');
 breedTarget.value = 30;
 breedTarget.style.width = "15%";
@@ -49,7 +47,7 @@ if (checking != null && checking.versioning == version) {
 	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
 	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
 	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
-	var autoStartMap = {enabled: 3, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone","Starting every 10 Zone"]};
+	var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone", "Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 4, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when next doable"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
@@ -121,12 +119,38 @@ function toggleAutoSetting(setting){
 function refreshSettings() {
 	for (var item in autoTSettings) {
 		if (item != "versioning") {
-			var menuElem = document.getElementById("toggle" + setting);
+			var autoOption = autoTSettings[item];
+			var menuElem = document.getElementById("toggle" + item);
 			menuElem.innerHTML = autoOption.titles[autoOption.enabled];
 			menuElem.className = "";
 			menuElem.className = "settingBtn settingBtn" + autoOption.enabled;
 		}
 	}
+}
+
+function purchaseBuilding(buildingName) {
+	if (canAffordBuilding(buildingName)) {
+		if (game.global.buildingsQueue.indexOf(buildingName + ".1") == -1) {
+			buyBuilding(buildingName);
+			tooltip("hide");
+			message("Build " + buildingName + ".", "Unlocks", "*eye2", "exotic");
+			update();
+			return true;
+		}
+	}
+	return false;
+}
+
+function purchaseUpgrade(upgradeName) {
+	if (canAffordTwoLevel(game.upgrades[upgradeName])) {
+		if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
+			buyUpgrade(upgradeName);
+			message("Read " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
+			update();
+			return true;
+		}
+	}
+	return false;
 }
 
 function breedTime(genes) {
@@ -352,8 +376,6 @@ function update() {
 	game.global.firing = tempState;
 	game.global.lockTooltip = tempTooltips;
 	
-	breedTimer.innerHTML = "(" + Math.round(breedTime(0)) + "s) ";
-	
 	//remove alerts if they exist
 	var removebadge = true;
 	var badgeupgrades = document.getElementById("upgradesHere");
@@ -375,14 +397,6 @@ function myTimer(){
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
-	
-	if (game.global.autoBattle) {
-		if (game.global.pauseFight) {
-			pauseFight();
-		}
-	} else if (!game.global.fighting) {
-		fightManual();
-	}
 
 	//TODO change behaviour depending on game.global.world
 	//from upgrades/mapbonus to mapbonus at 60
@@ -390,9 +404,19 @@ function myTimer(){
 	//from every 3 to every at 60
 	//restoreGrid at 60
 	if (game.global.gridArray.length == 0) {
-		autoStartMap.enabled = 3;
-		autoEndMap.enabled = 3;
+		autoTSettings.autoStartMap.enabled = 3;
+		autoTSettings.autoEndMap.enabled = 3;
 		refreshSettings();
+		purchaseUpgrade("Battle");
+	}
+	
+	if (game.global.autoBattle) {
+		if (game.global.pauseFight) {
+			pauseFight();
+		}
+	}
+	if (!game.global.fighting && game.global.gridArray.length != 0) {
+		fightManual();
 	}
 	
 	var tempAmt = game.global.buyAmt;
@@ -406,26 +430,20 @@ function myTimer(){
 		
 		var food = game.resources.food.owned / (game.resources.food.max + (game.resources.food.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var foodTime = timeTillFull("food");
-		if ((food > 0.9 || (foodTime != "" && foodTime < 600)) && canAffordBuilding("Barn")) {
-			buyBuilding('Barn');
-			tooltip("hide");
-			message("Build Barn", "Unlocks", "*eye2", "exotic");
+		if (food > 0.9 || (foodTime != "" && foodTime < 600)) {
+			purchaseBuilding("Barn");
 		}
 		
 		var wood = game.resources.wood.owned / (game.resources.wood.max + (game.resources.wood.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var woodTime = timeTillFull("wood");
-		if ((wood > 0.9 || (woodTime != "" && woodTime < 600)) && canAffordBuilding("Shed")) {
-			buyBuilding('Shed');
-			tooltip("hide");
-			message("Build Shed", "Unlocks", "*eye2", "exotic");
+		if (wood > 0.9 || (woodTime != "" && woodTime < 600)) {
+			purchaseBuilding("Shed");
 		}
 		
 		var metal = game.resources.metal.owned / (game.resources.metal.max + (game.resources.metal.max * game.portal.Packrat.modifier * game.portal.Packrat.level));
 		var metalTime = timeTillFull("metal");
-		if ((metal > 0.9 || (metalTime != "" && metalTime < 600)) && canAffordBuilding("Forge")) {
-			buyBuilding('Forge');
-			tooltip("hide");
-			message("Build Forge", "Unlocks", "*eye2", "exotic")
+		if (metal > 0.9 || (metalTime != "" && metalTime < 600)) {
+			purchaseBuilding("Forge");
 		}
 	}
 	
@@ -433,115 +451,67 @@ function myTimer(){
 		
 		if (bestBuilding != null){
 			var nextStationAt = 20 + 2 * game.upgrades.Gigastation.done;
-			if ((game.upgrades.Gigastation.allowed > game.upgrades.Gigastation.done) && (game.buildings.Warpstation.owned >= nextStationAt)) {
-				if (canAffordTwoLevel(game.upgrades.Gigastation)) {
-					message("Build Gigastation at " + game.buildings.Warpstation.owned + " Warpstations", "Unlocks", "*eye2", "exotic");
-					buyUpgrade("Gigastation");
-					tooltip("hide");
-					message("Next Gigastation at " + nextStationAt + " Warpstations", "Unlocks", "*eye2", "exotic");
-					if (document.getElementById("Gigastation").style.border = "1px solid #00CC00") {
-						document.getElementById("Gigastation").style.border = "1px solid #FFFFFF";
-					}
-					update();
-				} else {
-					document.getElementById("Gigastation").style.border = "1px solid #00CC00";
-				}
-			} else if (!game.buildings[bestBuilding].locked) {
-				if (canAffordBuilding(bestBuilding)) {
-					buyBuilding(bestBuilding);
-					tooltip("hide");
-					message("Build " + bestBuilding, "Unlocks", "*eye2", "exotic");
-					if (bestBuilding == "Warpstation")
-					{
-						message("Next Gigastation at " + nextStationAt + " Warpstations", "Unlocks", "*eye2", "exotic");
-					}
-					update();
-				}
+			if (game.buildings.Warpstation.owned >= nextStationAt) {
+				purchaseUpgrade("Gigastation");
+			} else {
+				purchaseBuilding(bestBuilding);
 			}
 
 			var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
 			var grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
 			var grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
 			if (grMansion > grHouse) {
-				if (canAffordBuilding("House")) {
-					buyBuilding("House");
-					tooltip("hide");
-					message("Build House", "Unlocks", "*eye2", "exotic");
-				}
+				purchaseBuilding("House");
 			}
 			if (grMansion > grHut) {
-				if (canAffordBuilding("Hut")) {
-					buyBuilding("Hut");
-					tooltip("hide");
-					message("Build Hut", "Unlocks", "*eye2", "exotic");
-				}
+				purchaseBuilding("Hut");
 			}
 		} else if (!game.buildings.House.locked) {
 			grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
 			grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
 			if (grHouse < grHut) {
-				if (canAffordBuilding("House")) {
-					buyBuilding("House");
-					tooltip("hide");
-					message("Build House", "Unlocks", "*eye2", "exotic");
-					}
+				purchaseBuilding("House");
 			} else {
-				if (canAffordBuilding("Hut")) {
-					buyBuilding("Hut");
-					tooltip("hide");
-					message("Build Hut", "Unlocks", "*eye2", "exotic");
-				}
+				purchaseBuilding("Hut");
 			}
-		} else if (canAffordBuilding("Hut")) {
-			buyBuilding("Hut");
-			tooltip("hide");
-			message("Build Hut", "Unlocks", "*eye2", "exotic");
+		} else {
+			purchaseBuilding("Hut");
 		}
 		if (game.buildings.Gateway.locked == 0) {
-			if (canAffordBuilding("Gateway") && game.buildings.Gateway.owned < 40)  {
-				buyBuilding("Gateway");
-				tooltip("hide");
-				message("Build Gateway", "Unlocks", "*eye2", "exotic");
+			if (game.buildings.Gateway.owned < 40)  {
+				purchaseBuilding("Gateway");
 			}
 		}
 		if (game.buildings.Wormhole.locked == 0) {
-			if (canAffordBuilding("Wormhole") && game.buildings.Wormhole.owned < 20)  {
-				buyBuilding("Wormhole");
-				tooltip("hide");
-				message("Build Wormhole", "Unlocks", "*eye2", "exotic");
+			if (game.buildings.Wormhole.owned < 20)  {
+				purchaseBuilding("Wormhole");
 			}
 		}
 	}
 	
 	if (autoTSettings.autoBuildGyms.enabled != 0) {
 		
-		if (!game.buildings.Gym.locked && canAffordBuilding("Gym")) {
-			buyBuilding("Gym");
-			tooltip("hide");
-			message("Build Gym", "Unlocks", "*eye2", "exotic");
+		if (!game.buildings.Gym.locked) {
+			purchaseBuilding("Gym");
 		}
 	}
 	
 	if (autoTSettings.autoBuildTributes.enabled != 0) {
 		
-		if (!game.buildings.Tribute.locked && canAffordBuilding("Tribute")) {
-			buyBuilding("Tribute");
-			tooltip("hide");
-			message("Build Tribute", "Unlocks", "*eye2", "exotic");
+		if (!game.buildings.Tribute.locked) {
+			purchaseBuilding("Tribute");
 		}
 	}
 	
 	if (autoTSettings.autoBuildNurseries.enabled != 0) {
 		
-		game.global.buyAmt = 35;
-		if ((autoBuildNurseries.enabled == 1) || 
-				(autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value) || 
-				(autoBuildNurseries.enabled == 3 && breedTime(0) > breedTarget.value && canAffordBuilding("Nursery"))) {
-			game.global.buyAmt = 1;
-			if (!game.buildings.Nursery.locked && canAffordBuilding("Nursery")) {
-				buyBuilding("Nursery");
-				tooltip("hide");
-				message("Build Nursery", "Unlocks", "*eye2", "exotic");
+		if (!game.buildings.Nursery.locked) {
+			game.global.buyAmt = 35;
+			if ((autoTSettings.autoBuildNurseries.enabled == 1) || 
+					(autoTSettings.autoBuildNurseries.enabled == 2 && breedTime(0) > breedTarget.value) || 
+					(autoTSettings.autoBuildNurseries.enabled == 3 && breedTime(0) > breedTarget.value && canAffordBuilding("Nursery"))) {
+				game.global.buyAmt = 1;
+				purchaseBuilding("Nursery");
 			}
 		}
 		game.global.buyAmt = 1;
@@ -550,10 +520,8 @@ function myTimer(){
 	if (autoTSettings.autoRead.enabled != 0) {
 		
 		if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
-			if (canAffordCoordinationTrimps() && canAffordTwoLevel(game.upgrades.Coordination)){
-				buyUpgrade('Coordination');
-				message("Read Coordination", "Unlocks", "*eye2", "exotic")
-				update();
+			if (canAffordCoordinationTrimps()){
+				purchaseUpgrade('Coordination');
 			}
 		}
 		var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
@@ -561,10 +529,7 @@ function myTimer(){
 						"Formations", "Dominance", "Barrier", "Miners"]
 		for (var key in game.upgrades) {
 			if (upgrades.indexOf(key) != -1) { 
-				if (game.upgrades[key].allowed > game.upgrades[key].done && canAffordTwoLevel(game.upgrades[key])) {
-					buyUpgrade(key);
-					message("Read " + key, "Unlocks", "*eye2", "exotic");
-					update();
+				if (purchaseUpgrade(key)) {
 					break;
 				}
 			}
@@ -575,14 +540,8 @@ function myTimer(){
 		
 		var allEquip = ["Supershield", "Dagadder", "Bootboost", "Megamace", "Hellishmet", "Polierarm", "Pantastic", "Axeidic", "Smoldershoulder", "Greatersword", "Bestplate", "Harmbalest", "GambesOP"];
 		for (equip in allEquip) {
-			if (game.upgrades[allEquip[equip]].allowed > game.upgrades[allEquip[equip]].done) {
-				if (canAffordTwoLevel(game.upgrades[allEquip[equip]])) {
-					buyUpgrade(allEquip[equip]);
-					message("Prestiged " + allEquip[equip], "Unlocks", "*eye2", "exotic");
-					tooltip("hide");
-					update();
-					break;
-				}
+			if (purchaseUpgrade(allEquip[equip])) {
+				break;
 			}
 		}
 	}
@@ -602,6 +561,8 @@ function myTimer(){
 		}
 	}
 	
+	//TODO start und end zusammen
+	//TODO leave map when block > max dmg auf current map && damage > hp auf next
 	if (autoTSettings.autoStartMap.enabled != 0) {
 		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
@@ -612,7 +573,7 @@ function myTimer(){
 			if (startMap == false && createMap == false)
 			{
 				var everyMap = 100;
-				switch (autoStartMap.enabled) {
+				switch (autoTSettings.autoStartMap.enabled) {
 					case 1:
 						everyMap = 1;
 						break;
@@ -874,11 +835,7 @@ function myTimer(){
 					buyJob("Miner");
 					tooltip("hide");
 				}
-			} else if (game.jobs.Farmer.owned < 10){
-				game.global.buyAmt = 1;
-				buyJob("Farmer");
-				tooltip("hide");
-			} else if (game.jobs.Farmer.owned < 20){
+			} else if (game.jobs.Farmer.owned < 100){
 				game.global.buyAmt = 1;
 				if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
 					buyJob("Lumberjack");
@@ -935,9 +892,10 @@ function myTimer(){
 		}
 	}
 	
-	breedTimer.innerHTML = "(" + Math.round(breedTime(1)) + "s)";
-	
 	game.global.buyAmt = tempAmt;
 	game.global.firing = tempState;
 	game.global.lockTooltip = tempTooltips;
+	
+	//save
+	localStorage.setItem("autotrimpsave",JSON.stringify(autoTSettings));
 }
