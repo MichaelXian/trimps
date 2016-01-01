@@ -1,9 +1,13 @@
 var autoTSettings = {};
-var version = "1.04.00";
+var version = "1.05.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
 var premapscounter = 0;
+
+var baseDamage = 0;
+var baseBlock = 0;
+var baseHealth = 0;
 
 var trigger1 = false;
 var trigger2 = false;
@@ -43,20 +47,21 @@ var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
 if (checking != null && checking.versioning == version) {
 	autoTSettings = checking;
 } else {
-	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not Buying", "Buying"]};
-	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not Buying", "Buying"]};
-	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not Buying", "Buying"]};
-	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not Buying", "Buying"]};
-	var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not Buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
-	var autoRead = {enabled: 1, description: "Read", titles: ["Not Reading", "Reading"]};
-	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not Prestiging", "Prestiging"]};
-	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not Switching", "Switching"]};
-	var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not Starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone", "Starting every 10 Zone"]};
+	var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not buying", "Buying"]};
+	var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not buying", "Buying"]};
+	var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not buying", "Buying"]};
+	var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not buying", "Buying"]};
+	var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
+	var autoRead = {enabled: 1, description: "Read", titles: ["Not reading", "Reading"]};
+	var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not prestiging", "Prestiging"]};
+	var autoMap = {enabled: 1, description: "Automatically manages everything concerning maps", titles: ["Not managing", ""]};
+	var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not switching", "Switching"]};
+	var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone", "Starting every 10 Zone"]};
 	var autoEndMap = {enabled: 4, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when next doable"]};
 	var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
 	var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
-	var autoWorkers = {enabled: 1, description: "Trimps Work", titles: ["Not Jobbing", "Jobbing"]};
-	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not Switching", "Switching"]};
+	var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
+	var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not switching", "Switching"]};
 	autoTSettings = {
 		versioning: version, 
 		autoBuildResources: autoBuildResources, 
@@ -167,6 +172,7 @@ function purchaseUpgrade(upgradeName) {
 	if (canAffordTwoLevel(game.upgrades[upgradeName])) {
 		if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
 			buyUpgrade(upgradeName);
+			tooltip("hide");
 			var date = new Date();
 			message(getTime() + " - Upgraded " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
 			update();
@@ -276,8 +282,6 @@ function getEnemyMaxAttack(zone) {
 
 	amt *= 1.1;	
 	amt *= game.badGuys["Snimp"].attack;
-	amt *= 0.84;
-	amt *= 1.19;
 	return Math.floor(amt);
 }
 
@@ -300,6 +304,17 @@ function getEnemyMaxHealth(zone) {
 	amt *= game.badGuys["Grimp"].health;
 	amt *= 0.84;
 	return Math.floor(amt);
+}
+
+function getMaximalMinDamage() {
+	var damage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
+
+	if (game.global.formation == "0") {
+		damage *= 4;
+	} else if (game.global.formation != 2) {
+		damage *= 8;
+	}
+	return damage;
 }
 
 function update() {
@@ -399,6 +414,32 @@ function update() {
 	game.global.firing = tempState;
 	game.global.lockTooltip = tempTooltips;
 	
+	if (game.global.soldierHealth > 0){
+		//baseDamage
+		baseDamage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
+		if (game.global.formation == 2) {
+			baseDamage /= 4;
+		} else if (game.global.formation != "0") {
+			baseDamage *= 2;
+		}
+
+		//baseBlock
+		baseBlock = game.global.soldierCurrentBlock;
+		if (game.global.formation == 3) {
+			baseBlock /= 4;
+		} else if (game.global.formation != "0") {
+			baseBlock *= 2;
+		}
+
+		//baseHealth
+		baseHealth = game.global.soldierHealthMax;
+		if (game.global.formation == 1) {
+			baseHealth /= 4;
+		} else if (game.global.formation != "0") {
+			baseHealth *= 2;
+		}
+	}
+	
 	//remove alerts if they exist
 	var removebadge = true;
 	var badgeupgrades = document.getElementById("upgradesHere");
@@ -422,6 +463,9 @@ function myTimer(){
 	}
 
 	if (game.global.gridArray.length == 0) {
+		trigger1 = false;
+		trigger2 = false;
+		trigger3 = false;
 		purchaseUpgrade("Battle");
 	}
 	if (!trigger1 && game.global.world <= 59) {
@@ -444,7 +488,7 @@ function myTimer(){
 			pauseFight();
 		}
 	}
-	if (!game.global.fighting && game.global.gridArray.length != 0 && game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) {
+	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) || game.global.soldierHealth > 0) {
 		fightManual();
 	}
 	
@@ -575,6 +619,18 @@ function myTimer(){
 		}
 	}
 	
+	//TODO
+	//Should i be doing maps?
+	//if in world an should be doing switch to pre
+	//if in pre and should do maps  - if map already exist start
+	//if in pre and should do maps  - if map doesn't exist create
+	//if in pre and shouldn't be leave
+	//if in maps and should be check repeat
+	//if in maps and shouldn't uncheck repeat
+	if (autoTSettings.autoMap.enabled != 0) {
+		
+	}
+	
 	if (autoTSettings.autoContinue.enabled != 0) {
 		
 		if (game.global.preMapsActive) {
@@ -589,9 +645,7 @@ function myTimer(){
 			premapscounter = 0;
 		}
 	}
-	
-	//TODO start und end zusammen
-	//TODO leave map when block > max dmg auf current map && damage > hp auf next
+
 	if (autoTSettings.autoStartMap.enabled != 0) {
 		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
@@ -745,35 +799,99 @@ function myTimer(){
 					}
 
 					var zone = game.global.world;
-					if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < minDamage) {
+					if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < getMaximalMinDamage) {
 						repeatClicked();
 					}
 				}
 			}
 		}
 	}
-		
+	
 	if (autoTSettings.autoFormations.enabled != 0) {
 		
-		if (game.upgrades.Dominance.done == 1)	{
-			if (game.global.mapsActive && !game.global.preMapsActive){
-				if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-					if (game.global.formation != 1 && game.global.soldierCurrentBlock < game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19) {
-						setFormation(1);
-					}
-				} else {
-					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax() <= game.resources.trimps.owned + 1)) {
+		var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
+		var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+		if (game.global.mapsActive && !game.global.preMapsActive){
+			var damage = getEnemyMaxAttack(game.global.world);
+			var d = baseHealth/2 - 30 * ((damage - baseBlock/2> 0 ? damage - baseBlock/2 : 0));
+			var x = baseHealth - 30 * ((damage - baseBlock > 0 ? damage - baseBlock : 0));
+			var b = baseHealth/2 - 30 * ((damage - baseBlock*4> 0 ? damage - baseBlock*4 : 0));
+			if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
+				if (game.upgrades.Dominance.done && d > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 2) {
 						setFormation(2);
 					}
-				}
-			} else {
-				if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
+				} else if (x > 0 && (missingHealth*1.1 < baseHealth  || newSquadRdy)) {
+					if (game.global.formation != "0") {
+						setFormation("0");
+					}
+				} else if (game.upgrades.Barrier.done && b > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 3) {
+						setFormation(3);
+					}
+				} else if (game.upgrades.Formations.done) {
 					if (game.global.formation != 1) {
 						setFormation(1);
 					}
-				} else {
-					if (game.global.formation != 2 && ((game.global.soldierHealthMax/8-(game.global.soldierHealthMax - game.global.soldierHealth)) > 0 || game.resources.trimps.realMax() <= game.resources.trimps.owned + 1)) {
+				}
+			} else {
+				if (game.upgrades.Dominance.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 2) {
 						setFormation(2);
+					}
+				} else if (missingHealth*1.1 < baseHealth  || newSquadRdy) {
+					if (game.global.formation != "0") {
+						setFormation("0");
+					}
+				} else if (game.upgrades.Barrier.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 3) {
+						setFormation(3);
+					}
+				} else if (game.upgrades.Formations.done) {
+					if (game.global.formation != 1) {
+						setFormation(1);
+					}
+				}
+			}
+		} else if (!game.global.mapsActive && !game.global.preMapsActive){
+			var damage = getEnemyMaxAttack(game.global.world);
+			var d = baseHealth/2 - 30 * ((damage - baseBlock/2 > damage*0.2 ? damage - baseBlock/2 : damage*0.2));
+			var x = baseHealth - 30 * ((damage - baseBlock > damage*0.2 ? damage - baseBlock : damage*0.2));
+			var b = baseHealth/2 - 30 * ((damage - baseBlock*4 > damage*0.1 ? damage - baseBlock*4 : damage*0.1));
+			if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
+				if (game.upgrades.Dominance.done && d > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 2) {
+						setFormation(2);
+					}
+				} else if (x > 0 && (missingHealth*1.1 < baseHealth  || newSquadRdy)) {
+					if (game.global.formation != "0") {
+						setFormation("0");
+					}
+				} else if (game.upgrades.Barrier.done && b > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 3) {
+						setFormation(3);
+					}
+				} else if (game.upgrades.Formations.done) {
+					if (game.global.formation != 1) {
+						setFormation(1);
+					}
+				}
+			} else {
+				if (game.upgrades.Dominance.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 2) {
+						setFormation(2);
+					}
+				} else if (missingHealth*1.1 < baseHealth  || newSquadRdy) {
+					if (game.global.formation != "0") {
+						setFormation("0");
+					}
+				} else if (game.upgrades.Barrier.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
+					if (game.global.formation != 3) {
+						setFormation(3);
+					}
+				} else if (game.upgrades.Formations.done) {
+					if (game.global.formation != 1) {
+						setFormation(1);
 					}
 				}
 			}
