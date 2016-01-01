@@ -816,16 +816,26 @@ function myTimer(){
 		var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
 			
 		if (!game.global.mapsActive && !game.global.preMapsActive){
-			var enemyFast = game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast
-			var enemyHealth = game.global.gridArray[game.global.lastClearedCell + 1].health;
-			var enemyDamage = game.global.gridArray[game.global.lastClearedCell + 1].attack * 1.19;
+			if (typeof game.global.gridArray[game.global.lastClearedCell + 1] === 'undefined') {
+				var enemy = game.global.gridArray[0];
+			} else {
+				var enemy = game.global.gridArray[game.global.lastClearedCell + 1];
+			}
+			var enemyFast = game.badGuys[enemy.name].fast;
+			var enemyHealth = enemy.health;
+			var enemyDamage = enemy.attack * 1.19;
 			var dDamage = enemyDamage - baseBlock/2 > enemyDamage*0.2 ? enemyDamage - baseBlock/2 : enemyDamage*0.2;
 			var xDamage = enemyDamage - baseBlock > enemyDamage*0.2 ? enemyDamage - baseBlock : enemyDamage*0.2;
 			var bDamage = enemyDamage - baseBlock*4 > enemyDamage*0.1 ? enemyDamage - baseBlock*4 : enemyDamage*0.1;
-		} else {
-			var enemyFast = game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast
-			var enemyHealth = game.global.mapGridArray[game.global.lastClearedMapCell + 1].health;
-			var enemyDamage = game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19;
+		} else if (game.global.mapsActive && !game.global.preMapsActive) {
+			if (typeof game.global.mapGridArray[game.global.lastClearedMapCell + 1] === 'undefined') {
+				var enemy = game.global.mapGridArray[0];
+			} else {
+				var enemy = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
+			}
+			var enemyFast = game.badGuys[enemy.name].fast;
+			var enemyHealth = enemy.health;
+			var enemyDamage = enemy.attack * 1.19;
 			var dDamage = enemyDamage - baseBlock/2 > 0 ? enemyDamage - baseBlock/2 : 0;
 			var xDamage = enemyDamage - baseBlock > 0 ? enemyDamage - baseBlock : 0;
 			var bDamage = enemyDamage - baseBlock*4 > 0 ? enemyDamage - baseBlock*4 : 0;
@@ -882,97 +892,105 @@ function myTimer(){
 	}
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
+	
+		var potencyMod = game.resources.trimps.potency;
+		potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+		if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
+		if (game.unlocks.quickTrimps) potencyMod *= 2;
+		var timeTillFull = log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10));
 		
-		game.global.buyAmt = 35;
-		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=499 && canAffordJob("Trainer", false, game.global.buyAmt)){
-			game.global.buyAmt = 1;
-			game.global.firing = true;
-			buyJob("Lumberjack");
-			game.global.firing = false;
-			buyJob("Trainer");
-			tooltip("hide");
-		}
-		
-		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && canAffordJob("Explorer", false, game.global.buyAmt)){
-			game.global.buyAmt = 1;
-			game.global.firing = true;
-			buyJob("Lumberjack");
-			game.global.firing = false;
-			buyJob("Explorer");
-			tooltip("hide");
-		}
-		
-		if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 1000000) {
-			game.global.buyAmt = game.jobs.Scientist.owned;
-			game.global.firing = true;
-			buyJob("Scientist");
-			game.global.firing = false;
-		}
-		
-		var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
-		if (maxemployed >= game.resources.trimps.owned - 1) {
-			maxemployed = game.resources.trimps.owned - 2;
-		}
-		var workspaces = maxemployed - game.resources.trimps.employed;
-		if (workspaces > tempAmt) {
-			game.global.buyAmt = Math.ceil((workspaces- tempAmt)*0.1);
-			if (game.global.buyAmt > game.resources.trimps.employed) {
-				game.global.buyAmt = game.resources.trimps.employed;
+		if (timeTillFull < breedTime(0)) {
+			game.global.buyAmt = 35;
+			if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && canAffordJob("Trainer", false, game.global.buyAmt)){
+				game.global.buyAmt = 1;
+				game.global.firing = true;
+				buyJob("Lumberjack");
+				game.global.firing = false;
+				buyJob("Trainer");
+				tooltip("hide");
 			}
-			if (game.jobs.Farmer.owned > 1000000) {
-				// if more than 1000000 farmers allocate 3:1:4
-				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
-					buyJob("Farmer");
-					tooltip("hide");
-				} else if (game.jobs.Lumberjack.owned * 4 < game.jobs.Miner.owned * 1) {
-					buyJob("Lumberjack");
-					tooltip("hide");
-				} else {
-					buyJob("Miner");
-					tooltip("hide");
+
+			if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && canAffordJob("Explorer", false, game.global.buyAmt)){
+				game.global.buyAmt = 1;
+				game.global.firing = true;
+				buyJob("Lumberjack");
+				game.global.firing = false;
+				buyJob("Explorer");
+				tooltip("hide");
+			}
+
+			if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 1000000) {
+				game.global.buyAmt = game.jobs.Scientist.owned;
+				game.global.firing = true;
+				buyJob("Scientist");
+				game.global.firing = false;
+			}
+
+			var maxemployed = Math.ceil(game.resources.trimps.realMax() / 2);
+			if (maxemployed >= game.resources.trimps.owned - 1) {
+				maxemployed = game.resources.trimps.owned - 2;
+			}
+			var workspaces = maxemployed - game.resources.trimps.employed;
+			if (workspaces > tempAmt) {
+				game.global.buyAmt = Math.ceil((workspaces- tempAmt)*0.1);
+				if (game.global.buyAmt > game.resources.trimps.employed) {
+					game.global.buyAmt = game.resources.trimps.employed;
 				}
-			} else if (game.jobs.Farmer.owned > 100000) {
-				// if more than 100000 farmers allocate 3:3:5
-				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
-					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
-					buyJob("Scientist");
-					tooltip("hide");
-				} else if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
-					buyJob("Farmer");
-					tooltip("hide");
-				} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
-					buyJob("Lumberjack");
-					tooltip("hide");
-				} else {
-					buyJob("Miner");
-					tooltip("hide");
-				}
-			} else if (game.jobs.Farmer.owned < 100){
-				if (game.resources.trimps.owned > game.resources.trimps.realMax()*0.9) {
-					game.global.buyAmt = 1;
-					if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
+				if (game.jobs.Farmer.owned > 1000000) {
+					// if more than 1000000 farmers allocate 3:1:4
+					if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
+						buyJob("Farmer");
+						tooltip("hide");
+					} else if (game.jobs.Lumberjack.owned * 4 < game.jobs.Miner.owned * 1) {
 						buyJob("Lumberjack");
 						tooltip("hide");
 					} else {
-						buyJob("Farmer");
+						buyJob("Miner");
 						tooltip("hide");
 					}
-				}
-			} else {
-				// if less than  100000 farmers allocate 1:1:1
-				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
-					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
-					buyJob("Scientist");
-					tooltip("hide");
-				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
-					buyJob("Farmer");
-					tooltip("hide");
-				} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
-					buyJob("Lumberjack");
-					tooltip("hide");
-				} else  if(game.jobs.Miner.locked == 0){
-					buyJob("Miner");
-					tooltip("hide");
+				} else if (game.jobs.Farmer.owned > 100000) {
+					// if more than 100000 farmers allocate 3:3:5
+					if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
+						game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
+						buyJob("Scientist");
+						tooltip("hide");
+					} else if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
+						buyJob("Farmer");
+						tooltip("hide");
+					} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
+						buyJob("Lumberjack");
+						tooltip("hide");
+					} else {
+						buyJob("Miner");
+						tooltip("hide");
+					}
+				} else if (game.jobs.Farmer.owned < 100){
+					if (game.resources.trimps.owned > game.resources.trimps.realMax()*0.9) {
+						game.global.buyAmt = 1;
+						if (game.jobs.Lumberjack.owned < game.jobs.Farmer.owned){
+							buyJob("Lumberjack");
+							tooltip("hide");
+						} else {
+							buyJob("Farmer");
+							tooltip("hide");
+						}
+					}
+				} else {
+					// if less than  100000 farmers allocate 1:1:1
+					if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
+						game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
+						buyJob("Scientist");
+						tooltip("hide");
+					} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
+						buyJob("Farmer");
+						tooltip("hide");
+					} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
+						buyJob("Lumberjack");
+						tooltip("hide");
+					} else  if(game.jobs.Miner.locked == 0){
+						buyJob("Miner");
+						tooltip("hide");
+					}
 				}
 			}
 		}
