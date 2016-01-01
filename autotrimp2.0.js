@@ -897,9 +897,8 @@ function myTimer(){
 		potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
 		if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
 		if (game.unlocks.quickTrimps) potencyMod *= 2;
-		var timeTillFull = log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10));
-		
-		if (timeTillFull < breedTime(0)) {
+
+		if (log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10)) < breedTime(0)) {
 			game.global.buyAmt = 35;
 			if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && canAffordJob("Trainer", false, game.global.buyAmt)){
 				game.global.buyAmt = 1;
