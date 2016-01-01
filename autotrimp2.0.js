@@ -1,7 +1,7 @@
 //TODO setup in setup und nur ausführen wenn nochnicht existiert
 
 var autoTSettings = {};
-var version = "1.05.00";
+var version = "1.06.00";
 var bestBuilding = null;
 var bestArmor = null;
 var bestWeapon = null;
@@ -72,7 +72,8 @@ if (checking != null && checking.versioning == version) {
 		autoBuildTributes: autoBuildTributes, 
 		autoBuildNurseries: autoBuildNurseries, 
 		autoRead: autoRead, 
-		autoPrestige: autoPrestige, 
+		autoPrestige: autoPrestige,
+		autoMap: autoMap,
 		autoContinue: autoContinue, 
 		autoStartMap: autoStartMap, 
 		autoEndMap: autoEndMap,  
