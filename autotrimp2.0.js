@@ -1,3 +1,5 @@
+//TODO setup in setup und nur ausführen wenn nochnicht existiert
+
 var autoTSettings = {};
 var version = "1.05.00";
 var bestBuilding = null;
@@ -811,88 +813,43 @@ function myTimer(){
 		
 		var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 		var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
-		if (game.global.mapsActive && !game.global.preMapsActive){
-			var damage = getEnemyMaxAttack(game.global.world);
-			var d = baseHealth/2 - 30 * ((damage - baseBlock/2> 0 ? damage - baseBlock/2 : 0));
-			var x = baseHealth - 30 * ((damage - baseBlock > 0 ? damage - baseBlock : 0));
-			var b = baseHealth/2 - 30 * ((damage - baseBlock*4> 0 ? damage - baseBlock*4 : 0));
-			if (game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast) {
-				if (game.upgrades.Dominance.done && d > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 2) {
-						setFormation(2);
-					}
-				} else if (x > 0 && (missingHealth*1.1 < baseHealth  || newSquadRdy)) {
-					if (game.global.formation != "0") {
-						setFormation("0");
-					}
-				} else if (game.upgrades.Barrier.done && b > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 3) {
-						setFormation(3);
-					}
-				} else if (game.upgrades.Formations.done) {
-					if (game.global.formation != 1) {
-						setFormation(1);
-					}
+			
+		if (!game.global.mapsActive && !game.global.preMapsActive){
+			var enemyFast = game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast
+			var enemyHealth = game.global.gridArray[game.global.lastClearedCell + 1].health;
+			var enemyDamage = game.global.gridArray[game.global.lastClearedCell + 1].attack * 1.19;
+			var dDamage = enemyDamage - baseBlock/2 > enemyDamage*0.2 ? enemyDamage - baseBlock/2 : enemyDamage*0.2;
+			var xDamage = enemyDamage - baseBlock > enemyDamage*0.2 ? enemyDamage - baseBlock : enemyDamage*0.2;
+			var bDamage = enemyDamage - baseBlock*4 > enemyDamage*0.1 ? enemyDamage - baseBlock*4 : enemyDamage*0.1;
+		} else {
+			var enemyFast = game.badGuys[game.global.mapGridArray[game.global.lastClearedMapCell + 1].name].fast
+			var enemyHealth = game.global.mapGridArray[game.global.lastClearedMapCell + 1].health;
+			var enemyDamage = game.global.mapGridArray[game.global.lastClearedMapCell + 1].attack * 1.19;
+			var dDamage = enemyDamage - baseBlock/2 > 0 ? enemyDamage - baseBlock/2 : 0;
+			var xDamage = enemyDamage - baseBlock > 0 ? enemyDamage - baseBlock : 0;
+			var bDamage = enemyDamage - baseBlock*4 > 0 ? enemyDamage - baseBlock*4 : 0;
+		}
+	
+		if (!game.global.preMapsActive) {
+			if (!enemyFast && game.upgrades.Dominance.done && enemyHealth < baseDamage * (game.global.titimpLeft > 0 ? 4 : 2) && (newSquadRdy || baseHealth/2 - missingHealth > 0)) {
+				if (game.global.formation != 2) {
+					setFormation(2);
+				}
+			} else if (game.upgrades.Dominance.done && ((newSquadRdy && baseHealth/2 > dDamage) || baseHealth/2 - missingHealth > dDamage)) {
+				if (game.global.formation != 2) {
+					setFormation(2);
+				}
+			} else if (game.upgrades.Formations.done && ((newSquadRdy && baseHealth > xDamage) || baseHealth - missingHealth > xDamage)) {
+				if (game.global.formation != "0") {
+					setFormation("0");
+				}
+			} else if (game.upgrades.Barrier.done && ((newSquadRdy && baseHealth/2 > bDamage) || baseHealth/2 - missingHealth > bDamage)) {
+				if (game.global.formation != 3) {
+					setFormation(3);
 				}
 			} else {
-				if (game.upgrades.Dominance.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 2) {
-						setFormation(2);
-					}
-				} else if (missingHealth*1.1 < baseHealth  || newSquadRdy) {
-					if (game.global.formation != "0") {
-						setFormation("0");
-					}
-				} else if (game.upgrades.Barrier.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 3) {
-						setFormation(3);
-					}
-				} else if (game.upgrades.Formations.done) {
-					if (game.global.formation != 1) {
-						setFormation(1);
-					}
-				}
-			}
-		} else if (!game.global.mapsActive && !game.global.preMapsActive){
-			var damage = getEnemyMaxAttack(game.global.world);
-			var d = baseHealth/2 - 30 * ((damage - baseBlock/2 > damage*0.2 ? damage - baseBlock/2 : damage*0.2));
-			var x = baseHealth - 30 * ((damage - baseBlock > damage*0.2 ? damage - baseBlock : damage*0.2));
-			var b = baseHealth/2 - 30 * ((damage - baseBlock*4 > damage*0.1 ? damage - baseBlock*4 : damage*0.1));
-			if (game.badGuys[game.global.gridArray[game.global.lastClearedCell + 1].name].fast) {
-				if (game.upgrades.Dominance.done && d > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 2) {
-						setFormation(2);
-					}
-				} else if (x > 0 && (missingHealth*1.1 < baseHealth  || newSquadRdy)) {
-					if (game.global.formation != "0") {
-						setFormation("0");
-					}
-				} else if (game.upgrades.Barrier.done && b > 0 && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 3) {
-						setFormation(3);
-					}
-				} else if (game.upgrades.Formations.done) {
-					if (game.global.formation != 1) {
-						setFormation(1);
-					}
-				}
-			} else {
-				if (game.upgrades.Dominance.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 2) {
-						setFormation(2);
-					}
-				} else if (missingHealth*1.1 < baseHealth  || newSquadRdy) {
-					if (game.global.formation != "0") {
-						setFormation("0");
-					}
-				} else if (game.upgrades.Barrier.done && (missingHealth*1.1 < baseHealth/2 || newSquadRdy)) {
-					if (game.global.formation != 3) {
-						setFormation(3);
-					}
-				} else if (game.upgrades.Formations.done) {
-					if (game.global.formation != 1) {
-						setFormation(1);
-					}
+				if (game.global.formation != 1) {
+					setFormation(1);
 				}
 			}
 		}
