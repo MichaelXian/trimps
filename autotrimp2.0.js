@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.11.00";
+	autoTrimps.version = "1.12.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -59,6 +59,7 @@ function setup() {
 		var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
 		var autoRead = {enabled: 1, description: "Read", titles: ["Not reading", "Reading"]};
 		var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not prestiging", "Prestiging"]};
+		var autoEquip = {enabled: 1, description: "Equip", titles: ["Not buying", "Buying when cheap"]};
 		var autoMap = {enabled: 1, description: "Automatically manages everything concerning maps", titles: ["Not managing", "Managing"]};
 		var autoFormations = {enabled: 1, description: "Switch formation based on enemy and health", titles: ["Not Switching", "Switching"]};
 		var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
@@ -73,6 +74,7 @@ function setup() {
 			autoBuildNurseries: autoBuildNurseries, 
 			autoRead: autoRead, 
 			autoPrestige: autoPrestige,
+			autoEquip: autoEquip,
 			autoMap: autoMap,
 			autoFormations: autoFormations, 
 			autoGeneticists: autoGeneticists, 
@@ -604,6 +606,26 @@ function aPrestige() {
 	}
 }
 
+function aEquip() {
+	var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+	var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+	var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
+	var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
+	
+	if (!enoughDamage && autoTrimps.bestWeapon != null) {
+		if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+			game.global.buyAmt = 1;
+			buyEquipment(autoTrimps.bestWeapon);
+		}
+	}
+	if (!enoughHealth && autoTrimps.bestArmor != null) {
+		if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+			game.global.buyAmt = 1;
+			buyEquipment(autoTrimps.bestArmor);
+		}
+	}
+}
+
 function aMap() {
 	//TODO
 	//if not enough damage for next map and cost low buy equip (only when not already waiting on upgrade?)
@@ -623,7 +645,7 @@ function aMap() {
 		var enemyDamage = getEnemyMaxAttack(game.global.world +1);
 		var enemyHeath = getEnemyMaxHealth(game.global.world +1);
 		var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
-		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath)
+		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
 		var shouldDoMaps = !enoughHealth || !enoughDamage;
 		
 		var shouldDoMap = "world";
@@ -648,7 +670,7 @@ function aMap() {
 		
 		if (!game.global.preMapsActive) {
 			if (game.global.mapsActive) {
-				if (shouldDoMap == game.global.currentMapId) {
+				if (shouldDoMap == game.global.currentMapId && !game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
 					if (!game.global.repeatMap) {
 						repeatClicked();
 					}
@@ -667,14 +689,15 @@ function aMap() {
 		} else if (game.global.preMapsActive) {
 			if (shouldDoMap == "world") {
 				mapsClicked();
-			} else if (shouldDoMap == "create") {	
+			} else if (shouldDoMap == "create") {
+				//TODO optimize buying
 				if (game.global.world > 70) {
 					sizeAdvMapsRange.value = 9;
 					adjustMap('size', 9);
 					difficultyAdvMapsRange.value = 9;
 					adjustMap('difficulty', 9);
-					lootAdvMapsRange.value = 9;
-					adjustMap('loot', 9);
+					lootAdvMapsRange.value = 0;
+					adjustMap('loot', 0);
 
 					biomeAdvMapsSelect.value = "Mountain";
 					updateMapCost();
@@ -699,9 +722,7 @@ function aMap() {
 					biomeAdvMapsSelect.value = "Random";
 					updateMapCost();
 				}
-				selectMap(game.global.mapsOwnedArray[highestMap].id);
 				buyMap();
-				runMap();
 			} else {
 				selectMap(shouldDoMap);
 				runMap();
@@ -981,6 +1002,10 @@ function myTimer(){
 	
 	if (autoTrimps.settings.autoPrestige.enabled != 0) {
 		aPrestige();
+	}
+	
+	if (autoTrimps.settings.autoEquip.enabled != 0) {
+		aEquip();
 	}
 	
 	if (autoTrimps.settings.autoMap.enabled != 0) {
