@@ -4,8 +4,8 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
+	autoTrimps.version = "1.07.00";
 	autoTrimps.settings = {};
-	autoTrimps.version = "1.06.00";
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
 	autoTrimps.bestWeapon = null;
@@ -49,7 +49,7 @@ function setup() {
 
 	//setup options
 	var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
-	if (checking != null && checking.versioning == autoTrimps.version) {
+	if (checking != null && checking.version == autoTrimps.version) {
 		autoTrimps.settings = checking;
 	} else {
 		var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not buying", "Buying"]};
@@ -68,7 +68,7 @@ function setup() {
 		var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
 		var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not switching", "Switching"]};
 		autoTrimps.settings = {
-			versioning: version, 
+			version: autoTrimps.version, 
 			autoBuildResources: autoBuildResources, 
 			autoBuildHouses: autoBuildHouses, 
 			autoBuildGyms: autoBuildGyms, 
@@ -91,7 +91,7 @@ function setup() {
 	var autosettings = document.getElementById("autosettings0");
 	var html = "";
 	for (var item in autoTrimps.settings) {
-		if (item != "versioning") {
+		if (item != "version") {
 			var optionItem = autoTrimps.settings[item]; 
 			var text = optionItem.titles[optionItem.enabled]; 
 			html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div> ";
@@ -163,7 +163,6 @@ function purchaseBuilding(buildingName) {
 		if (game.global.buildingsQueue.indexOf(buildingName + ".1") == -1) {
 			buyBuilding(buildingName);
 			tooltip("hide");
-			var date = new Date();
 			message(getTime() + " - Build " + buildingName + ".", "Unlocks", "*eye2", "exotic");
 			update();
 			return true;
@@ -177,7 +176,6 @@ function purchaseUpgrade(upgradeName) {
 		if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
 			buyUpgrade(upgradeName);
 			tooltip("hide");
-			var date = new Date();
 			message(getTime() + " - Upgraded " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
 			update();
 			return true;
@@ -233,15 +231,25 @@ function timeTillFull(resourceName) {
 			job = "Miner";
 			break;
 		case "trimps":
-			var potencyMod = game.resources.trimps.potency;
-			potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
-			if (game.jobs.Geneticist.owned > 0) {
-				potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
-			}
+			var trimps = game.resources.trimps;
+			var potencyMod = trimps.potency;
+			potencyMod = potencyMod * (1 + game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+
 			if (game.unlocks.quickTrimps) {
 				potencyMod *= 2;
 			}
-			return log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10));
+			if (game.global.brokenPlanet) {
+				potencyMod /= 10;
+			}
+			if (game.jobs.Geneticist.owned > 0) {
+				potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
+			}
+
+			var soldiers = game.portal.Coordinated.level ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
+			var numerus = (trimps.realMax() - trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed);
+			var base = potencyMod + 1;
+
+			return Math.log(numerus)/Math.log(base);
 		default:
 			return "";
 	}
@@ -336,7 +344,7 @@ function update() {
 	var tempState = game.global.firing;
 	var tempTooltips = game.global.lockTooltip;
 	
-	//bestBuilding
+	//Building
 	game.global.buyAmt = 1;
 	var allHousing = ["Mansion", "Hotel", "Resort", "Collector", "Warpstation"];
 	var unlockedHousing = [];
@@ -395,7 +403,7 @@ function update() {
 		autoTrimps.bestArmor = null;
 	}
 	
-	//Attack
+	//Damage
 	var allWeapons = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
 	var unlockedWeapons = [];
 	for (var weapon in allWeapons) {
@@ -424,10 +432,6 @@ function update() {
 		autoTrimps.bestWeapon = null;
 	}
 	
-	game.global.buyAmt = tempAmt;
-	game.global.firing = tempState;
-	game.global.lockTooltip = tempTooltips;
-	
 	if (game.global.soldierHealth > 0){
 		//baseDamage
 		autoTrimps.baseDamage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
@@ -453,7 +457,7 @@ function update() {
 			autoTrimps.baseHealth *= 2;
 		}
 	}
-	
+
 	//remove alerts if they exist
 	var removebadge = true;
 	var badgeupgrades = document.getElementById("upgradesHere");
@@ -465,6 +469,10 @@ function update() {
 	if (removebadge) {
 		document.getElementById("upgradesAlert").innerHTML = "";
 	}
+	
+	game.global.buyAmt = tempAmt;
+	game.global.firing = tempState;
+	game.global.lockTooltip = tempTooltips;
 }
 
 ////////////////////////////////////
@@ -572,7 +580,7 @@ function aRead() {
 			purchaseUpgrade('Coordination');
 		}
 	}
-	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Megaminer", "Megalumber", "Megafarming", "Speedfarming", "Speedlumber", "Speedminer", "Speedscience", "Potency",
+	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Speedscience", "Megaminer", "Speedminer", "Megafarming", "Speedfarming", "Megalumber", "Speedlumber", "Potency",
 					"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
 					"Formations", "Dominance", "Barrier", "Miners"]
 	for (var key in game.upgrades) {
@@ -603,7 +611,7 @@ function aMap() {
 	//if in maps and should be check repeat
 	//if in maps and shouldn't uncheck repeat
 	
-	//survice on 3xbasehealth and block/2 for 30secs
+	//survive on 3xbasehealth and block/2 for 30secs && onehit on d?
 }
 
 function aFormation() {
@@ -855,9 +863,6 @@ function myTimer(){
 	var tempAmt = game.global.buyAmt;
 	var tempState = game.global.firing;
 	var tempTooltips = game.global.lockTooltip;
-	
-	game.global.buyAmt = 1;
-	game.global.firing = false;
 	
 	if (autoTrimps.settings.autoBuildResources.enabled != 0) {
 		aBuildResources();
