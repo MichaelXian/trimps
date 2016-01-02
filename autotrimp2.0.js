@@ -131,7 +131,7 @@ function toggleAutoSetting(setting){
 
 function refreshSettings() {
 	for (var item in autoTrimps.settings) {
-		if (item != "versioning") {
+		if (item != "version") {
 			var autoOption = autoTrimps.settings[item];
 			var menuElem = document.getElementById("toggle" + item);
 			menuElem.innerHTML = autoOption.titles[autoOption.enabled];
@@ -697,7 +697,7 @@ function aGeneticists() {
 }
 
 function aWorkers() {
-	if (timeTillFull("trimps") < breedTime(0)) {
+	if (timeTillFull("trimps") < breedTime(0)+1) {
 		game.global.buyAmt = 35;
 		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && canAffordJob("Trainer", false, game.global.buyAmt)){
 			game.global.buyAmt = 1;
@@ -856,7 +856,7 @@ function myTimer(){
 			pauseFight();
 		}
 	}
-	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) || game.global.soldierHealth > 0) {
+	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) || game.global.soldierHealth > 0 || breedTime(0) < 2) {
 		fightManual();
 	}
 	
