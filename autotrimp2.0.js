@@ -231,6 +231,16 @@ function timeTillFull(resourceName) {
 		case "metal":
 			job = "Miner";
 			break;
+		case "trimps":
+			var potencyMod = game.resources.trimps.potency;
+			potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+			if (game.jobs.Geneticist.owned > 0) {
+				potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
+			}
+			if (game.unlocks.quickTrimps) {
+				potencyMod *= 2;
+			}
+			return log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10));
 		default:
 			return "";
 	}
@@ -630,6 +640,8 @@ function myTimer(){
 	//if in pre and shouldn't be leave
 	//if in maps and should be check repeat
 	//if in maps and shouldn't uncheck repeat
+	
+	//survice on 3xbasehealth and block/2 for 30secs
 	if (autoTSettings.autoMap.enabled != 0) {
 		
 	}
@@ -893,12 +905,7 @@ function myTimer(){
 	
 	if (autoTSettings.autoWorkers.enabled != 0) {
 	
-		var potencyMod = game.resources.trimps.potency;
-		potencyMod += (potencyMod * game.portal.Pheromones.level * game.portal.Pheromones.modifier);
-		if (game.jobs.Geneticist.owned > 0) potencyMod *= Math.pow(.98, game.jobs.Geneticist.owned);
-		if (game.unlocks.quickTrimps) potencyMod *= 2;
-
-		if (log10((game.resources.trimps.realMax() - game.resources.trimps.employed) / (game.resources.trimps.owned - game.resources.trimps.employed)) / log10(1 + (potencyMod / 10)) < breedTime(0)) {
+		if (timeTillFull("trimps") < breedTime(0)) {
 			game.global.buyAmt = 35;
 			if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && canAffordJob("Trainer", false, game.global.buyAmt)){
 				game.global.buyAmt = 1;
