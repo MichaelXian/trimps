@@ -63,7 +63,7 @@ function setup() {
 		var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not switching", "Switching"]};
 		var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone", "Starting every 10 Zone"]};
 		var autoEndMap = {enabled: 4, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when next doable"]};
-		var autoFormations = {enabled: 1, description: "Switch formation based on enemy", titles: ["Not Switching", "Switching"]};
+		var autoFormations = {enabled: 1, description: "Switch formation based on enemy and health", titles: ["Not Switching", "Switching"]};
 		var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 		var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
 		var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not switching", "Switching"]};
@@ -698,8 +698,7 @@ function aGeneticists() {
 
 function aWorkers() {
 	if (timeTillFull("trimps") < breedTime(0)+1) {
-		game.global.buyAmt = 35;
-		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && canAffordJob("Trainer", false, game.global.buyAmt)){
+		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && Math.floor((game.jobs.Trainer.cost.food[0] * Math.pow(job.cost.food[1], game.jobs.Trainer.owned)) * ((Math.pow(game.jobs.Trainer.cost.food[1], 1) - 1) / (game.jobs.Trainer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
 			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
@@ -708,7 +707,7 @@ function aWorkers() {
 			tooltip("hide");
 		}
 
-		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && canAffordJob("Explorer", false, game.global.buyAmt)){
+		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && Math.floor((game.jobs.Explorer.cost.food[0] * Math.pow(job.cost["food"][1], game.jobs.Explorer.owned)) * ((Math.pow(game.jobs.Explorer.cost.food[1], 1) - 1) / (game.jobs.Explorer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
 			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
