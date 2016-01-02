@@ -735,7 +735,12 @@ function aMap() {
 					biomeAdvMapsSelect.value = "Random";
 					updateMapCost();
 				}
-				buyMap();
+				if (updateMapCost(true) > game.resources.fragments.owned) {
+					selectMap(getMapIndex(game.global.mapsOwnedArray[highestMap].id));
+					runMap();
+				} else {
+					buyMap();
+				}
 			} else {
 				selectMap(shouldDoMap);
 				runMap();
