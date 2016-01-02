@@ -607,21 +607,34 @@ function aPrestige() {
 }
 
 function aEquip() {
-	var enemyDamage = getEnemyMaxAttack(game.global.world +1);
-	var enemyHeath = getEnemyMaxHealth(game.global.world +1);
-	var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
-	var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
-	
-	if (!enoughDamage && autoTrimps.bestWeapon != null) {
-		if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
-			game.global.buyAmt = 1;
-			buyEquipment(autoTrimps.bestWeapon);
+	if (game.global.mapsUnlocked) {
+		var obj = {};
+		for (var map in game.global.mapsOwnedArray) {
+			if (!game.global.mapsOwnedArray[map].noRecycle)
+			{
+				obj[map] = game.global.mapsOwnedArray[map].level;
+			}
 		}
-	}
-	if (!enoughHealth && autoTrimps.bestArmor != null) {
-		if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
-			game.global.buyAmt = 1;
-			buyEquipment(autoTrimps.bestArmor);
+		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
+		var highestMap = keysSorted[0];
+		if (addSpecials(true, true, game.global.mapsOwnedArray[highestMap]) < 1) {
+			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+			var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
+			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
+
+			if (!enoughDamage && autoTrimps.bestWeapon != null) {
+				if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+					game.global.buyAmt = 1;
+					buyEquipment(autoTrimps.bestWeapon);
+				}
+			}
+			if (!enoughHealth && autoTrimps.bestArmor != null) {
+				if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+					game.global.buyAmt = 1;
+					buyEquipment(autoTrimps.bestArmor);
+				}
+			}
 		}
 	}
 }
