@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.autoTSettings = {};
+	autoTrimps.settings = {};
 	autoTrimps.version = "1.06.00";
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -30,7 +30,6 @@ function setup() {
 	document.getElementById("fireBtn").parentElement.className = "col-xs-5";
 	document.getElementById("fireBtn").parentElement.appendChild(autoTrimps.breedTarget);
 
-
 	//Line things up, OCD FTW!
 	document.getElementById("helium").style.height = "32.4%";
 	document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses";
@@ -51,7 +50,7 @@ function setup() {
 	//setup options
 	var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
 	if (checking != null && checking.versioning == autoTrimps.version) {
-		autoTrimps.autoTSettings = checking;
+		autoTrimps.settings = checking;
 	} else {
 		var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not buying", "Buying"]};
 		var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not buying", "Buying"]};
@@ -68,7 +67,7 @@ function setup() {
 		var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 		var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
 		var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not switching", "Switching"]};
-		autoTrimps.autoTSettings = {
+		autoTrimps.settings = {
 			versioning: version, 
 			autoBuildResources: autoBuildResources, 
 			autoBuildHouses: autoBuildHouses, 
@@ -91,9 +90,9 @@ function setup() {
 	//add buttons
 	var autosettings = document.getElementById("autosettings0");
 	var html = "";
-	for (var item in autoTrimps.autoTSettings) {
+	for (var item in autoTrimps.settings) {
 		if (item != "versioning") {
-			var optionItem = autoTrimps.autoTSettings[item]; 
+			var optionItem = autoTrimps.settings[item]; 
 			var text = optionItem.titles[optionItem.enabled]; 
 			html += "<div class='optionContainer'><div id='toggle" + item + "' class='noselect settingBtn settingBtn" + optionItem.enabled + "' onclick='toggleAutoSetting(\"" + item + "\")'>" + text + "</div><div class='optionItemDescription'>" + optionItem.description + "</div></div> ";
 		}
@@ -111,7 +110,7 @@ function setup() {
 }
 
 function toggleAutoSetting(setting){
-	var autoOption = autoTrimps.autoTSettings[setting];
+	var autoOption = autoTrimps.settings[setting];
 	var toggles = autoOption.titles.length;
 	if (toggles == 2){
 		autoOption.enabled = (autoOption.enabled) ? 0 : 1;
@@ -131,9 +130,9 @@ function toggleAutoSetting(setting){
 }
 
 function refreshSettings() {
-	for (var item in autoTrimps.autoTSettings) {
+	for (var item in autoTrimps.settings) {
 		if (item != "versioning") {
-			var autoOption = autoTrimps.autoTSettings[item];
+			var autoOption = autoTrimps.settings[item];
 			var menuElem = document.getElementById("toggle" + item);
 			menuElem.innerHTML = autoOption.titles[autoOption.enabled];
 			menuElem.className = "";
@@ -558,9 +557,9 @@ function aBuildTributs() {
 function aBuildNurseries() {
 	if (!game.buildings.Nursery.locked) {
 		game.global.buyAmt = 35;
-		if ((autoTrimps.autoTSettings.autoBuildNurseries.enabled == 1) || 
-				(autoTrimps.autoTSettings.autoBuildNurseries.enabled == 2 && breedTime(0) > autoTrimps.breedTarget.value) || 
-				(autoTrimps.autoTSettings.autoBuildNurseries.enabled == 3 && breedTime(0) > autoTrimps.breedTarget.value && canAffordBuilding("Nursery"))) {
+		if ((autoTrimps.settings.autoBuildNurseries.enabled == 1) || 
+				(autoTrimps.settings.autoBuildNurseries.enabled == 2 && breedTime(0) > autoTrimps.breedTarget.value) || 
+				(autoTrimps.settings.autoBuildNurseries.enabled == 3 && breedTime(0) > autoTrimps.breedTarget.value && canAffordBuilding("Nursery"))) {
 			game.global.buyAmt = 1;
 			purchaseBuilding("Nursery");
 		}
@@ -830,16 +829,16 @@ function myTimer(){
 		purchaseUpgrade("Battle");
 	}
 	if (!autoTrimps.trigger1 && game.global.world <= 59) {
-		autoTrimps.autoTSettings.autoStartMap.enabled = 1;
-		autoTrimps.autoTSettings.autoEndMap.enabled = 3;
+		autoTrimps.settings.autoStartMap.enabled = 1;
+		autoTrimps.settings.autoEndMap.enabled = 3;
 		refreshSettings();
 		autoTrimps.trigger1 = true;
 	} else if (!autoTrimps.trigger2 && game.global.world > 59) {
-		autoTrimps.autoTSettings.autoEndMap.enabled = 1;
+		autoTrimps.settings.autoEndMap.enabled = 1;
 		refreshSettings();
 		autoTrimps.trigger2 = true;
 	} else if (!autoTrimps.trigger3 && game.global.world > 70) {
-		autoTrimps.autoTSettings.autoEndMap.enabled = 4;
+		autoTrimps.settings.autoEndMap.enabled = 4;
 		refreshSettings();
 		autoTrimps.trigger3 = true;
 	}
@@ -860,39 +859,39 @@ function myTimer(){
 	game.global.buyAmt = 1;
 	game.global.firing = false;
 	
-	if (autoTrimps.autoTSettings.autoBuildResources.enabled != 0) {
+	if (autoTrimps.settings.autoBuildResources.enabled != 0) {
 		aBuildResources();
 	}
 	
-	if (autoTrimps.autoTSettings.autoBuildHouses.enabled != 0) {
+	if (autoTrimps.settings.autoBuildHouses.enabled != 0) {
 		aBuildHouses();
 	}
 	
-	if (autoTrimps.autoTSettings.autoBuildGyms.enabled != 0) {
+	if (autoTrimps.settings.autoBuildGyms.enabled != 0) {
 		aBuildGyms();
 	}
 	
-	if (autoTrimps.autoTSettings.autoBuildTributes.enabled != 0) {
+	if (autoTrimps.settings.autoBuildTributes.enabled != 0) {
 		aBuildTributs();
 	}
 	
-	if (autoTrimps.autoTSettings.autoBuildNurseries.enabled != 0) {
+	if (autoTrimps.settings.autoBuildNurseries.enabled != 0) {
 		aBuildNurseries();
 	}
 	
-	if (autoTrimps.autoTSettings.autoRead.enabled != 0) {
+	if (autoTrimps.settings.autoRead.enabled != 0) {
 		aRead();
 	}
 	
-	if (autoTrimps.autoTSettings.autoPrestige.enabled != 0) {
+	if (autoTrimps.settings.autoPrestige.enabled != 0) {
 		aPrestige();
 	}
 	
-	if (autoTrimps.autoTSettings.autoMap.enabled != 0) {
+	if (autoTrimps.settings.autoMap.enabled != 0) {
 		aMap();
 	}
 	
-	if (autoTrimps.autoTSettings.autoContinue.enabled != 0) {
+	if (autoTrimps.settings.autoContinue.enabled != 0) {
 		
 		if (game.global.preMapsActive) {
 			if (autoTrimps.premapscounter < 20)
@@ -907,7 +906,7 @@ function myTimer(){
 		}
 	}
 
-	if (autoTrimps.autoTSettings.autoStartMap.enabled != 0) {
+	if (autoTrimps.settings.autoStartMap.enabled != 0) {
 		
 		if (game.global.mapsUnlocked && !game.global.mapsActive) {
 			
@@ -917,7 +916,7 @@ function myTimer(){
 			if (startMap == false && createMap == false)
 			{
 				var everyMap = 100;
-				switch (autoTrimps.autoTSettings.autoStartMap.enabled) {
+				switch (autoTrimps.settings.autoStartMap.enabled) {
 					case 1:
 						everyMap = 1;
 						break;
@@ -1018,26 +1017,26 @@ function myTimer(){
 		}
 	}
 
-	if (autoTrimps.autoTSettings.autoEndMap.enabled != 0) {
+	if (autoTrimps.settings.autoEndMap.enabled != 0) {
 		//["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]
 		
 		if (game.global.repeatMap && game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
 				repeatClicked();
 			} else {
-				if (autoTrimps.autoTSettings.autoEndMap.enabled == 1) {
+				if (autoTrimps.settings.autoEndMap.enabled == 1) {
 					if (game.global.mapBonus >= 9 || game.global.world > game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level ) {
 						repeatClicked();
 					}
-				} else if (autoTrimps.autoTSettings.autoEndMap.enabled == 2) {
+				} else if (autoTrimps.settings.autoEndMap.enabled == 2) {
 					if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
 						repeatClicked();
 					}
-				} else if (autoTrimps.autoTSettings.autoEndMap.enabled == 3) {
+				} else if (autoTrimps.settings.autoEndMap.enabled == 3) {
 					if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
 						repeatClicked();
 					}
-				} else if (autoTrimps.autoTSettings.autoEndMap.enabled == 4) {
+				} else if (autoTrimps.settings.autoEndMap.enabled == 4) {
 					var minFluct = -1;
 
 					if (game.portal.Range.level > 0){
@@ -1068,19 +1067,19 @@ function myTimer(){
 		}
 	}
 	
-	if (autoTrimps.autoTSettings.autoFormations.enabled != 0) {
+	if (autoTrimps.settings.autoFormations.enabled != 0) {
 		aFormation();
 	}
 	
-	if (autoTrimps.autoTSettings.autoGeneticists.enabled != 0) {
+	if (autoTrimps.settings.autoGeneticists.enabled != 0) {
 		aGeneticists();
 	}
 	
-	if (autoTrimps.autoTSettings.autoWorkers.enabled != 0) {
+	if (autoTrimps.settings.autoWorkers.enabled != 0) {
 		aWorkers();
 	}
 	
-	if (autoTrimps.autoTSettings.autoGather.enabled != 0) {
+	if (autoTrimps.settings.autoGather.enabled != 0) {
 		aGather();
 	}
 	
@@ -1089,5 +1088,5 @@ function myTimer(){
 	game.global.lockTooltip = tempTooltips;
 	
 	//save
-	localStorage.setItem("autotrimpsave",JSON.stringify(autoTrimps.autoTSettings));
+	localStorage.setItem("autotrimpsave",JSON.stringify(autoTrimps.settings));
 }
