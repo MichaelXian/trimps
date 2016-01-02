@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.07.00";
+	autoTrimps.version = "1.10.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -59,10 +59,7 @@ function setup() {
 		var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
 		var autoRead = {enabled: 1, description: "Read", titles: ["Not reading", "Reading"]};
 		var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not prestiging", "Prestiging"]};
-		var autoMap = {enabled: 1, description: "Automatically manages everything concerning maps", titles: ["Not managing", ""]};
-		var autoContinue = {enabled: 1, description: "From PreMaps to World", titles: ["Not switching", "Switching"]};
-		var autoStartMap = {enabled: 1, description: "Start a Map", titles: ["Not starting", "Starting every Zone", "Starting every 3 Zone", "Starting every 5 Zone", "Starting every 10 Zone"]};
-		var autoEndMap = {enabled: 4, description: "Leave Map", titles: ["Not leaving", "Leaving when mapbonus", "Leaving when upgrades ", "Leaving when mapbonus OR upgrades", "Leaving when next doable"]};
+		var autoMap = {enabled: 1, description: "Automatically manages everything concerning maps", titles: ["Not managing", "Managing"]};
 		var autoFormations = {enabled: 1, description: "Switch formation based on enemy and health", titles: ["Not Switching", "Switching"]};
 		var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 		var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
@@ -77,9 +74,6 @@ function setup() {
 			autoRead: autoRead, 
 			autoPrestige: autoPrestige,
 			autoMap: autoMap,
-			autoContinue: autoContinue, 
-			autoStartMap: autoStartMap, 
-			autoEndMap: autoEndMap,  
 			autoFormations: autoFormations, 
 			autoGeneticists: autoGeneticists, 
 			autoWorkers: autoWorkers,
@@ -577,7 +571,16 @@ function aBuildNurseries() {
 function aRead() {
 	if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
 		if (canAffordCoordinationTrimps()){
-			purchaseUpgrade('Coordination');
+			if (purchaseUpgrade('Coordination')) {
+				if (game.global.mapsUnlocked) {
+					if (game.global.switchToMaps) {
+						mapsClicked();
+					} else {
+						mapsClicked();
+						mapsClicked();
+					}
+				}
+			}
 		}
 	}
 	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Speedscience", "Megaminer", "Speedminer", "Megafarming", "Speedfarming", "Megalumber", "Speedlumber", "Potency",
@@ -603,15 +606,108 @@ function aPrestige() {
 
 function aMap() {
 	//TODO
-	//Should i be doing maps?
-	//if in world an should be doing switch to pre
-	//if in pre and should do maps  - if map already exist start
-	//if in pre and should do maps  - if map doesn't exist create
-	//if in pre and shouldn't be leave
-	//if in maps and should be check repeat
-	//if in maps and shouldn't uncheck repeat
+	//if not enough damage for next map and cost low buy equip (only when not already waiting on upgrade?)
+	//if not enough health for next map and cost low buy equip (only when not already waiting on upgrade?)
 	
-	//survive on 3xbasehealth and block/2 for 30secs && onehit on d?
+	if (game.global.mapsUnlocked) {
+		var obj = {};
+		for (var map in game.global.mapsOwnedArray) {
+			if (!game.global.mapsOwnedArray[map].noRecycle)
+			{
+				obj[map] = game.global.mapsOwnedArray[map].level;
+			}
+		}
+		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
+		var highestMap = keysSorted[0];
+		
+		var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+		var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+		var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
+		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath)
+		var shouldDoMaps = !enoughHealth || !enoughDamage;
+		
+		var shouldDoMap = "world";
+		
+		for (var map in game.global.mapsOwnedArray) {
+			if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
+				shouldDoMap = game.global.mapsOwnedArray[map].id;
+				break;
+			}
+		}
+		
+		if (shouldDoMaps) {
+			if (shouldDoMap == "world") {
+				if (game.global.world == game.global.mapsOwnedArray[highestMap].level) {
+					shouldDoMap = game.global.mapsOwnedArray[highestMap].id;
+				}
+				else {
+					shouldDoMap = "create";
+				}
+			}
+		}
+		
+		if (!game.global.preMapsActive) {
+			if (game.global.mapsActive) {
+				if (shouldDoMap == game.global.currentMapId) {
+					if (!game.global.repeatMap) {
+						repeatClicked();
+					}
+				} else {
+					if (game.global.repeatMap) {
+						repeatClicked();
+					}
+				}
+			} else if (!game.global.mapsActive) {
+				if (shouldDoMap != "world") {
+					if (!game.global.switchToMaps) {
+						mapsClicked();
+					}
+				}
+			}
+		} else if (game.global.preMapsActive) {
+			if (shouldDoMap == "world") {
+				mapsClicked();
+			} else if (shouldDoMap == "create") {	
+				if (game.global.world > 70) {
+					sizeAdvMapsRange.value = 9;
+					adjustMap('size', 9);
+					difficultyAdvMapsRange.value = 9;
+					adjustMap('difficulty', 9);
+					lootAdvMapsRange.value = 9;
+					adjustMap('loot', 9);
+
+					biomeAdvMapsSelect.value = "Mountain";
+					updateMapCost();
+				} else if (game.global.world < 16) {
+					sizeAdvMapsRange.value = 0;
+					adjustMap('size', 0);
+					difficultyAdvMapsRange.value = 0;
+					adjustMap('difficulty', 0);
+					lootAdvMapsRange.value = 0;
+					adjustMap('loot', 0);
+
+					biomeAdvMapsSelect.value = "Random";
+					updateMapCost();
+				} else {
+					sizeAdvMapsRange.value = 9;
+					adjustMap('size', 9);
+					difficultyAdvMapsRange.value = 9;
+					adjustMap('difficulty', 9);
+					lootAdvMapsRange.value = 0;
+					adjustMap('loot', 0);
+
+					biomeAdvMapsSelect.value = "Random";
+					updateMapCost();
+				}
+				selectMap(game.global.mapsOwnedArray[highestMap].id);
+				buyMap();
+				runMap();
+			} else {
+				selectMap(shouldDoMap);
+				runMap();
+			}
+		}
+	}
 }
 
 function aFormation() {
@@ -698,7 +794,7 @@ function aGeneticists() {
 
 function aWorkers() {
 	if (timeTillFull("trimps") < breedTime(0)+1) {
-		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && Math.floor((game.jobs.Trainer.cost.food[0] * Math.pow(job.cost.food[1], game.jobs.Trainer.owned)) * ((Math.pow(game.jobs.Trainer.cost.food[1], 1) - 1) / (game.jobs.Trainer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
+		if (!game.jobs.Trainer.locked && game.jobs.Trainer.owned <=699 && Math.floor((game.jobs.Trainer.cost.food[0] * Math.pow(game.jobs.Trainer.cost.food[1], game.jobs.Trainer.owned)) * ((Math.pow(game.jobs.Trainer.cost.food[1], 1) - 1) / (game.jobs.Trainer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
 			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
@@ -707,7 +803,7 @@ function aWorkers() {
 			tooltip("hide");
 		}
 
-		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && Math.floor((game.jobs.Explorer.cost.food[0] * Math.pow(job.cost["food"][1], game.jobs.Explorer.owned)) * ((Math.pow(game.jobs.Explorer.cost.food[1], 1) - 1) / (game.jobs.Explorer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
+		if (!game.jobs.Explorer.locked && game.jobs.Explorer.owned <=199 && Math.floor((game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost["food"][1], game.jobs.Explorer.owned)) * ((Math.pow(game.jobs.Explorer.cost.food[1], 1) - 1) / (game.jobs.Explorer.cost.food[1] - 1))) < game.resources.food.owned / 1000){
 			game.global.buyAmt = 1;
 			game.global.firing = true;
 			buyJob("Lumberjack");
@@ -836,16 +932,12 @@ function myTimer(){
 		purchaseUpgrade("Battle");
 	}
 	if (!autoTrimps.trigger1 && game.global.world <= 59) {
-		autoTrimps.settings.autoStartMap.enabled = 1;
-		autoTrimps.settings.autoEndMap.enabled = 3;
 		refreshSettings();
 		autoTrimps.trigger1 = true;
 	} else if (!autoTrimps.trigger2 && game.global.world > 59) {
-		autoTrimps.settings.autoEndMap.enabled = 1;
 		refreshSettings();
 		autoTrimps.trigger2 = true;
 	} else if (!autoTrimps.trigger3 && game.global.world > 70) {
-		autoTrimps.settings.autoEndMap.enabled = 4;
 		refreshSettings();
 		autoTrimps.trigger3 = true;
 	}
@@ -893,182 +985,6 @@ function myTimer(){
 	
 	if (autoTrimps.settings.autoMap.enabled != 0) {
 		aMap();
-	}
-	
-	if (autoTrimps.settings.autoContinue.enabled != 0) {
-		
-		if (game.global.preMapsActive) {
-			if (autoTrimps.premapscounter < 20)
-			{
-				autoTrimps.premapscounter++;
-			} else {
-				autoTrimps.premapscounter = 0;
-				mapsClicked();
-			}
-		} else {
-			autoTrimps.premapscounter = 0;
-		}
-	}
-
-	if (autoTrimps.settings.autoStartMap.enabled != 0) {
-		
-		if (game.global.mapsUnlocked && !game.global.mapsActive) {
-			
-			var startMap = false;
-			var createMap = false;
-			var mapID = null;
-			if (startMap == false && createMap == false)
-			{
-				var everyMap = 100;
-				switch (autoTrimps.settings.autoStartMap.enabled) {
-					case 1:
-						everyMap = 1;
-						break;
-					case 2:
-						everyMap = 3;
-						break;
-					case 3:
-						everyMap = 5;
-						break;
-					case 4:
-						everyMap = 10;
-						break;
-				}
-				
-				var obj = {};
-				for (var map in game.global.mapsOwnedArray) {
-					if (!game.global.mapsOwnedArray[map].noRecycle)
-					{
-						obj[map] = game.global.mapsOwnedArray[map].level;
-					}
-				}
-				var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
-				var highestMap = keysSorted[0];
-				
-				if (game.global.mapsOwnedArray[highestMap].level <= game.global.world - everyMap) {
-					createMap = true;
-				}
-			}
-			
-			if (startMap == false && createMap == false) {
-				var mapsWithRewards = [8, 14, 15, 18, 25, 29, 30, 34, 37, 40, 47, 50, 59, 80, 21, 33, 44];
-				if (mapsWithRewards.indexOf(game.global.world) != -1 && game.global.mapBonus < 1) {
-					createMap = true;
-				}
-			}
-			
-			if (startMap == false && createMap == false) {
-				for (var map in game.global.mapsOwnedArray) {
-					if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
-						startMap = true;
-						mapID = game.global.mapsOwnedArray[map].id;
-						break;
-					}
-				}
-			}
-			
-			if (startMap || createMap) {
-				if (game.global.preMapsActive) {
-					if (createMap == true) {
-						if (game.global.world > 70) {
-							sizeAdvMapsRange.value = 9;
-							adjustMap('size', 9);
-							difficultyAdvMapsRange.value = 9;
-							adjustMap('difficulty', 9);
-							lootAdvMapsRange.value = 9;
-							adjustMap('loot', 9);
-
-							biomeAdvMapsSelect.value = "Mountain";
-							updateMapCost();
-						} else if (game.global.world < 16) {
-							sizeAdvMapsRange.value = 0;
-							adjustMap('size', 0);
-							difficultyAdvMapsRange.value = 0;
-							adjustMap('difficulty', 0);
-							lootAdvMapsRange.value = 0;
-							adjustMap('loot', 0);
-
-							biomeAdvMapsSelect.value = "Random";
-							updateMapCost();
-						} else {
-							sizeAdvMapsRange.value = 9;
-							adjustMap('size', 9);
-							difficultyAdvMapsRange.value = 9;
-							adjustMap('difficulty', 9);
-							lootAdvMapsRange.value = 0;
-							adjustMap('loot', 0);
-
-							biomeAdvMapsSelect.value = "Random";
-							updateMapCost();
-						}
-						buyMap();
-						startMap = true;
-						mapID = document.getElementsByClassName('mapThing')[0].id;
-					}
-
-					if (startMap == true) {
-						selectMap(mapID);
-						runMap();
-						if (!game.global.repeatMap) {
-							repeatClicked();
-						}
-					}
-				} else {
-					mapsClicked();
-					mapsClicked();
-				}
-			}
-		}
-	}
-
-	if (autoTrimps.settings.autoEndMap.enabled != 0) {
-		//["Not leaving", "Leaving when max Mapbonus","Leaving when no upgrades left"]
-		
-		if (game.global.repeatMap && game.global.mapsActive && !game.global.preMapsActive) {
-			if (game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].noRecycle) {
-				repeatClicked();
-			} else {
-				if (autoTrimps.settings.autoEndMap.enabled == 1) {
-					if (game.global.mapBonus >= 9 || game.global.world > game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level ) {
-						repeatClicked();
-					}
-				} else if (autoTrimps.settings.autoEndMap.enabled == 2) {
-					if (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1) {
-						repeatClicked();
-					}
-				} else if (autoTrimps.settings.autoEndMap.enabled == 3) {
-					if (game.global.mapBonus >= 9 || (addSpecials(true, true, game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)]) <= 1)) {
-						repeatClicked();
-					}
-				} else if (autoTrimps.settings.autoEndMap.enabled == 4) {
-					var minFluct = -1;
-
-					if (game.portal.Range.level > 0){
-						minFluct = 0.2 - (.02 * game.portal.Range.level);
-					}
-					if (minFluct == -1) {
-						minFluct = .2;
-					}
-
-					var damage = game.global.soldierCurrentAttack * 2;
-
-					if (game.global.achievementBonus > 0){
-						damage *= (1 + (game.global.achievementBonus / 100));
-					}
-
-					var minDamage = Math.floor(damage * (1 - minFluct));
-
-					if (game.global.antiStacks > 0){
-						minDamage *= (game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1;
-					}
-
-					var zone = game.global.world;
-					if (getEnemyMaxAttack(zone) < game.global.soldierCurrentBlock && getEnemyMaxHealth(zone) < getMaximalMinDamage) {
-						repeatClicked();
-					}
-				}
-			}
-		}
 	}
 	
 	if (autoTrimps.settings.autoFormations.enabled != 0) {
