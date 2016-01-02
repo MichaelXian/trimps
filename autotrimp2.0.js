@@ -324,17 +324,6 @@ function getEnemyMaxHealth(zone) {
 	return Math.floor(amt);
 }
 
-function getMaximalMinDamage() {
-	var damage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
-
-	if (game.global.formation == "0") {
-		damage *= 4;
-	} else if (game.global.formation != 2) {
-		damage *= 8;
-	}
-	return damage;
-}
-
 function update() {
 	var tempAmt = game.global.buyAmt;
 	var tempState = game.global.firing;
@@ -640,10 +629,6 @@ function aEquip() {
 }
 
 function aMap() {
-	//TODO
-	//if not enough damage for next map and cost low buy equip (only when not already waiting on upgrade?)
-	//if not enough health for next map and cost low buy equip (only when not already waiting on upgrade?)
-	
 	if (game.global.mapsUnlocked) {
 		var obj = {};
 		for (var map in game.global.mapsOwnedArray) {
@@ -862,7 +847,7 @@ function aWorkers() {
 		if (maxemployed >= game.resources.trimps.owned - 1) {
 			maxemployed = game.resources.trimps.owned - 2;
 		}
-		var workspaces = maxemployed - game.resources.trimps.employed;
+		var workspaces = maxemployed - (game.resources.trimps.employed+1);
 		if (workspaces > 0) {
 			game.global.buyAmt = Math.ceil(workspaces*0.1);
 			if (game.global.buyAmt > game.resources.trimps.employed) {
