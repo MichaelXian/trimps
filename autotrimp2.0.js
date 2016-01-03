@@ -739,7 +739,7 @@ function aMap() {
 					updateMapCost();
 				}
 				if (updateMapCost(true) > game.resources.fragments.owned) {
-					selectMap(getMapIndex(game.global.mapsOwnedArray[highestMap].id));
+					selectMap(game.global.mapsOwnedArray[highestMap].id);
 					runMap();
 				} else {
 					buyMap();
