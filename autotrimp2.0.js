@@ -563,7 +563,7 @@ function aRead() {
 	if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
 		if (canAffordCoordinationTrimps()){
 			if (purchaseUpgrade('Coordination')) {
-				if (game.global.mapsUnlocked) {
+				if (game.global.mapsUnlocked && autoTrimps.settings.autoMap.enabled != 0) {
 					if (game.global.switchToMaps) {
 						mapsClicked();
 					} else {
