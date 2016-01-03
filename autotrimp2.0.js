@@ -596,6 +596,7 @@ function aPrestige() {
 }
 
 function aEquip() {
+	//TODO only if best equip isn't locked?
 	if (game.global.mapsUnlocked) {
 		var obj = {};
 		for (var map in game.global.mapsOwnedArray) {
@@ -607,19 +608,36 @@ function aEquip() {
 		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
 		var highestMap = keysSorted[0];
 		if (addSpecials(true, true, game.global.mapsOwnedArray[highestMap]) < 1) {
+			var healthNotUpgradeable = false;
+			var damageNotUpgradeable = false;
+			var allEquip = ["Supershield", "Dagadder", "Bootboost", "Megamace", "Hellishmet", "Polierarm", "Pantastic", "Axeidic", "Smoldershoulder", "Greatersword", "Bestplate", "Harmbalest", "GambesOP"];
+			for (var equip in allEquip) {
+				if (game.upgrades[allEquip[equip]].prestiges == autoTrimps.bestArmor) {
+					if (game.upgrades[allEquip[equip]].allowed == game.upgrades[allEquip[equip]].done) {
+						healthNotUpgradeable = true;
+					}
+				} else if (game.upgrades[allEquip[equip]].prestiges == autoTrimps.bestWeapon) {
+					if (game.upgrades[allEquip[equip]].allowed == game.upgrades[allEquip[equip]].done) {
+						damageNotUpgradeable = true;
+					}
+				}
+			}
+			
 			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
 			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
 			var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
 			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
 
-			if (!enoughDamage && autoTrimps.bestWeapon != null) {
-				if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+			if (!enoughDamage && damageNotUpgradeable && autoTrimps.bestWeapon != null) {
+				var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+				if (equipPrice < game.resources.metal.owned / 100) {
 					game.global.buyAmt = 1;
 					buyEquipment(autoTrimps.bestWeapon);
 				}
 			}
-			if (!enoughHealth && autoTrimps.bestArmor != null) {
-				if (Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level))) < game.resources.metal.owned / 1000) {
+			if (!enoughHealth && healthNotUpgradeable && autoTrimps.bestArmor != null) {
+				var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+				if (equipPrice < game.resources.metal.owned / 100) {
 					game.global.buyAmt = 1;
 					buyEquipment(autoTrimps.bestArmor);
 				}
