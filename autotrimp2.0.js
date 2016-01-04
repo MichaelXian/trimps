@@ -18,6 +18,8 @@ function setup() {
 	autoTrimps.trigger1 = false;
 	autoTrimps.trigger2 = false;
 	autoTrimps.trigger3 = false;
+	autoTrimps.triggerElectricity1 = false;
+	autoTrimps.triggerElectricity2 = false;
 
 	autoTrimps.breedTarget = document.createElement('input');
 	autoTrimps.breedTarget.value = 30.9;
@@ -56,7 +58,7 @@ function setup() {
 		var autoBuildHouses = {enabled: 1, description: "Housing", titles: ["Not buying", "Buying"]};
 		var autoBuildGyms = {enabled: 1, description: "Gyms", titles: ["Not buying", "Buying"]};
 		var autoBuildTributes = {enabled: 1, description: "Tributes", titles: ["Not buying", "Buying"]};
-		var autoBuildNurseries = {enabled: 3, description: "Nurseries", titles: ["Not buying", "Buying", "Only when above breedTarget", "Only when above breedTarget and cost low"]};
+		var autoBuildNurseries = {enabled: 1, description: "Nurseries", titles: ["Not buying", "When above breedTarget and cheap", "When above breedTarget", "Buying"]};
 		var autoRead = {enabled: 1, description: "Read", titles: ["Not reading", "Reading"]};
 		var autoPrestige = {enabled: 1, description: "Prestige", titles: ["Not prestiging", "Prestiging"]};
 		var autoEquip = {enabled: 1, description: "Equip", titles: ["Not buying", "Buying when cheap"]};
@@ -550,9 +552,10 @@ function aBuildTributs() {
 function aBuildNurseries() {
 	if (!game.buildings.Nursery.locked) {
 		game.global.buyAmt = 35;
-		if ((autoTrimps.settings.autoBuildNurseries.enabled == 1) || 
+		
+		if ((autoTrimps.settings.autoBuildNurseries.enabled == 1 && breedTime(0) > autoTrimps.breedTarget.value && canAffordBuilding("Nursery")) ||
 				(autoTrimps.settings.autoBuildNurseries.enabled == 2 && breedTime(0) > autoTrimps.breedTarget.value) || 
-				(autoTrimps.settings.autoBuildNurseries.enabled == 3 && breedTime(0) > autoTrimps.breedTarget.value && canAffordBuilding("Nursery"))) {
+				(autoTrimps.settings.autoBuildNurseries.enabled == 3)) {
 			game.global.buyAmt = 1;
 			purchaseBuilding("Nursery");
 		}
@@ -633,6 +636,7 @@ function aEquip() {
 				if (equipPrice < game.resources.metal.owned / 100) {
 					game.global.buyAmt = 1;
 					buyEquipment(autoTrimps.bestWeapon);
+					tooltip("hide");
 				}
 			}
 			if (!enoughHealth && healthNotUpgradeable && autoTrimps.bestArmor != null) {
@@ -640,6 +644,7 @@ function aEquip() {
 				if (equipPrice < game.resources.metal.owned / 100) {
 					game.global.buyAmt = 1;
 					buyEquipment(autoTrimps.bestArmor);
+					tooltip("hide");
 				}
 			}
 		}
@@ -968,20 +973,31 @@ function myTimer(){
 	}
 
 	if (game.global.gridArray.length == 0) {
-		autoTrimps.trigger1 = false;
-		autoTrimps.trigger2 = false;
-		autoTrimps.trigger3 = false;
+		autoTrimps.settings.autoBuildResources = 1; 
+		autoTrimps.settings.autoBuildHouses = 1; 
+		autoTrimps.settings.autoBuildGyms = 1; 
+		autoTrimps.settings.autoBuildTributes = 1; 
+		autoTrimps.settings.autoBuildNurseries = 1; 
+		autoTrimps.settings.autoRead = 1; 
+		autoTrimps.settings.autoPrestige = 1; 
+		autoTrimps.settings.autoEquip = 1; 
+		autoTrimps.settings.autoMap = 1; 
+		autoTrimps.settings.autoFormations = 1; 
+		autoTrimps.settings.autoGeneticists = 1; 
+		autoTrimps.settings.autoWorkers = 1; 
+		autoTrimps.settings.autoGather = 1; 
+		
+		autoTrimps.triggerElectricity1 = false;
+		autoTrimps.triggerElectricity2 = false;
 		purchaseUpgrade("Battle");
 	}
-	if (!autoTrimps.trigger1 && game.global.world <= 59) {
-		refreshSettings();
-		autoTrimps.trigger1 = true;
-	} else if (!autoTrimps.trigger2 && game.global.world > 59) {
-		refreshSettings();
-		autoTrimps.trigger2 = true;
-	} else if (!autoTrimps.trigger3 && game.global.world > 70) {
-		refreshSettings();
-		autoTrimps.trigger3 = true;
+	
+	if (!autoTrimps.triggerElectricity1 && game.global.challengeActive == "Electricity") {
+		autoTrimps.breedTarget.value = 3;
+		autoTrimps.triggerElectricity1 = true;
+	} else if (!autoTrimps.triggerElectricity2 && game.global.challengeActive != "Electricity") {
+		autoTrimps.breedTarget.value = 30.9;
+		autoTrimps.triggerElectricity2 = true;
 	}
 	
 	if (game.global.autoBattle) {
