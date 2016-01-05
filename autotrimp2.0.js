@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.20.00";
+	autoTrimps.version = "1.30.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
