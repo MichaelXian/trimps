@@ -14,6 +14,8 @@ function setup() {
 	autoTrimps.baseDamage = 0;
 	autoTrimps.baseBlock = 0;
 	autoTrimps.baseHealth = 0;
+	
+	autoTrimps.gigaWarpNumber = 3;
 
 	autoTrimps.trigger1 = false;
 	autoTrimps.trigger2 = false;
@@ -492,7 +494,7 @@ function aBuildHouses() {
 	game.global.firing = false;
 	
 	if (autoTrimps.bestBuilding != null){
-		var nextStationAt = 20 + 2 * game.upgrades.Gigastation.done;
+		var nextStationAt = autoTrimps.gigaWarpNumber * 10 + autoTrimps.gigaWarpNumber * game.upgrades.Gigastation.done;
 		if (game.buildings.Warpstation.owned >= nextStationAt) {
 			purchaseUpgrade("Gigastation");
 		} else {
