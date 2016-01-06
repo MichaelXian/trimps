@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.31.00";
+	autoTrimps.version = "1.32.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -719,8 +719,8 @@ function aMap() {
 					adjustMap('size', 9);
 					difficultyAdvMapsRange.value = 9;
 					adjustMap('difficulty', 9);
-					lootAdvMapsRange.value = 0;
-					adjustMap('loot', 0);
+					lootAdvMapsRange.value = 9;
+					adjustMap('loot', 9);
 
 					biomeAdvMapsSelect.value = "Mountain";
 					updateMapCost();
@@ -745,6 +745,12 @@ function aMap() {
 					biomeAdvMapsSelect.value = "Random";
 					updateMapCost();
 				}
+				
+				while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+					lootAdvMapsRange.value += -1;
+					adjustMap('loot', lootAdvMapsRange.value);
+				}
+				
 				if (updateMapCost(true) > game.resources.fragments.owned) {
 					selectMap(game.global.mapsOwnedArray[highestMap].id);
 					runMap();
