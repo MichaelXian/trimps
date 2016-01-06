@@ -23,9 +23,10 @@ function setup() {
 
 	autoTrimps.breedTarget = document.createElement('input');
 	autoTrimps.breedTarget.value = 30.9;
-	autoTrimps.breedTarget.style.width = "20%";
+	autoTrimps.breedTarget.style.width = "47px";
 	autoTrimps.breedTarget.style.color = "black";
 	autoTrimps.breedTarget.style.textAlign = "right";
+	autoTrimps.breedTarget.style.cssFloat = "right";
 	document.getElementById("fireBtn").style.cssFloat = "left";
 	document.getElementById("fireBtn").style.width = "50%";
 	document.getElementById("jobsTitleSpan").parentElement.className = "col-xs-2";
@@ -34,7 +35,7 @@ function setup() {
 
 	autoTrimps.gigaWarpNumber = document.createElement('input');
 	autoTrimps.gigaWarpNumber.value = 2.1;
-	autoTrimps.gigaWarpNumber.style.width = "20%";
+	autoTrimps.gigaWarpNumber.style.width = "47px";
 	autoTrimps.gigaWarpNumber.style.color = "black";
 	autoTrimps.gigaWarpNumber.style.textAlign = "right";
 	autoTrimps.gigaWarpNumber.style.cssFloat = "right";
