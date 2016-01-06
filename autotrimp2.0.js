@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.30.00";
+	autoTrimps.version = "1.31.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -975,19 +975,19 @@ function myTimer(){
 	}
 
 	if (game.global.gridArray.length == 0) {
-		autoTrimps.settings.autoBuildResources = 1; 
-		autoTrimps.settings.autoBuildHouses = 1; 
-		autoTrimps.settings.autoBuildGyms = 1; 
-		autoTrimps.settings.autoBuildTributes = 1; 
-		autoTrimps.settings.autoBuildNurseries = 1; 
-		autoTrimps.settings.autoRead = 1; 
-		autoTrimps.settings.autoPrestige = 1; 
-		autoTrimps.settings.autoEquip = 1; 
-		autoTrimps.settings.autoMap = 1; 
-		autoTrimps.settings.autoFormations = 1; 
-		autoTrimps.settings.autoGeneticists = 1; 
-		autoTrimps.settings.autoWorkers = 1; 
-		autoTrimps.settings.autoGather = 1; 
+		autoTrimps.settings.autoBuildResources.enabled = 1; 
+		autoTrimps.settings.autoBuildHouses.enabled = 1; 
+		autoTrimps.settings.autoBuildGyms.enabled = 1; 
+		autoTrimps.settings.autoBuildTributes.enabled = 1; 
+		autoTrimps.settings.autoBuildNurseries .enabled= 1; 
+		autoTrimps.settings.autoRead.enabled = 1; 
+		autoTrimps.settings.autoPrestige.enabled = 1; 
+		autoTrimps.settings.autoEquip.enabled = 1; 
+		autoTrimps.settings.autoMap.enabled = 1; 
+		autoTrimps.settings.autoFormations.enabled = 1; 
+		autoTrimps.settings.autoGeneticists.enabled = 1; 
+		autoTrimps.settings.autoWorkers.enabled = 1; 
+		autoTrimps.settings.autoGather.enabled = 1; 
 		
 		autoTrimps.triggerElectricity1 = false;
 		autoTrimps.triggerElectricity2 = false;
