@@ -4,7 +4,7 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.32.00";
+	autoTrimps.version = "1.33.00";
 	autoTrimps.settings = {};
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -15,8 +15,6 @@ function setup() {
 	autoTrimps.baseBlock = 0;
 	autoTrimps.baseHealth = 0;
 	
-	autoTrimps.gigaWarpNumber = 2.5;
-
 	autoTrimps.trigger1 = false;
 	autoTrimps.trigger2 = false;
 	autoTrimps.trigger3 = false;
@@ -34,6 +32,17 @@ function setup() {
 	document.getElementById("fireBtn").parentElement.className = "col-xs-5";
 	document.getElementById("fireBtn").parentElement.appendChild(autoTrimps.breedTarget);
 
+	autoTrimps.gigaWarpNumber = document.createElement('input');
+	autoTrimps.gigaWarpNumber.value = 2.1;
+	autoTrimps.gigaWarpNumber.style.width = "20%";
+	autoTrimps.gigaWarpNumber.style.color = "black";
+	autoTrimps.gigaWarpNumber.style.textAlign = "right";
+	autoTrimps.gigaWarpNumber.style.cssFloat = "right";
+	var gigaWarpNumberContainer = document.createElement('div');
+	gigaWarpNumberContainer.className = "col-xs-8";
+	gigaWarpNumberContainer.appendChild(autoTrimps.gigaWarpNumber);
+	document.getElementById("upgradesTitleSpan").parentElement.parentElement.appendChild(gigaWarpNumberContainer);
+	
 	//Line things up, OCD FTW!
 	document.getElementById("helium").style.height = "32.4%";
 	document.getElementById("boneFlavorRow").innerHTML = "The Bone Trader trades bones for...bonuses";
@@ -494,7 +503,7 @@ function aBuildHouses() {
 	game.global.firing = false;
 	
 	if (autoTrimps.bestBuilding != null){
-		var nextStationAt = Math.floor(autoTrimps.gigaWarpNumber * 10 + autoTrimps.gigaWarpNumber * game.upgrades.Gigastation.done);
+		var nextStationAt = Math.floor(autoTrimps.gigaWarpNumber.value * 10 + autoTrimps.gigaWarpNumber.value * game.upgrades.Gigastation.done);
 		if (game.buildings.Warpstation.owned >= nextStationAt) {
 			purchaseUpgrade("Gigastation");
 		} else {
@@ -995,8 +1004,11 @@ function myTimer(){
 		autoTrimps.settings.autoWorkers.enabled = 1; 
 		autoTrimps.settings.autoGather.enabled = 1; 
 		
+		autoTrimps.gigaWarpNumber.value = 2.1;
+		
 		autoTrimps.triggerElectricity1 = false;
 		autoTrimps.triggerElectricity2 = false;
+		
 		purchaseUpgrade("Battle");
 	}
 	
