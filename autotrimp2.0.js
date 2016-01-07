@@ -726,39 +726,26 @@ function aMap() {
 				//TODO optimize buying
 				if (game.global.world > 70) {
 					sizeAdvMapsRange.value = 9;
-					adjustMap('size', 9);
 					difficultyAdvMapsRange.value = 9;
-					adjustMap('difficulty', 9);
 					lootAdvMapsRange.value = 9;
-					adjustMap('loot', 9);
 
 					biomeAdvMapsSelect.value = "Mountain";
-					updateMapCost();
 				} else if (game.global.world < 16) {
 					sizeAdvMapsRange.value = 0;
-					adjustMap('size', 0);
 					difficultyAdvMapsRange.value = 0;
-					adjustMap('difficulty', 0);
 					lootAdvMapsRange.value = 0;
-					adjustMap('loot', 0);
 
 					biomeAdvMapsSelect.value = "Random";
-					updateMapCost();
 				} else {
 					sizeAdvMapsRange.value = 9;
-					adjustMap('size', 9);
 					difficultyAdvMapsRange.value = 9;
-					adjustMap('difficulty', 9);
 					lootAdvMapsRange.value = 0;
-					adjustMap('loot', 0);
 
 					biomeAdvMapsSelect.value = "Random";
-					updateMapCost();
 				}
-				
+
 				while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-					lootAdvMapsRange.value += -1;
-					adjustMap('loot', lootAdvMapsRange.value);
+					lootAdvMapsRange.value = lootAdvMapsRange.value - 1;
 				}
 				
 				if (updateMapCost(true) > game.resources.fragments.owned) {
@@ -767,6 +754,11 @@ function aMap() {
 				} else {
 					buyMap();
 				}
+				
+				adjustMap('size', sizeAdvMapsRange.value);
+				adjustMap('difficulty', difficultyAdvMapsRange.value);
+				adjustMap('loot', lootAdvMapsRange.value);
+				
 			} else {
 				selectMap(shouldDoMap);
 				runMap();
