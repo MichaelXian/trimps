@@ -665,15 +665,16 @@ function aEquip() {
 
 function aMap() {
 	if (game.global.mapsUnlocked) {
+		var shouldDoMap = "world";
 		var obj = {};
 		for (var map in game.global.mapsOwnedArray) {
 			if (!game.global.mapsOwnedArray[map].noRecycle)
 			{
 				obj[map] = game.global.mapsOwnedArray[map].level;
+			} else if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
+				shouldDoMap = game.global.mapsOwnedArray[map].id;
 			}
 		}
-		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
-		var highestMap = keysSorted[0];
 		
 		var enemyDamage = getEnemyMaxAttack(game.global.world +1);
 		var enemyHeath = getEnemyMaxHealth(game.global.world +1);
@@ -681,17 +682,17 @@ function aMap() {
 		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
 		var shouldDoMaps = !enoughHealth || !enoughDamage;
 		
-		var shouldDoMap = "world";
+		var highestMap = null;
 		
-		for (var map in game.global.mapsOwnedArray) {
-			if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
-				shouldDoMap = game.global.mapsOwnedArray[map].id;
-				break;
-			}
-		}
-		
-		if (shouldDoMaps) {
-			if (shouldDoMap == "world") {
+		if (shouldDoMap == "world") {
+			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+			var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
+			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
+			var shouldDoMaps = !enoughHealth || !enoughDamage;
+			if (shouldDoMaps) {
+				var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
+				highestMap = keysSorted[0];
 				if (game.global.world == game.global.mapsOwnedArray[highestMap].level) {
 					shouldDoMap = game.global.mapsOwnedArray[highestMap].id;
 				}
