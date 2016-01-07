@@ -1019,7 +1019,7 @@ function myTimer(){
 			pauseFight();
 		}
 	}
-	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) || game.global.soldierHealth > 0 || breedTime(0) < 2) {
+	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1 || game.global.soldierHealth > 0 || breedTime(0) < 2)) {
 		fightManual();
 	}
 	
