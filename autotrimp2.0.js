@@ -611,39 +611,27 @@ function aPrestige() {
 }
 
 function aEquip() {
-	//TODO only if best equip isn't locked?
 	if (game.global.mapsUnlocked) {
-		var obj = {};
-		for (var map in game.global.mapsOwnedArray) {
-			if (!game.global.mapsOwnedArray[map].noRecycle)
-			{
-				obj[map] = game.global.mapsOwnedArray[map].level;
+		var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+		var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+		var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
+							autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
+		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
+
+		if (!enoughDamage && autoTrimps.bestWeapon != null) {
+			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+			if (equipPrice < game.resources.metal.owned / 100) {
+				game.global.buyAmt = 1;
+				buyEquipment(autoTrimps.bestWeapon);
+				tooltip("hide");
 			}
 		}
-		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
-		var highestMap = keysSorted[0];
-		if (addSpecials(true, true, game.global.mapsOwnedArray[highestMap]) < 1) {
-			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
-			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
-			var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
-								autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
-			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
-
-			if (!enoughDamage && autoTrimps.bestWeapon != null) {
-				var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
-				if (equipPrice < game.resources.metal.owned / 100) {
-					game.global.buyAmt = 1;
-					buyEquipment(autoTrimps.bestWeapon);
-					tooltip("hide");
-				}
-			}
-			if (!enoughHealth && autoTrimps.bestArmor != null) {
-				var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
-				if (equipPrice < game.resources.metal.owned / 100) {
-					game.global.buyAmt = 1;
-					buyEquipment(autoTrimps.bestArmor);
-					tooltip("hide");
-				}
+		if (!enoughHealth && autoTrimps.bestArmor != null) {
+			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+			if (equipPrice < game.resources.metal.owned / 100) {
+				game.global.buyAmt = 1;
+				buyEquipment(autoTrimps.bestArmor);
+				tooltip("hide");
 			}
 		}
 	}
