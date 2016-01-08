@@ -687,7 +687,8 @@ function aMap() {
 		if (shouldDoMap == "world") {
 			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
 			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
-			var enoughHealth = (autoTrimps.baseHealth*3 > 30* (enemyDamage - autoTrimps.baseBlock/2 > enemyDamage ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage) || autoTrimps.baseHealth > 30* (enemyDamage - autoTrimps.baseBlock > enemyDamage ? enemyDamage - autoTrimps.baseBlock : enemyDamage));
+			var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
+								autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
 			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
 			var shouldDoMaps = !enoughHealth || !enoughDamage;
 			if (shouldDoMaps) {
