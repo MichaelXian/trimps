@@ -997,6 +997,7 @@ function myTimer(){
 		autoTrimps.settings.autoGeneticists.enabled = 1; 
 		autoTrimps.settings.autoWorkers.enabled = 1; 
 		autoTrimps.settings.autoGather.enabled = 1; 
+		refreshSettings();
 		
 		autoTrimps.gigaWarpNumber.value = 2.1;
 		
