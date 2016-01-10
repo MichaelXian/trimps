@@ -784,10 +784,12 @@ function aFormation() {
 			if (game.global.formation != 3) {
 				setFormation(3);
 			}
-		} else {
+		} else if (game.upgrades.Formations.done) {
 			if (game.global.formation != 1) {
 				setFormation(1);
 			}
+		} else {
+			setFormation("0");
 		}
 	}
 }
