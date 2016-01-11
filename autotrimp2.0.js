@@ -433,7 +433,7 @@ function update() {
 	
 	if (game.global.soldierHealth > 0){
 		//baseDamage
-		autoTrimps.baseDamage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
+		autoTrimps.baseDamage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1) * ((0.2 * game.global.roboTrimpLevel) + 1);
 		if (game.global.formation == 2) {
 			autoTrimps.baseDamage /= 4;
 		} else if (game.global.formation != "0") {
