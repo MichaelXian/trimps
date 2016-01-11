@@ -22,7 +22,7 @@ function setup() {
 	autoTrimps.triggerElectricity2 = false;
 
 	autoTrimps.breedTarget = document.createElement('input');
-	autoTrimps.breedTarget.value = 30.0;
+	autoTrimps.breedTarget.value = 30.4;
 	autoTrimps.breedTarget.style.width = "47px";
 	autoTrimps.breedTarget.style.color = "black";
 	autoTrimps.breedTarget.style.textAlign = "right";
@@ -982,7 +982,7 @@ function myTimer(){
 		autoTrimps.breedTarget.value = 3.0;
 		autoTrimps.triggerElectricity1 = true;
 	} else if (!autoTrimps.triggerElectricity2 && game.global.challengeActive != "Electricity") {
-		autoTrimps.breedTarget.value = 30.0;
+		autoTrimps.breedTarget.value = 30.4;
 		autoTrimps.triggerElectricity2 = true;
 	}
 	
