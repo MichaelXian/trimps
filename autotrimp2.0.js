@@ -939,11 +939,7 @@ function aWorkers() {
 				}
 			} else {
 				// if less than  100000 farmers allocate 1:1:1
-				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
-					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
-					buyJob("Scientist");
-					tooltip("hide");
-				} else if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
+				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned && game.jobs.Farmer.owned < game.jobs.Miner.owned) {
 					buyJob("Farmer");
 					tooltip("hide");
 				} else if (game.jobs.Lumberjack.owned < game.jobs.Miner.owned) {
