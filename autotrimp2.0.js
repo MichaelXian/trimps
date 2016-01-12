@@ -354,22 +354,28 @@ function update() {
 		}
 	}
 	if (unlockedHousing.length) {
-		var obj = {};
+		var bestRatio = -1;
 		for (var house in unlockedHousing) {
 			var building = game.buildings[unlockedHousing[house]];
 			var cost = 0;
 			cost += getBuildingItemPrice(building, "gems");
 			var ratio = cost / building.increase.by;
-			obj[unlockedHousing[house]] = ratio;
-			if (document.getElementById(unlockedHousing[house]).style.border = "1px solid #00CC00") {
-				document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
-				document.getElementById(unlockedHousing[house]).removeEventListener("click", update);
+			if (ratio < bestRatio || bestRatio == -1) {
+				bestRatio = ratio;
+				autoTrimps.bestBuilding = unlockedHousing[house];
 			}
 		}
-		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
-		autoTrimps.bestBuilding = keysSorted[0];
-		document.getElementById(autoTrimps.bestBuilding).style.border = "1px solid #00CC00";
-		document.getElementById(autoTrimps.bestBuilding).addEventListener('click',update,false);
+		for (var house in unlockedHousing) {
+			if (unlockedHousing[house] == autoTrimps.bestArmor) {
+				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #00CC00") {
+					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #00CC00";
+				}
+			} else {
+				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #FFFFFF") {
+					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #FFFFFF";
+				}
+			}
+		}
 	} else {
 		autoTrimps.bestBuilding = null;
 	}
@@ -383,22 +389,29 @@ function update() {
 		}
 	}
 	if (unlockedArmor.length) {
-		var obj = {};
+		var bestRatio = -1;
 		for (var armor in unlockedArmor) {
 			var equip = game.equipment[unlockedArmor[armor]];
 			var cost = 0;
 			cost += getBuildingItemPrice(equip, "metal", true);
 			var ratio = cost / equip.healthCalculated;
-			obj[unlockedArmor[armor]] = ratio;
-			if (document.getElementById(unlockedArmor[armor]).style.border = "1px solid #0000FF") {
-				document.getElementById(unlockedArmor[armor]).style.border = "1px solid #FFFFFF";
-				document.getElementById(unlockedArmor[armor]).removeEventListener("click", update);
+			if (ratio < bestRatio || bestRatio == -1) {
+				bestRatio = ratio;
+				autoTrimps.bestArmor = unlockedArmor[armor];
 			}
 		}
-		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
-		autoTrimps.bestArmor = keysSorted[0];
-		document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #0000FF";
-		document.getElementById(autoTrimps.bestArmor).addEventListener('click',update,false);
+		
+		for (var armor in unlockedArmor) {
+			if (unlockedArmor[armor] == autoTrimps.bestArmor) {
+				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #0000FF") {
+					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #0000FF";
+				}
+			} else {
+				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #FFFFFF") {
+					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #FFFFFF";
+				}
+			}
+		}
 	} else {
 		autoTrimps.bestArmor = null;
 	}
@@ -412,22 +425,29 @@ function update() {
 		}
 	}
 	if (unlockedWeapons.length) {
-		var obj = {};
+		var bestRatio = -1;
 		for (var weapon in unlockedWeapons) {
 			var equip = game.equipment[unlockedWeapons[weapon]];
 			var cost = 0;
 			cost += getBuildingItemPrice(equip, "metal", true);
 			var ratio = cost / equip.attackCalculated;
-			obj[unlockedWeapons[weapon]] = ratio;
-			if (document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FF0000") {
-				document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FFFFFF";
-				document.getElementById(unlockedWeapons[weapon]).removeEventListener("click", update);
+			if (ratio < bestRatio || bestRatio == -1) {
+				bestRatio = ratio;
+				autoTrimps.bestWeapon = unlockedArmor[armor];
 			}
 		}
-		var keysSorted = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
-		autoTrimps.bestWeapon = keysSorted[0];
-		document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FF0000";
-		document.getElementById(autoTrimps.bestWeapon).addEventListener('click',update,false);
+		
+		for (var weapon in unlockedWeapons) {
+			if (unlockedWeapons[weapon] == autoTrimps.bestWeapon) {
+				if (document.getElementById(autoTrimps.bestWeapon).style.border != "1px solid #FF0000") {
+					document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FF0000";
+				}
+			} else {
+				if (document.getElementById(unlockedWeapons[weapon]).style.border != "1px solid #FFFFFF") {
+					document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FFFFFF";
+				}
+			}
+		}
 	} else {
 		autoTrimps.bestWeapon = null;
 	}
