@@ -371,8 +371,8 @@ function update() {
 					document.getElementById(autoTrimps.bestBuilding).style.border = "1px solid #00CC00";
 				}
 			} else {
-				if (document.getElementById(autoTrimps.bestBuilding).style.border != "1px solid #FFFFFF") {
-					document.getElementById(autoTrimps.bestBuilding).style.border = "1px solid #FFFFFF";
+				if (document.getElementById(unlockedHousing[house]).style.border != "1px solid #FFFFFF") {
+					document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
 				}
 			}
 		}
@@ -407,8 +407,8 @@ function update() {
 					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #0000FF";
 				}
 			} else {
-				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #FFFFFF") {
-					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #FFFFFF";
+				if (document.getElementById(unlockedArmor[armor]).style.border != "1px solid #FFFFFF") {
+					document.getElementById(unlockedArmor[armor]).style.border = "1px solid #FFFFFF";
 				}
 			}
 		}
@@ -433,7 +433,7 @@ function update() {
 			var ratio = cost / equip.attackCalculated;
 			if (ratio < bestRatio || bestRatio == -1) {
 				bestRatio = ratio;
-				autoTrimps.bestWeapon = unlockedArmor[armor];
+				autoTrimps.bestWeapon = unlockedWeapons[weapon];
 			}
 		}
 		
@@ -443,8 +443,8 @@ function update() {
 					document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FF0000";
 				}
 			} else {
-				if (document.getElementById(autoTrimps.bestWeapon).style.border != "1px solid #FFFFFF") {
-					document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FFFFFF";
+				if (document.getElementById(unlockedWeapons[weapon]).style.border != "1px solid #FFFFFF") {
+					document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FFFFFF";
 				}
 			}
 		}
