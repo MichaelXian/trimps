@@ -22,7 +22,7 @@ function setup() {
 	autoTrimps.triggerElectricity2 = false;
 
 	autoTrimps.breedTarget = document.createElement('input');
-	autoTrimps.breedTarget.value = 30.4;
+	autoTrimps.breedTarget.value = 30.5;
 	autoTrimps.breedTarget.style.width = "47px";
 	autoTrimps.breedTarget.style.color = "black";
 	autoTrimps.breedTarget.style.textAlign = "right";
@@ -34,7 +34,7 @@ function setup() {
 	document.getElementById("fireBtn").parentElement.appendChild(autoTrimps.breedTarget);
 
 	autoTrimps.gigaWarpNumber = document.createElement('input');
-	autoTrimps.gigaWarpNumber.value = 2.3;
+	autoTrimps.gigaWarpNumber.value = 2.4;
 	autoTrimps.gigaWarpNumber.style.width = "47px";
 	autoTrimps.gigaWarpNumber.style.color = "black";
 	autoTrimps.gigaWarpNumber.style.textAlign = "right";
@@ -970,7 +970,7 @@ function myTimer(){
 		autoTrimps.settings.autoGather.enabled = 1; 
 		refreshSettings();
 		
-		autoTrimps.gigaWarpNumber.value = 2.3;
+		autoTrimps.gigaWarpNumber.value = 2.4;
 		
 		autoTrimps.triggerElectricity1 = false;
 		autoTrimps.triggerElectricity2 = false;
@@ -982,7 +982,7 @@ function myTimer(){
 		autoTrimps.breedTarget.value = 3.0;
 		autoTrimps.triggerElectricity1 = true;
 	} else if (!autoTrimps.triggerElectricity2 && game.global.challengeActive != "Electricity") {
-		autoTrimps.breedTarget.value = 30.4;
+		autoTrimps.breedTarget.value = 30.5;
 		autoTrimps.triggerElectricity2 = true;
 	}
 	
