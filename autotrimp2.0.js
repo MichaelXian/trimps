@@ -366,13 +366,13 @@ function update() {
 			}
 		}
 		for (var house in unlockedHousing) {
-			if (unlockedHousing[house] == autoTrimps.bestArmor) {
-				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #00CC00") {
-					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #00CC00";
+			if (unlockedHousing[house] == autoTrimps.bestBuilding) {
+				if (document.getElementById(autoTrimps.bestBuilding).style.border != "1px solid #00CC00") {
+					document.getElementById(autoTrimps.bestBuilding).style.border = "1px solid #00CC00";
 				}
 			} else {
-				if (document.getElementById(autoTrimps.bestArmor).style.border != "1px solid #FFFFFF") {
-					document.getElementById(autoTrimps.bestArmor).style.border = "1px solid #FFFFFF";
+				if (document.getElementById(autoTrimps.bestBuilding).style.border != "1px solid #FFFFFF") {
+					document.getElementById(autoTrimps.bestBuilding).style.border = "1px solid #FFFFFF";
 				}
 			}
 		}
@@ -443,8 +443,8 @@ function update() {
 					document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FF0000";
 				}
 			} else {
-				if (document.getElementById(unlockedWeapons[weapon]).style.border != "1px solid #FFFFFF") {
-					document.getElementById(unlockedWeapons[weapon]).style.border = "1px solid #FFFFFF";
+				if (document.getElementById(autoTrimps.bestWeapon).style.border != "1px solid #FFFFFF") {
+					document.getElementById(autoTrimps.bestWeapon).style.border = "1px solid #FFFFFF";
 				}
 			}
 		}
