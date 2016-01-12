@@ -9,6 +9,7 @@ function setup() {
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
 	autoTrimps.bestWeapon = null;
+	autoTrimps.mostExpensiveUpgradeCost = 0;
 	autoTrimps.premapscounter = 0;
 
 	autoTrimps.baseDamage = 0;
@@ -431,6 +432,24 @@ function update() {
 		autoTrimps.bestWeapon = null;
 	}
 	
+	//Most expensive upgrade (science)
+	autoTrimps.mostExpensiveUpgradeCost = 0;
+	for (var upgrade in game.upgrades) {
+		var upgradeObject = game.upgrades[upgrade];
+		if (upgradeObject.locked == 0 && upgradeObject.allowed > upgradeObject.done) {
+			var cost = 0;
+			if (typeof upgradeObject.cost.resources.science == "number")
+			{
+				cost = upgradeObject.cost.resources.science;
+			} else if (typeof upgradeObject.cost.resources.science == "object") {
+				cost = upgradeObject.cost.resources.science[0] * Math.pow(upgradeObject.cost.resources.science[1], upgradeObject.done);
+			}
+			if (cost > autoTrimps.mostExpensiveUpgradeCost) {
+				autoTrimps.mostExpensiveUpgradeCost = cost;
+			}	
+		}
+	}
+	
 	if (game.global.soldierHealth > 0){
 		//baseDamage
 		autoTrimps.baseDamage = game.global.soldierCurrentAttack * 2 * (1 + (game.global.achievementBonus / 100)) * ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1) * ((0.2 * game.global.roboTrimpLevel) + 1);
@@ -841,7 +860,7 @@ function aWorkers() {
 			tooltip("hide");
 		}
 
-		if (game.jobs.Scientist.owned > 0 && game.jobs.Farmer.owned > 1000000) {
+		if (autoTrimps.mostExpensiveUpgradeCost < game.resources.science.owned) {
 			game.global.buyAmt = game.jobs.Scientist.owned;
 			game.global.firing = true;
 			buyJob("Scientist");
@@ -853,12 +872,17 @@ function aWorkers() {
 			maxemployed = game.resources.trimps.owned - 2;
 		}
 		var workspaces = maxemployed - (game.resources.trimps.employed+1);
+		
 		if (workspaces > 0) {
 			game.global.buyAmt = Math.ceil(workspaces*0.1);
 			if (game.global.buyAmt > game.resources.trimps.employed) {
 				game.global.buyAmt = game.resources.trimps.employed;
 			}
-			if (game.jobs.Farmer.owned > 1000000) {
+			if (autoTrimps.mostExpensiveUpgradeCost > game.resources.science.owned && game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
+				game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
+				buyJob("Scientist");
+				tooltip("hide");
+			} else if (game.jobs.Farmer.owned > 1000000) {
 				// if more than 1000000 farmers allocate 3:1:4
 				if (game.jobs.Farmer.owned < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 4 < 2 * game.jobs.Miner.owned) {
 					buyJob("Farmer");
@@ -872,11 +896,7 @@ function aWorkers() {
 				}
 			} else if (game.jobs.Farmer.owned > 100000) {
 				// if more than 100000 farmers allocate 3:3:5
-				if (game.jobs.Scientist.owned * 3 < game.jobs.Miner.owned) {
-					game.global.buyAmt = Math.ceil(game.global.buyAmt*0.1);
-					buyJob("Scientist");
-					tooltip("hide");
-				} else if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
+				if (game.jobs.Farmer.owned * 3 < game.jobs.Lumberjack.owned * 3 && game.jobs.Farmer.owned * 5 < 3 * game.jobs.Miner.owned) {
 					buyJob("Farmer");
 					tooltip("hide");
 				} else if (game.jobs.Lumberjack.owned * 5 < game.jobs.Miner.owned * 3) {
