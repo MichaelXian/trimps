@@ -21,6 +21,8 @@ function setup() {
 	autoTrimps.trigger3 = false;
 	autoTrimps.triggerElectricity1 = false;
 	autoTrimps.triggerElectricity2 = false;
+	autoTrimps.triggerNom1 = false;
+	autoTrimps.triggerNom2 = false;
 
 	autoTrimps.breedTarget = document.createElement('input');
 	autoTrimps.breedTarget.value = 30.5;
@@ -602,13 +604,20 @@ function aBuildTributs() {
 
 function aBuildNurseries() {
 	if (!game.buildings.Nursery.locked) {
-		game.global.buyAmt = 35;
-		
-		if ((autoTrimps.settings.autoBuildNurseries.enabled == 1 && breedTime(0) > autoTrimps.breedTarget.value && canAffordBuilding("Nursery")) ||
-				(autoTrimps.settings.autoBuildNurseries.enabled == 2 && breedTime(0) > autoTrimps.breedTarget.value) || 
-				(autoTrimps.settings.autoBuildNurseries.enabled == 3)) {
-			game.global.buyAmt = 1;
+		if (autoTrimps.settings.autoBuildNurseries.enabled != 0) {
+			if (breedTime(0) > autoTrimps.breedTarget.value) {
+				if (!purchaseUpgrade("Potency"))
+				{
+					game.global.buyAmt = 35;
+					if (autoTrimps.settings.autoBuildNurseries.enabled == 1 && canAffordBuilding("Nursery") || autoTrimps.settings.autoBuildNurseries.enabled == 2) {
+						game.global.buyAmt = 1;
+						purchaseBuilding("Nursery");
+					}
+				}
+			} else if (autoTrimps.settings.autoBuildNurseries.enabled == 3) {
+				game.global.buyAmt = 1;
 			purchaseBuilding("Nursery");
+			}
 		}
 	}
 }
@@ -628,8 +637,8 @@ function aRead() {
 			}
 		}
 	}
-	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Speedscience", "Megaminer", "Speedminer", "Megafarming", "Speedfarming", "Megalumber", "Speedlumber", "Potency",
-					"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
+	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Speedscience", "Megaminer", "Speedminer", "Megafarming", "Speedfarming", "Megalumber", "Speedlumber", 
+		"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
 					"Formations", "Dominance", "Barrier", "Miners"]
 	for (var key in game.upgrades) {
 		if (upgrades.indexOf(key) != -1) { 
@@ -1010,16 +1019,25 @@ function myTimer(){
 		
 		autoTrimps.triggerElectricity1 = false;
 		autoTrimps.triggerElectricity2 = false;
+		autoTrimps.triggerNom1 = false;
+		autoTrimps.triggerNom2 = false;
 		
 		purchaseUpgrade("Battle");
 	}
 	
-	if (!autoTrimps.triggerElectricity1 && game.global.challengeActive == "Electricity") {
+	if (!autoTrimps.triggerElectricity1 && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
 		autoTrimps.breedTarget.value = 3.0;
 		autoTrimps.triggerElectricity1 = true;
-	} else if (!autoTrimps.triggerElectricity2 && game.global.challengeActive != "Electricity") {
+	} else if (autoTrimps.triggerElectricity1 && !autoTrimps.triggerElectricity2 && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
 		autoTrimps.breedTarget.value = 30.5;
 		autoTrimps.triggerElectricity2 = true;
+	}
+	if (!autoTrimps.triggerElectricity1 && (game.global.challengeActive == "Nom")) {
+		autoTrimps.breedTarget.value = 10.5;
+		autoTrimps.triggerNom1 = true;
+	} else if (autoTrimps.triggerElectricity1 && !autoTrimps.triggerElectricity2 && (game.global.challengeActive == "Nom")) {
+		autoTrimps.breedTarget.value = 30.5;
+		autoTrimps.triggerNom2 = true;
 	}
 	
 	if (game.global.autoBattle) {
