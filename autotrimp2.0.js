@@ -1073,7 +1073,7 @@ function myTimer(){
 		autoTrimps.highestZone = 0;
 		
 		autoTrimps.trigger.challengeOn = false;
-		autoTrimps.trigger.challengeOn = false;
+		autoTrimps.trigger.challengeOff = false;
 		
 		autoTrimps.doneMaps = [];
 		
@@ -1083,7 +1083,7 @@ function myTimer(){
 	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
 		autoTrimps.trigger.challengeOn = true;
-	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
+	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && game.global.challengeActive == "") {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 		autoTrimps.trigger.challengeOff = true;
 	}
@@ -1091,7 +1091,7 @@ function myTimer(){
 	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Nom")) {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNom;
 		autoTrimps.trigger.challengeOn = true;
-	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Nom")) {
+	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && game.global.challengeActive == "") {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 		autoTrimps.trigger.challengeOff = true;
 	}
