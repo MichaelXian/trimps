@@ -4,28 +4,33 @@ if (typeof autoTrimps === 'undefined') {
 
 function setup() {
 	autoTrimps = {}
-	autoTrimps.version = "1.33.00";
 	autoTrimps.settings = {};
+	autoTrimps.trigger = {};
+	autoTrimps.constants = {};
+	autoTrimps.doneMaps = [];
+	
+	autoTrimps.constants.version = "2.00.00";
+	autoTrimps.constants.breedTargetNormal = 30.5;
+	autoTrimps.constants.breedTargetElectricity = 10.5;
+	autoTrimps.constants.breedTargetMapocalypse = 3.0;
+	autoTrimps.constants.gigaWarpNumberProg = 3.0;
+	autoTrimps.constants.gigaWarpNumberFarm = 2.5;
+	
+	autoTrimps.trigger.challengeOn = false;
+	autoTrimps.trigger.challengeOff = false;
+	
+	autoTrimps.highestZone = 0;
+	autoTrimps.lastHeliumPerHour = 0;
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
 	autoTrimps.bestWeapon = null;
 	autoTrimps.mostExpensiveUpgradeCost = 0;
-	autoTrimps.premapscounter = 0;
-
 	autoTrimps.baseDamage = 0;
 	autoTrimps.baseBlock = 0;
 	autoTrimps.baseHealth = 0;
-	
-	autoTrimps.trigger1 = false;
-	autoTrimps.trigger2 = false;
-	autoTrimps.trigger3 = false;
-	autoTrimps.triggerElectricity1 = false;
-	autoTrimps.triggerElectricity2 = false;
-	autoTrimps.triggerNom1 = false;
-	autoTrimps.triggerNom2 = false;
 
 	autoTrimps.breedTarget = document.createElement('input');
-	autoTrimps.breedTarget.value = 30.5;
+	autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 	autoTrimps.breedTarget.style.width = "47px";
 	autoTrimps.breedTarget.style.color = "black";
 	autoTrimps.breedTarget.style.textAlign = "right";
@@ -37,7 +42,7 @@ function setup() {
 	document.getElementById("fireBtn").parentElement.appendChild(autoTrimps.breedTarget);
 
 	autoTrimps.gigaWarpNumber = document.createElement('input');
-	autoTrimps.gigaWarpNumber.value = 2.4;
+	autoTrimps.gigaWarpNumber.value = autoTrimps.constants.gigaWarpNumberProg;
 	autoTrimps.gigaWarpNumber.style.width = "47px";
 	autoTrimps.gigaWarpNumber.style.color = "black";
 	autoTrimps.gigaWarpNumber.style.textAlign = "right";
@@ -66,7 +71,7 @@ function setup() {
 
 	//setup options
 	var checking = JSON.parse(localStorage.getItem("autotrimpsave"));
-	if (checking != null && checking.version == autoTrimps.version) {
+	if (checking != null && checking.version == autoTrimps.constants.version) {
 		autoTrimps.settings = checking;
 	} else {
 		var autoBuildResources = {enabled: 1, description: "Storage", titles: ["Not buying", "Buying"]};
@@ -82,8 +87,9 @@ function setup() {
 		var autoGeneticists = {enabled: 1, description: "Genetics to breedTarget", titles: ["Not targeting", "Targeting"]};
 		var autoWorkers = {enabled: 1, description: "Trimps work", titles: ["Not jobbing", "Jobbing"]};
 		var autoGather = {enabled: 1, description: "Switch between gathering and building", titles: ["Not switching", "Switching"]};
+		var autoFarm = {enabled: 0, description: "Progress or Farm run", titles :["Progress", "Farm"]};
 		autoTrimps.settings = {
-			version: autoTrimps.version, 
+			version: autoTrimps.constants.version, 
 			autoBuildResources: autoBuildResources, 
 			autoBuildHouses: autoBuildHouses, 
 			autoBuildGyms: autoBuildGyms, 
@@ -96,7 +102,8 @@ function setup() {
 			autoFormations: autoFormations, 
 			autoGeneticists: autoGeneticists, 
 			autoWorkers: autoWorkers,
-			autoGather: autoGather
+			autoGather: autoGather,
+			autoFarm: autoFarm
 		};
 	}
 
@@ -118,28 +125,27 @@ function setup() {
 	autosettings.insertAdjacentHTML('beforeend', "<div class='optionContainer'><div id='add Respec' class='noselect settingBtn btn-warning' onclick='addRespec()'>Add a Respec</div><div class='optionItemDescription'>If you've already used your respec but want to do it again anyway, let me know.</div></div>");
 	document.getElementById("add Respec").onclick = function(){if (game.global.canRespecPerks == false) {game.global.canRespecPerks = true;}}
 
+	for (var map in game.global.mapsOwnedArray) {
+		if (game.global.mapsOwnedArray[map].noRecycle) {
+			autoTrimps.doneMaps.push(game.global.mapsOwnedArray[map].id);
+		}
+	}
+	
 	update();
 	var timer = setInterval(function () { myTimer(); }, 100);
 }
 
 function toggleAutoSetting(setting){
 	var autoOption = autoTrimps.settings[setting];
-	var toggles = autoOption.titles.length;
-	if (toggles == 2){
-		autoOption.enabled = (autoOption.enabled) ? 0 : 1;
-	} else {
-		autoOption.enabled++;
-		if (autoOption.enabled >= toggles){
-			autoOption.enabled = 0;
-		}
+	autoOption.enabled++;
+	if (autoOption.enabled >= autoOption.titles.length){
+		autoOption.enabled = 0;
 	}
-	if (autoOption.onToggle){
-		autoOption.onToggle();
+	if (setting == "autoFarm") {
+		setAutoFarmValues();
 	}
-	var menuElem = document.getElementById("toggle" + setting);
-	menuElem.innerHTML = autoOption.titles[autoOption.enabled];
-	menuElem.className = "";
-	menuElem.className = "settingBtn settingBtn" + autoOption.enabled;
+	
+	refreshSettings();
 }
 
 function refreshSettings() {
@@ -339,6 +345,14 @@ function getEnemyMaxHealth(zone) {
 	amt *= game.badGuys["Grimp"].health;
 	amt *= 0.84;
 	return Math.floor(amt);
+}
+
+function setAutoFarmValues() {
+	if (autoTrimps.settings.autoFarm.enabled == 0) {
+		autoTrimps.gigaWarpNumber.value = autoTrimps.constants.gigaWarpNumberProg;
+	} else if (autoTrimps.settings.autoFarm.enabled == 1) {
+		autoTrimps.gigaWarpNumber.value = autoTrimps.constants.gigaWarpNumberFarm;
+	}
 }
 
 function update() {
@@ -674,7 +688,7 @@ function aEquip() {
 				tooltip("hide");
 			}
 		}
-		if (!enoughHealth && autoTrimps.bestArmor != null) {
+		if ((!enoughHealth && game.global.challengeActive != "Nom") && autoTrimps.bestArmor != null) {
 			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
 			if (equipPrice < game.resources.metal.owned / 100) {
 				game.global.buyAmt = 1;
@@ -688,17 +702,22 @@ function aEquip() {
 function aMap() {
 	if (game.global.mapsUnlocked) {
 		var shouldDoMap = "world";
-		var obj = {};
+		var highestMapID = null;
+		var highestMapLevel = 0;
+		
 		for (var map in game.global.mapsOwnedArray) {
 			if (!game.global.mapsOwnedArray[map].noRecycle)
 			{
-				obj[map] = game.global.mapsOwnedArray[map].level;
-			} else if (game.global.mapsOwnedArray[map].noRecycle && addSpecials(true, true, game.global.mapsOwnedArray[map]) == 1) {
-				shouldDoMap = game.global.mapsOwnedArray[map].id;
+				if (game.global.mapsOwnedArray[map].level > highestMapLevel) {
+					highestMapID = game.global.mapsOwnedArray[map].id;
+					highestMapLevel = game.global.mapsOwnedArray[map].level;
+				}
+			} else if (game.global.mapsOwnedArray[map].noRecycle) {
+				if (autoTrimps.doneMaps.indexOf(game.global.mapsOwnedArray[map].id) == -1) {
+					shouldDoMap = game.global.mapsOwnedArray[map].id;
+				}
 			}
 		}
-		
-		var highestMap = null;
 		
 		if (shouldDoMap == "world") {
 			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
@@ -706,12 +725,10 @@ function aMap() {
 			var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
 								autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
 			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
-			var shouldDoMaps = !enoughHealth || !enoughDamage;
+			var shouldDoMaps = (!enoughHealth && game.global.challengeActive != "Nom") || !enoughDamage;
 			if (shouldDoMaps) {
-				var keysSorted = Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]});
-				highestMap = keysSorted[0];
-				if (game.global.world == game.global.mapsOwnedArray[highestMap].level) {
-					shouldDoMap = game.global.mapsOwnedArray[highestMap].id;
+				if (game.global.world == highestMapLevel) {
+					shouldDoMap = highestMapID;
 				}
 				else {
 					shouldDoMap = "create";
@@ -767,7 +784,7 @@ function aMap() {
 				}
 				
 				if (updateMapCost(true) > game.resources.fragments.owned) {
-					selectMap(game.global.mapsOwnedArray[highestMap].id);
+					selectMap(highestMapID);
 					runMap();
 				} else {
 					buyMap();
@@ -780,6 +797,7 @@ function aMap() {
 			} else {
 				selectMap(shouldDoMap);
 				runMap();
+				autoTrimps.doneMaps.push(shouldDoMap);
 			}
 		}
 	}
@@ -795,7 +813,8 @@ function aFormation() {
 		} else {
 			var enemy = game.global.gridArray[game.global.lastClearedCell + 1];
 		}
-		var enemyFast = game.badGuys[enemy.name].fast;
+
+		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast | game.global.challengeActive == 'Slow');
 		var enemyHealth = enemy.health;
 		var enemyDamage = enemy.attack * 1.19;
 		var dDamage = enemyDamage - autoTrimps.baseBlock/2 > enemyDamage*0.2 ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage*0.2;
@@ -807,7 +826,8 @@ function aFormation() {
 		} else {
 			var enemy = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
 		}
-		var enemyFast = game.badGuys[enemy.name].fast;
+
+		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast | game.global.challengeActive == 'Slow');
 		var enemyHealth = enemy.health;
 		var enemyDamage = enemy.attack * 1.19;
 		var dDamage = enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0;
@@ -990,14 +1010,48 @@ function aGather() {
 	}
 }
 
+function aFarm() {
+	if (game.global.world > autoTrimps.highestZone) {
+		autoTrimps.highestZone = game.global.world;
+		if (game.resources.helium.owned > 0) {
+			var timeThisPortal = new Date().getTime() - game.global.portalTime;
+			timeThisPortal /= 3600000;
+			var heliumHour = game.resources.helium.owned / ((new Date().getTime() - game.global.portalTime) / 3600000)
+			if (heliumHour < autoTrimps.lastHeliumPerHour) {
+				portalClicked();
+				activateClicked();
+				activatePortal();
+			} else {
+				autoTrimps.lastHeliumPerHour = heliumHour;
+			}
+		} else {
+			autoTrimps.lastHeliumPerHour = 0;
+		}
+	}
+}
+
 ////////////////////////////////////
 //BaseLoop
 function myTimer(){
 	update();
 	
+	if (game.global.autoBattle) {
+		if (!game.global.pauseFight) {
+			pauseFight();
+		}
+	}
+	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1 || game.global.soldierHealth > 0 || breedTime(0) < 2)) {
+		fightManual();
+	}
+
+	//pause if config open
 	if (document.getElementById("autotrimp").style.display == "block"){
 		 return;
 	}
+	
+	//auto-close breaking the world textbox 
+	if(document.getElementById('extraGridInfo').style.display == 'block') restoreGrid(); 
+
 
 	if (game.global.gridArray.length == 0) {
 		autoTrimps.settings.autoBuildResources.enabled = 1; 
@@ -1009,44 +1063,37 @@ function myTimer(){
 		autoTrimps.settings.autoPrestige.enabled = 1; 
 		autoTrimps.settings.autoEquip.enabled = 1; 
 		autoTrimps.settings.autoMap.enabled = 1; 
-		autoTrimps.settings.autoFormations.enabled = 1; 
-		autoTrimps.settings.autoGeneticists.enabled = 1; 
-		autoTrimps.settings.autoWorkers.enabled = 1; 
-		autoTrimps.settings.autoGather.enabled = 1; 
+		autoTrimps.settings.autoFormations.enabled = 1;
+		autoTrimps.settings.autoGeneticists.enabled = 1;
+		autoTrimps.settings.autoWorkers.enabled = 1;
+		autoTrimps.settings.autoGather.enabled = 1;
+		setAutoFarmValues();
 		refreshSettings();
 		
-		autoTrimps.gigaWarpNumber.value = 2.4;
+		autoTrimps.highestZone = 0;
 		
-		autoTrimps.triggerElectricity1 = false;
-		autoTrimps.triggerElectricity2 = false;
-		autoTrimps.triggerNom1 = false;
-		autoTrimps.triggerNom2 = false;
+		autoTrimps.trigger.challengeOn = false;
+		autoTrimps.trigger.challengeOn = false;
+		
+		autoTrimps.doneMaps = [];
 		
 		purchaseUpgrade("Battle");
 	}
 	
-	if (!autoTrimps.triggerElectricity1 && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
-		autoTrimps.breedTarget.value = 3.0;
-		autoTrimps.triggerElectricity1 = true;
-	} else if (autoTrimps.triggerElectricity1 && !autoTrimps.triggerElectricity2 && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
-		autoTrimps.breedTarget.value = 30.5;
-		autoTrimps.triggerElectricity2 = true;
-	}
-	if (!autoTrimps.triggerElectricity1 && (game.global.challengeActive == "Nom")) {
-		autoTrimps.breedTarget.value = 10.5;
-		autoTrimps.triggerNom1 = true;
-	} else if (autoTrimps.triggerElectricity1 && !autoTrimps.triggerElectricity2 && (game.global.challengeActive == "Nom")) {
-		autoTrimps.breedTarget.value = 30.5;
-		autoTrimps.triggerNom2 = true;
+	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetMapocalypse;
+		autoTrimps.trigger.challengeOn = true;
+	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
+		autoTrimps.trigger.challengeOff = true;
 	}
 	
-	if (game.global.autoBattle) {
-		if (!game.global.pauseFight) {
-			pauseFight();
-		}
-	}
-	if (!game.global.fighting && game.global.gridArray.length != 0 && (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1 || game.global.soldierHealth > 0 || breedTime(0) < 2)) {
-		fightManual();
+	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Nom")) {
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
+		autoTrimps.trigger.challengeOn = true;
+	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Nom")) {
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
+		autoTrimps.trigger.challengeOff = true;
 	}
 	
 	var tempAmt = game.global.buyAmt;
@@ -1103,6 +1150,10 @@ function myTimer(){
 	
 	if (autoTrimps.settings.autoGather.enabled != 0) {
 		aGather();
+	}
+	
+	if (autoTrimps.settings.autoFarm.enabled != 0) {
+		aFarm();
 	}
 	
 	game.global.buyAmt = tempAmt;
