@@ -11,8 +11,8 @@ function setup() {
 	
 	autoTrimps.constants.version = "2.00.00";
 	autoTrimps.constants.breedTargetNormal = 30.5;
-	autoTrimps.constants.breedTargetElectricity = 10.5;
-	autoTrimps.constants.breedTargetMapocalypse = 3.0;
+	autoTrimps.constants.breedTargetNom = 10.5;
+	autoTrimps.constants.breedTargetElectricity = 3.0;
 	autoTrimps.constants.gigaWarpNumberProg = 3.0;
 	autoTrimps.constants.gigaWarpNumberFarm = 2.5;
 	
@@ -1081,7 +1081,7 @@ function myTimer(){
 	}
 	
 	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
-		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetMapocalypse;
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
 		autoTrimps.trigger.challengeOn = true;
 	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
@@ -1089,7 +1089,7 @@ function myTimer(){
 	}
 	
 	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Nom")) {
-		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
+		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNom;
 		autoTrimps.trigger.challengeOn = true;
 	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && (game.global.challengeActive == "Nom")) {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
