@@ -1104,6 +1104,8 @@ function myTimer(){
 			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 			autoTrimps.settings.autoMap.enabled = 0;
 			autoTrimps.challengeOn = true;
+		} else {
+			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 		}
 		
 		autoTrimps.highestZone = 0;
