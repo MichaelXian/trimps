@@ -5,7 +5,6 @@ if (typeof autoTrimps === 'undefined') {
 function setup() {
 	autoTrimps = {}
 	autoTrimps.settings = {};
-	autoTrimps.trigger = {};
 	autoTrimps.constants = {};
 	autoTrimps.doneMaps = [];
 	
@@ -16,9 +15,7 @@ function setup() {
 	autoTrimps.constants.gigaWarpNumberProg = 3.0;
 	autoTrimps.constants.gigaWarpNumberFarm = 2.5;
 	
-	autoTrimps.trigger.challengeOn = false;
-	autoTrimps.trigger.challengeOff = false;
-	
+	autoTrimps.challengeOn = false;
 	autoTrimps.highestZone = 0;
 	autoTrimps.lastHeliumPerHour = 0;
 	autoTrimps.bestBuilding = null;
@@ -184,6 +181,9 @@ function purchaseBuilding(buildingName) {
 			tooltip("hide");
 			message(getTime() + " - Build " + buildingName + ".", "Unlocks", "*eye2", "exotic");
 			update();
+			if (buildingName == "Gigastation") {
+				message(getTime() + " - Build " + buildingName + " - " + game.buildings.Warpstation.owned, "Story", "*eye2", "exotic");
+			}
 			return true;
 		}
 	}
@@ -191,8 +191,8 @@ function purchaseBuilding(buildingName) {
 }
 
 function purchaseUpgrade(upgradeName) {
-	if (canAffordTwoLevel(game.upgrades[upgradeName])) {
-		if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
+	if (game.upgrades[upgradeName].allowed > game.upgrades[upgradeName].done) {
+		if (canAffordTwoLevel(game.upgrades[upgradeName])) {
 			buyUpgrade(upgradeName);
 			tooltip("hide");
 			message(getTime() + " - Upgraded " + upgradeName + ".", "Unlocks", "*eye2", "exotic");
@@ -326,6 +326,16 @@ function getEnemyMaxAttack(zone) {
 	return Math.floor(amt);
 }
 
+function enoughHealth() {
+	if (game.global.challengeActive == "Nom") {
+		return true;
+	}
+	var enemyDamage = getEnemyMaxAttack(game.global.world +1);
+	var enough = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
+				autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
+	return enough;
+}
+
 function getEnemyMaxHealth(zone) {
 	var amt = 0;
 	var level = 30;
@@ -345,6 +355,12 @@ function getEnemyMaxHealth(zone) {
 	amt *= game.badGuys["Grimp"].health;
 	amt *= 0.84;
 	return Math.floor(amt);
+}
+
+function enoughDamage() {
+	var enemyHeath = getEnemyMaxHealth(game.global.world +1);
+	var enough = autoTrimps.baseDamage*4 > enemyHeath;
+	return enough;
 }
 
 function setAutoFarmValues() {
@@ -639,7 +655,7 @@ function aBuildNurseries() {
 function aRead() {
 	if (game.upgrades.Coordination.allowed > game.upgrades.Coordination.done) {
 		if (canAffordCoordinationTrimps()){
-			if (purchaseUpgrade('Coordination')) {
+			if (purchaseUpgrade("Coordination")) {
 				if (game.global.mapsUnlocked && autoTrimps.settings.autoMap.enabled != 0) {
 					if (game.global.switchToMaps) {
 						mapsClicked();
@@ -651,12 +667,11 @@ function aRead() {
 			}
 		}
 	}
-	var upgrades = ["Efficiency", "TrainTacular", "Gymystic", "Megascience", "Speedscience", "Megaminer", "Speedminer", "Megafarming", "Speedfarming", "Megalumber", "Speedlumber", 
-		"Egg", "UberHut", "UberHouse", "UberMansion", "UberHotel", "UberResort", "Bounty", "Scientists", "Battle", "Bloodlust", "Blockmaster", "Trainers", "Trapstorm", "Explorers", "Anger",
-					"Formations", "Dominance", "Barrier", "Miners"]
-	for (var key in game.upgrades) {
-		if (upgrades.indexOf(key) != -1) { 
-			if (purchaseUpgrade(key)) {
+	var dontUpgrade = ["Coordination", "Potency", "Shieldblock"];
+
+	for (var upgrade in game.upgrades) {
+		if (dontUpgrade.indexOf(upgrade) == -1) { 
+			if (purchaseUpgrade(upgrade)) {
 				break;
 			}
 		}
@@ -674,13 +689,7 @@ function aPrestige() {
 
 function aEquip() {
 	if (game.global.mapsUnlocked) {
-		var enemyDamage = getEnemyMaxAttack(game.global.world +1);
-		var enemyHeath = getEnemyMaxHealth(game.global.world +1);
-		var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
-							autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
-		var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
-
-		if (!enoughDamage && autoTrimps.bestWeapon != null) {
+		if (autoTrimps.bestWeapon != null && !enoughDamage()) {
 			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
 			if (equipPrice < game.resources.metal.owned / 100) {
 				game.global.buyAmt = 1;
@@ -688,7 +697,7 @@ function aEquip() {
 				tooltip("hide");
 			}
 		}
-		if ((!enoughHealth && game.global.challengeActive != "Nom") && autoTrimps.bestArmor != null) {
+		if (autoTrimps.bestArmor != null && !enoughHealth()) {
 			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
 			if (equipPrice < game.resources.metal.owned / 100) {
 				game.global.buyAmt = 1;
@@ -720,13 +729,7 @@ function aMap() {
 		}
 		
 		if (shouldDoMap == "world") {
-			var enemyDamage = getEnemyMaxAttack(game.global.world +1);
-			var enemyHeath = getEnemyMaxHealth(game.global.world +1);
-			var enoughHealth = (autoTrimps.baseHealth*4 > 30 * (enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0) ||
-								autoTrimps.baseHealth > 30 * (enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0));
-			var enoughDamage = (autoTrimps.baseDamage*4 > enemyHeath);
-			var shouldDoMaps = (!enoughHealth && game.global.challengeActive != "Nom") || !enoughDamage;
-			if (shouldDoMaps) {
+			if (!enoughHealth() || !enoughDamage()) {
 				if (game.global.world == highestMapLevel) {
 					shouldDoMap = highestMapID;
 				}
@@ -814,12 +817,15 @@ function aFormation() {
 			var enemy = game.global.gridArray[game.global.lastClearedCell + 1];
 		}
 
-		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast | game.global.challengeActive == 'Slow');
+		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast || game.global.challengeActive == 'Slow');
 		var enemyHealth = enemy.health;
 		var enemyDamage = enemy.attack * 1.19;
 		var dDamage = enemyDamage - autoTrimps.baseBlock/2 > enemyDamage*0.2 ? enemyDamage - autoTrimps.baseBlock/2 : enemyDamage*0.2;
+		var dHealth = autoTrimps.baseHealth/2;
 		var xDamage = enemyDamage - autoTrimps.baseBlock > enemyDamage*0.2 ? enemyDamage - autoTrimps.baseBlock : enemyDamage*0.2;
+		var xHealth = autoTrimps.baseHealth;
 		var bDamage = enemyDamage - autoTrimps.baseBlock*4 > enemyDamage*0.1 ? enemyDamage - autoTrimps.baseBlock*4 : enemyDamage*0.1;
+		var bHealth = autoTrimps.baseHealth/2;
 	} else if (game.global.mapsActive && !game.global.preMapsActive) {
 		if (typeof game.global.mapGridArray[game.global.lastClearedMapCell + 1] === 'undefined') {
 			var enemy = game.global.mapGridArray[0];
@@ -827,28 +833,42 @@ function aFormation() {
 			var enemy = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
 		}
 
-		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast | game.global.challengeActive == 'Slow');
+		var enemyFast = game.global.challengeActive != 'Nom' && (game.badGuys[enemy.name].fast || game.global.challengeActive == 'Slow');
 		var enemyHealth = enemy.health;
 		var enemyDamage = enemy.attack * 1.19;
 		var dDamage = enemyDamage - autoTrimps.baseBlock/2 > 0 ? enemyDamage - autoTrimps.baseBlock/2 : 0;
+		var dHealth = autoTrimps.baseHealth/2;
 		var xDamage = enemyDamage - autoTrimps.baseBlock > 0 ? enemyDamage - autoTrimps.baseBlock : 0;
+		var xHealth = autoTrimps.baseHealth;
 		var bDamage = enemyDamage - autoTrimps.baseBlock*4 > 0 ? enemyDamage - autoTrimps.baseBlock*4 : 0;
+		var bHealth = autoTrimps.baseHealth/2;
 	}
-
+	
+	if (autoTrimps.challengeOn) {
+		if (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse") {
+			dDamage+= dHealth * game.global.radioStacks * 0.1;
+			xDamage+= xHealth * game.global.radioStacks * 0.1;
+			bDamage+= bHealth * game.global.radioStacks * 0.1;
+		} else if (game.global.challengeActive == "Nom") {
+			dDamage += dHealth/20;
+			xDamage += xHealth/20;
+			bDamage += bHealth/20;
+		}
+	}
 	if (!game.global.preMapsActive) {
-		if (!enemyFast && game.upgrades.Dominance.done && enemyHealth < autoTrimps.baseDamage * (game.global.titimpLeft > 0 ? 4 : 2) && (newSquadRdy || autoTrimps.baseHealth/2 - missingHealth > 0)) {
+		if (!enemyFast && game.upgrades.Dominance.done && enemyHealth < autoTrimps.baseDamage * (game.global.titimpLeft > 0 ? 4 : 2) && (newSquadRdy || dHealth - missingHealth > 0)) {
 			if (game.global.formation != 2) {
 				setFormation(2);
 			}
-		} else if (game.upgrades.Dominance.done && ((newSquadRdy && autoTrimps.baseHealth/2 > dDamage) || autoTrimps.baseHealth/2 - missingHealth > dDamage)) {
+		} else if (game.upgrades.Dominance.done && ((newSquadRdy && dHealth > dDamage) || dHealth - missingHealth > dDamage)) {
 			if (game.global.formation != 2) {
 				setFormation(2);
 			}
-		} else if (game.upgrades.Formations.done && ((newSquadRdy && autoTrimps.baseHealth > xDamage) || autoTrimps.baseHealth - missingHealth > xDamage)) {
+		} else if (game.upgrades.Formations.done && ((newSquadRdy && xHealth > xDamage) || xHealth - missingHealth > xDamage)) {
 			if (game.global.formation != "0") {
 				setFormation("0");
 			}
-		} else if (game.upgrades.Barrier.done && ((newSquadRdy && autoTrimps.baseHealth/2 > bDamage) || autoTrimps.baseHealth/2 - missingHealth > bDamage)) {
+		} else if (game.upgrades.Barrier.done && ((newSquadRdy && bHealth > bDamage) || bHealth - missingHealth > bDamage)) {
 			if (game.global.formation != 3) {
 				setFormation(3);
 			}
@@ -1013,16 +1033,17 @@ function aGather() {
 function aFarm() {
 	if (game.global.world > autoTrimps.highestZone) {
 		autoTrimps.highestZone = game.global.world;
-		if (game.resources.helium.owned > 0) {
-			var timeThisPortal = new Date().getTime() - game.global.portalTime;
-			timeThisPortal /= 3600000;
-			var heliumHour = game.resources.helium.owned / ((new Date().getTime() - game.global.portalTime) / 3600000)
-			if (heliumHour < autoTrimps.lastHeliumPerHour) {
+		var helium = game.resources.helium.owned
+		if (helium > 0) {
+			var heliumPerHour = helium / ((new Date().getTime() - game.global.portalTime) / 3600000)
+			if (heliumPerHour < autoTrimps.lastHeliumPerHour * 0.7) {
 				portalClicked();
 				activateClicked();
 				activatePortal();
+				console.log(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.")
+				message(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.", "Story", "*eye2", "exotic");
 			} else {
-				autoTrimps.lastHeliumPerHour = heliumHour;
+				autoTrimps.lastHeliumPerHour = heliumPerHour;
 			}
 		} else {
 			autoTrimps.lastHeliumPerHour = 0;
@@ -1050,8 +1071,9 @@ function myTimer(){
 	}
 	
 	//auto-close breaking the world textbox 
-	if(document.getElementById('extraGridInfo').style.display == 'block') restoreGrid(); 
-
+	if(document.getElementById('extraGridInfo').style.display == 'block') {
+		restoreGrid(); 
+	}
 
 	if (game.global.gridArray.length == 0) {
 		autoTrimps.settings.autoBuildResources.enabled = 1; 
@@ -1070,30 +1092,31 @@ function myTimer(){
 		setAutoFarmValues();
 		refreshSettings();
 		
+		autoTrimps.challengeOn = false;
+		
+		if (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse") {
+			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
+			autoTrimps.challengeOn = true;
+		} else if (game.global.challengeActive == "Nom") {
+			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNom;
+			autoTrimps.challengeOn = true;
+		} else if (game.global.challengeActive == "Mapology") {
+			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
+			autoTrimps.settings.autoMap.enabled = 0;
+			autoTrimps.challengeOn = true;
+		}
+		
 		autoTrimps.highestZone = 0;
-		
-		autoTrimps.trigger.challengeOn = false;
-		autoTrimps.trigger.challengeOff = false;
-		
 		autoTrimps.doneMaps = [];
 		
 		purchaseUpgrade("Battle");
 	}
 	
-	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
-		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetElectricity;
-		autoTrimps.trigger.challengeOn = true;
-	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && game.global.challengeActive == "") {
+	if (autoTrimps.challengeOn && game.global.challengeActive == "") {
 		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
-		autoTrimps.trigger.challengeOff = true;
-	}
-	
-	if (!autoTrimps.trigger.challengeOn && (game.global.challengeActive == "Nom")) {
-		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNom;
-		autoTrimps.trigger.challengeOn = true;
-	} else if (autoTrimps.trigger.challengeOn && !autoTrimps.trigger.challengeOff && game.global.challengeActive == "") {
-		autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
-		autoTrimps.trigger.challengeOff = true;
+		autoTrimps.challengeOn = false;
+		autoTrimps.settings.autoMap.enabled = 1;
+		refreshSettings();
 	}
 	
 	var tempAmt = game.global.buyAmt;
