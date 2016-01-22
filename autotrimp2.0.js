@@ -16,7 +16,6 @@ function setup() {
 	autoTrimps.constants.gigaWarpNumberFarm = 2.5;
 	
 	autoTrimps.challengeOn = false;
-	autoTrimps.highestZone = 0;
 	autoTrimps.bestHeliumPerHour = 0;
 	autoTrimps.bestBuilding = null;
 	autoTrimps.bestArmor = null;
@@ -1031,24 +1030,21 @@ function aGather() {
 }
 
 function aFarm() {
-	if (game.global.world > autoTrimps.highestZone) {
-		autoTrimps.highestZone = game.global.world;
-		var helium = game.resources.helium.owned
-		if (helium > 0) {
-			var heliumPerHour = helium / ((new Date().getTime() - game.global.portalTime) / 3600000)
-			if ((heliumPerHour > game.stats.bestHeliumHour.valueTotal * 0.9 && heliumPerHour < autoTrimps.bestHeliumPerHour * 0.95) ||
-					(heliumPerHour < autoTrimps.bestHeliumPerHour * 0.6)){
-				portalClicked();
-				activateClicked();
-				activatePortal();
-				console.log(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.")
-				message(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.", "Story", "*eye2", "exotic");
-			} else if (heliumPerHour > autoTrimps.bestHeliumPerHour) {
-				autoTrimps.bestHeliumPerHour = heliumPerHour;
-			}
-		} else {
-			autoTrimps.bestHeliumPerHour = 0;
+	var helium = game.resources.helium.owned;
+	if (helium > 0) {
+		var heliumPerHour = helium / ((new Date().getTime() - game.global.portalTime) / 3600000)
+		if ((heliumPerHour > game.stats.bestHeliumHour.valueTotal * 0.9 && heliumPerHour < autoTrimps.bestHeliumPerHour * 0.95) ||
+				(heliumPerHour < autoTrimps.bestHeliumPerHour * 0.6)){
+			portalClicked();
+			activateClicked();
+			activatePortal();
+			console.log(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.")
+			message(getTime() + " - PORTALED: " + helium +  " -> " + heliumPerHour + "/h.", "Story", "*eye2", "exotic");
+		} else if (heliumPerHour > autoTrimps.bestHeliumPerHour) {
+			autoTrimps.bestHeliumPerHour = heliumPerHour;
 		}
+	} else {
+		autoTrimps.bestHeliumPerHour = 0;
 	}
 }
 
@@ -1109,7 +1105,6 @@ function myTimer(){
 			autoTrimps.breedTarget.value = autoTrimps.constants.breedTargetNormal;
 		}
 		
-		autoTrimps.highestZone = 0;
 		autoTrimps.doneMaps = [];
 		
 		purchaseUpgrade("Battle");
