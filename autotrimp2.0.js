@@ -721,7 +721,7 @@ function aMap() {
 					highestMapID = game.global.mapsOwnedArray[map].id;
 					highestMapLevel = game.global.mapsOwnedArray[map].level;
 				}
-			} else if (game.global.mapsOwnedArray[map].noRecycle) {
+			} else if (game.global.mapsOwnedArray[map].noRecycle && game.global.mapsOwnedArray[map].level <= game.global.world) {
 				if (autoTrimps.doneMaps.indexOf(game.global.mapsOwnedArray[map].id) == -1) {
 					shouldDoMap = game.global.mapsOwnedArray[map].id;
 				}
