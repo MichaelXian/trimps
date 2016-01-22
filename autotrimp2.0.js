@@ -1033,8 +1033,7 @@ function aFarm() {
 	var helium = game.resources.helium.owned;
 	if (helium > 0) {
 		var heliumPerHour = helium / ((new Date().getTime() - game.global.portalTime) / 3600000)
-		if ((heliumPerHour > game.stats.bestHeliumHour.valueTotal * 0.9 && heliumPerHour < autoTrimps.bestHeliumPerHour * 0.95) ||
-				(heliumPerHour < autoTrimps.bestHeliumPerHour * 0.6)){
+		if (heliumPerHour > game.stats.bestHeliumHour.valueTotal * 0.9 && heliumPerHour < autoTrimps.bestHeliumPerHour * 0.95) {
 			portalClicked();
 			activateClicked();
 			activatePortal();
