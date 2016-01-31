@@ -855,7 +855,7 @@ function aFormation() {
 		}
 	}
 	if (!game.global.preMapsActive) {
-		if (!enemyFast && game.upgrades.Dominance.done && enemyHealth < autoTrimps.baseDamage * (game.global.titimpLeft > 0 ? 4 : 2) && (newSquadRdy || dHealth - missingHealth > 0)) {
+		if (!enemyFast && game.upgrades.Dominance.done && enemyHealth < autoTrimps.baseDamage * (game.global.titimpLeft > 0 ? 4 : 2) && (newSquadRdy || (dHealth - missingHealth > 0 && game.global.challengeActive != 'Nom') || (game.global.challengeActive == 'Nom' && dHealth - missingHealth > dHealth/20))) {
 			if (game.global.formation != 2) {
 				setFormation(2);
 			}
