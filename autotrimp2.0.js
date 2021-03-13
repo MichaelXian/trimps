@@ -2,6 +2,12 @@ if (typeof autoTrimps === 'undefined') {
 	setup();
 }
 
+function getBuildingItemPriceDefault(toBuy, costItem, isEquipment, num) {
+    isEquipment = isEquipment || false;
+    num = num || 1;
+    return getBuildingItemPrice(toBuy, costItem, isEquipment, num);
+}
+
 function setup() {
 	autoTrimps = {}
 	autoTrimps.settings = {};
@@ -389,7 +395,7 @@ function update() {
 		for (var house in unlockedHousing) {
 			var building = game.buildings[unlockedHousing[house]];
 			var cost = 0;
-			cost += getBuildingItemPrice(building, "gems");
+			cost += getBuildingItemPriceDefault(building, "gems");
 			var ratio = cost / building.increase.by;
 			if (ratio < bestRatio || bestRatio == -1) {
 				bestRatio = ratio;
@@ -424,7 +430,7 @@ function update() {
 		for (var armor in unlockedArmor) {
 			var equip = game.equipment[unlockedArmor[armor]];
 			var cost = 0;
-			cost += getBuildingItemPrice(equip, "metal", true);
+			cost += getBuildingItemPriceDefault(equip, "metal", true);
 			var ratio = cost / equip.healthCalculated;
 			if (ratio < bestRatio || bestRatio == -1) {
 				bestRatio = ratio;
@@ -460,7 +466,7 @@ function update() {
 		for (var weapon in unlockedWeapons) {
 			var equip = game.equipment[unlockedWeapons[weapon]];
 			var cost = 0;
-			cost += getBuildingItemPrice(equip, "metal", true);
+			cost += getBuildingItemPriceDefault(equip, "metal", true);
 			var ratio = cost / equip.attackCalculated;
 			if (ratio < bestRatio || bestRatio == -1) {
 				bestRatio = ratio;
@@ -581,9 +587,9 @@ function aBuildHouses() {
 			purchaseBuilding(autoTrimps.bestBuilding);
 		}
 
-		var grMansion = getBuildingItemPrice(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
-		var grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
-		var grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
+		var grMansion = getBuildingItemPriceDefault(game.buildings.Mansion, "food") / game.buildings.Mansion.increase.by;
+		var grHouse = getBuildingItemPriceDefault(game.buildings.House, "food") / game.buildings.House.increase.by;
+		var grHut = getBuildingItemPriceDefault(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
 		if (grMansion > grHouse) {
 			purchaseBuilding("House");
 		}
@@ -591,8 +597,8 @@ function aBuildHouses() {
 			purchaseBuilding("Hut");
 		}
 	} else if (!game.buildings.House.locked) {
-		grHouse = getBuildingItemPrice(game.buildings.House, "food") / game.buildings.House.increase.by;
-		grHut = getBuildingItemPrice(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
+		grHouse = getBuildingItemPriceDefault(game.buildings.House, "food") / game.buildings.House.increase.by;
+		grHut = getBuildingItemPriceDefault(game.buildings.Hut, "food") / game.buildings.Hut.increase.by;
 		if (grHouse < grHut) {
 			purchaseBuilding("House");
 		} else {
@@ -689,16 +695,16 @@ function aPrestige() {
 function aEquip() {
 	if (game.global.mapsUnlocked) {
 		if (autoTrimps.bestWeapon != null && !enoughDamage()) {
-			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
-			if (equipPrice < game.resources.metal.owned / 100) {
+			var equipPrice = Math.ceil(parseFloat(getBuildingItemPriceDefault(game.equipment[autoTrimps.bestWeapon], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+			if (equipPrice < game.resources.metal.owned / 10) {
 				game.global.buyAmt = 1;
 				buyEquipment(autoTrimps.bestWeapon);
 				tooltip("hide");
 			}
 		}
 		if (autoTrimps.bestArmor != null && !enoughHealth()) {
-			var equipPrice = Math.ceil(parseFloat(getBuildingItemPrice(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
-			if (equipPrice < game.resources.metal.owned / 100) {
+			var equipPrice = Math.ceil(parseFloat(getBuildingItemPriceDefault(game.equipment[autoTrimps.bestArmor], "metal", true)) * (Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)));
+			if (equipPrice < game.resources.metal.owned / 10) {
 				game.global.buyAmt = 1;
 				buyEquipment(autoTrimps.bestArmor);
 				tooltip("hide");
